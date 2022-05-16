@@ -3,5 +3,5 @@ module.exports = {
     title: `myriad-server-list`,
     siteUrl: `https://www.yourdomain.tld`,
   },
-  plugins: [],
-}
+  plugins: [`gatsby-plugin-material-ui`],
+};
