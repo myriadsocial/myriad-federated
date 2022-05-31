@@ -14,15 +14,17 @@ import {
 // import { MyriadFullBlackIcon } from "../atoms/Icons";
 import { useStyles } from "./serverlist.styles";
 
-// import { SearchBoxContainer } from "src/components/atoms/Search/SearchBoxContainer";
+import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
+import { useGetList } from "src/hooks/get-list.hooks";
 
 export const ServerListComponent = () => {
   const style = useStyles();
+  const { tipsEachNetwork } = useGetList();
 
   return (
     <Container maxWidth="lg" disableGutters>
       <div className={style.root}>
-        <a href={""} rel="noreferrer">
+        <a href={"asda"} rel="noreferrer">
           {/* <MyriadFullBlackIcon /> */}
         </a>
         <Typography className={style.text} color="primary">
@@ -107,7 +109,7 @@ export const ServerListComponent = () => {
           </Grid>
         </Grid>
         <div style={{ marginTop: 16 }}>
-          {/* <SearchBoxContainer onSubmitSearch={console.log} hidden={true} /> */}
+          <SearchBoxContainer onSubmitSearch={console.log} hidden={true} />
         </div>
       </div>
       <div className={style.list}>

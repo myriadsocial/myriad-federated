@@ -15,15 +15,25 @@
     "clean": "gatsby clean"
   },
   "dependencies": {
+    "@acala-network/api": "^3.0.2",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@fontsource/mulish": "^4.5.1",
     "@heroicons/react": "^1.0.6",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
+    "@polkadot/api": "^6.5.2",
+    "@polkadot/extension-dapp": "^0.37.2",
+    "@polkadot/react-identicon": "^0.58.*",
+    "bn.js": "^4.12.0",
     "gatsby": "^4.14.0",
     "gatsby-plugin-material-ui": "^4.1.0",
+    "lodash": "^4.17.21",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
+  },
+  "devDependencies": {
+    "@polkadot/types": "^6.5.2",
+    "gatsby-plugin-root-import": "^2.0.8"
   }
 }
