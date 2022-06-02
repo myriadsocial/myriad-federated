@@ -14,6 +14,7 @@ import MyriadGrey from "src/images/Icons/myriad-grey.svg";
 import MyriadFull from "src/images/Icons/myriad-logo-full.svg";
 import Notification from "src/images/Icons/notif-default.svg";
 import OfficialBadge from "src/images/Icons/official-badge.svg";
+import Illustration from "src/images/Icons/Illustration.svg";
 
 export const MyriadCircleIcon = (props) => (
   <SvgIcon
@@ -40,7 +41,7 @@ export const MyriadFullBlackIcon = (props) => (
   <SvgIcon
     component={MyriadFullBlack}
     viewBox="0 0 142 36"
-    style={{ width: "auto", height: "auto" }}
+    style={{ width: "250px", height: "57px" }}
     {...props}
   />
 );
@@ -96,6 +97,15 @@ export const InfoIcon = (props) => (
     component={Info}
     viewBox="0 0 24 24"
     style={{ width: 24, height: 24 }}
+    {...props}
+  />
+);
+
+export const IllustrationIcon = (props) => (
+  <SvgIcon
+    component={Illustration}
+    viewBox="0 0 580 500"
+    style={{ width: "580px", height: "500px" }}
     {...props}
   />
 );

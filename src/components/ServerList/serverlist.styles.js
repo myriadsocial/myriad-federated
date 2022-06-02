@@ -3,56 +3,86 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 export const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      width: "100%",
-      padding: "22px 0px",
+      padding: "137px 30px 30px 30px",
+      flexDirection: "column",
+      display: "flex",
+      rowGap: 20,
     },
     container: {
       width: "674px",
     },
     content: {
-      borderRadius: "10px",
-      padding: theme.spacing(2),
-      display: "flex",
       flexDirection: "column",
       gap: theme.spacing(1),
+      borderRadius: "10px",
+      display: "flex",
+      padding: "20px 36px",
+    },
+    contentTitle: {
+      fontSize: "24px",
+    },
+    contentText: {
+      fontSize: 16,
+      marginTop: theme.spacing(1),
     },
     link: {
-      display: "flex",
       justifyContent: "flex-start",
       alignItems: "center",
+      marginBottom: 12,
+      display: "flex",
+      fontSize: 14,
+    },
+    textDecoration: {
+      textDecoration: "none",
     },
     card: {
       background: theme.palette.primary.main,
+      padding: theme.spacing(3),
+      borderRadius: 10,
       color: "#FFF",
-      padding: theme.spacing(1),
     },
     divider: {
-      height: "40px",
-      width: "2px",
-      backgroundColor: theme.palette.text.secondary,
+      background: "#EDEDED",
       margin: "0px 10px",
+      height: "32px",
+      width: "2px",
     },
     text: {
-      fontSize: "22px",
+      fontSize: "28px",
+      marginBottom: 14,
       fontWeight: 700,
     },
-    title: {},
-    subtitle: {},
+    illustration: {
+      position: "absolute",
+      zIndex: -99,
+      right: 0,
+      top: -130,
+    },
+    title: {
+      fontSize: "16px",
+    },
+    subtitle: {
+      fontSize: "24px",
+    },
     flex: {
-      display: "flex",
-      alignItems: "center",
       justifyContent: "space-between",
+      alignItems: "center",
+      display: "flex",
     },
     list: {},
-    box: {
-      display: "flex",
-      gap: theme.spacing(1),
-    },
     badge: {
       display: "inline-block",
       background: "#EBE0FF",
       borderRadius: "20px",
       padding: "4px 16px",
+    },
+    icon: {
+      background: "#452680",
+      borderRadius: 6,
+      marginRight: 16,
+      color: "#FFF",
+      minWidth: 24,
+      padding: 7,
     },
   })
 );

@@ -2,16 +2,19 @@ import React from "react";
 
 import {
   Container,
-  Avatar,
   ListItem,
-  ListItemAvatar,
+  ListItemIcon,
   ListItemText,
   Card,
   Typography,
   Grid,
+  Button,
+  SvgIcon,
 } from "@material-ui/core";
 
-// import { MyriadFullBlackIcon } from "../atoms/Icons";
+import { ServerIcon, UsersIcon, PencilAltIcon } from "@heroicons/react/outline";
+
+import { MyriadFullBlackIcon, IllustrationIcon } from "../Icons";
 import { useStyles } from "./serverlist.styles";
 
 import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
@@ -19,26 +22,39 @@ import { useGetList } from "src/hooks/get-list.hooks";
 
 export const ServerListComponent = () => {
   const style = useStyles();
-  const { tipsEachNetwork } = useGetList();
+  const { servers, totalInstances, totalUsers, totalPosts } = useGetList();
 
   return (
     <Container maxWidth="lg" disableGutters>
       <div className={style.root}>
-        <a href={"asda"} rel="noreferrer">
-          {/* <MyriadFullBlackIcon /> */}
-        </a>
-        <Typography className={style.text} color="primary">
-          Federated Instances
-        </Typography>
-        <div className={style.link}>
+        <header style={{ marginLeft: 10, position: "relative" }}>
+          <a href={"https://www.myriad.social/"} rel="noreferrer">
+            <MyriadFullBlackIcon />
+          </a>
+          <div className={style.illustration}>
+            <IllustrationIcon />
+          </div>
           <Typography className={style.text} color="primary">
-            Go to App
+            Federated Instances
           </Typography>
-          <div className={style.divider} />
-          <Typography className={style.text} color="primary">
-            Visit Website
-          </Typography>
-        </div>
+          <div className={style.link}>
+            <a
+              href="https://app.myriad.social/"
+              className={style.textDecoration}
+              rel="noreferrer"
+            >
+              <Typography color="primary">Go to App</Typography>
+            </a>
+            <div className={style.divider} />
+            <a
+              href="https://www.myriad.social/"
+              className={style.textDecoration}
+              rel="noreferrer"
+            >
+              <Typography color="primary">Visit Website</Typography>
+            </a>
+          </div>
+        </header>
 
         <Grid
           container
@@ -49,11 +65,9 @@ export const ServerListComponent = () => {
           <Grid item md={4} xs={6}>
             <Card variant="outlined" className={style.card}>
               <ListItem>
-                <ListItemAvatar>
-                  <Avatar variant="rounded" src={""}>
-                    A
-                  </Avatar>
-                </ListItemAvatar>
+                <ListItemIcon classes={{ root: style.icon }}>
+                  <SvgIcon component={ServerIcon} />
+                </ListItemIcon>
                 <ListItemText
                   primary={
                     <Typography className={style.title}>
@@ -61,7 +75,9 @@ export const ServerListComponent = () => {
                     </Typography>
                   }
                   secondary={
-                    <Typography className={style.subtitle}>100,000</Typography>
+                    <Typography className={style.subtitle}>
+                      {totalInstances.toLocaleString()}
+                    </Typography>
                   }
                 />
               </ListItem>
@@ -70,17 +86,17 @@ export const ServerListComponent = () => {
           <Grid item md={4} xs={6}>
             <Card variant="outlined" className={style.card}>
               <ListItem>
-                <ListItemAvatar>
-                  <Avatar variant="rounded" src={""}>
-                    A
-                  </Avatar>
-                </ListItemAvatar>
+                <ListItemIcon classes={{ root: style.icon }}>
+                  <SvgIcon component={UsersIcon} />
+                </ListItemIcon>
                 <ListItemText
                   primary={
                     <Typography className={style.title}>Total users</Typography>
                   }
                   secondary={
-                    <Typography className={style.subtitle}>800,000</Typography>
+                    <Typography className={style.subtitle}>
+                      {totalUsers.toLocaleString()}
+                    </Typography>
                   }
                 />
               </ListItem>
@@ -89,18 +105,16 @@ export const ServerListComponent = () => {
           <Grid item md={4} xs={6}>
             <Card variant="outlined" className={style.card}>
               <ListItem>
-                <ListItemAvatar>
-                  <Avatar variant="rounded" src={""}>
-                    A
-                  </Avatar>
-                </ListItemAvatar>
+                <ListItemIcon classes={{ root: style.icon }}>
+                  <SvgIcon component={PencilAltIcon} />
+                </ListItemIcon>
                 <ListItemText
                   primary={
                     <Typography className={style.title}>Total posts</Typography>
                   }
                   secondary={
                     <Typography className={style.subtitle}>
-                      1,500,000
+                      {totalPosts.toLocaleString()}
                     </Typography>
                   }
                 />
@@ -108,30 +122,46 @@ export const ServerListComponent = () => {
             </Card>
           </Grid>
         </Grid>
-        <div style={{ marginTop: 16 }}>
+        <div>
           <SearchBoxContainer onSubmitSearch={console.log} hidden={true} />
         </div>
-      </div>
-      <div className={style.list}>
-        <Card className={style.content}>
-          <div className={style.flex}>
-            <Typography className={style.text} color="primary">
-              tothemoon.net
-            </Typography>
-            <Typography variant="body1" color="textPrimary">
-              400 users . 5054 statuses
-            </Typography>
-          </div>
-          <Typography color="textPrimary">
-            {
-              "The cryptocurrency market is filled with surprises; now, the market is going up, and in an instant, everything comes crashing down. "
-            }
-          </Typography>
-          <div className={style.box}>
-            <div className={style.badge}>Generalist</div>
-            <div className={style.badge}>API</div>
-          </div>
-        </Card>
+        <div className={style.list}>
+          {servers.map(
+            (server, i) =>
+              server.detail && (
+                <Card className={style.content} key={i}>
+                  <div className={style.flex}>
+                    <div>
+                      <Typography
+                        className={style.contentTitle}
+                        color="primary"
+                      >
+                        {server.name}
+                      </Typography>
+                      <Typography variant="body1" color="textSecondary">
+                        Crypto, Cryptocurrency, market, Ethereum, NFT
+                      </Typography>
+                      <Typography
+                        color="textPrimary"
+                        className={style.contentText}
+                      >
+                        {server.detail.description}
+                      </Typography>
+                    </div>
+                    <a
+                      href={server.webUrl}
+                      rel="noreferrer"
+                      className={style.textDecoration}
+                    >
+                      <Button variant="outlined" color="secondary" size="small">
+                        Go to instance
+                      </Button>
+                    </a>
+                  </div>
+                </Card>
+              )
+          )}
+        </div>
       </div>
     </Container>
   );
