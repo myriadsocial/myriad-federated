@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider } from "@polkadot/api";
 
 export const connectToBlockchain = async () => {
-  const provider = new WsProvider("wss://ws-rpc.dev.myriad.social");
+  const provider = new WsProvider(process.env.MYRIAD_RPC_URL);
 
   const api = await ApiPromise.create({ provider });
   await api.isReadyOrError;

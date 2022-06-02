@@ -28,7 +28,7 @@ export const ServerListComponent = () => {
     <Container maxWidth="lg" disableGutters>
       <div className={style.root}>
         <header style={{ marginLeft: 10, position: "relative" }}>
-          <a href={"https://www.myriad.social/"} rel="noreferrer">
+          <a href={process.env.MYRIAD_WEBSITE_URL} rel="noreferrer">
             <MyriadFullBlackIcon />
           </a>
           <div className={style.illustration}>
@@ -39,7 +39,7 @@ export const ServerListComponent = () => {
           </Typography>
           <div className={style.link}>
             <a
-              href="https://app.myriad.social/"
+              href={process.env.MYRIAD_APP_URL}
               className={style.textDecoration}
               rel="noreferrer"
             >
@@ -47,7 +47,7 @@ export const ServerListComponent = () => {
             </a>
             <div className={style.divider} />
             <a
-              href="https://www.myriad.social/"
+              href={process.env.MYRIAD_WEBSITE_URL}
               className={style.textDecoration}
               rel="noreferrer"
             >
