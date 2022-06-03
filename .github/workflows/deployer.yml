@@ -1,0 +1,239 @@
+name: Deployer
+
+on:
+  release:
+    types:
+      - published
+  workflow_run:
+    branches:
+      - main
+    workflows:
+      - 'Builder'
+    types:
+      - completed
+
+concurrency:
+  group: deployer
+
+jobs:
+  compute-build-info:
+    runs-on: ubuntu-latest
+    outputs:
+      sha_short: ${{ steps.build-info.outputs.sha_short }}
+      date: ${{ steps.build-info.outputs.date }}
+      latest_tag: ${{ steps.build-info.outputs.latest_tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Compute build info
+        id: build-info
+        shell: bash
+        run: |
+          echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+          echo "::set-output name=date::$(date +'%Y%m%d')"
+
+          version=${GITHUB_REF#refs/*/}
+          echo $version
+          echo "::set-output name=latest_tag::$version"
+
+  deploy-dev:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    needs: [compute-build-info]
+    environment: development
+    env:
+      DEPLOY: ${{ secrets.DEV_DEPLOY }}
+    steps:
+      - name: Checkout code
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Deploy
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            ./connect.sh
+            helm repo add debio https://charts.myriad.social
+            helm repo update
+            helm upgrade myriad-federated debio/myriad-federated \
+              --install \
+              --set-string image.repository=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }} \
+              --set-string image.tag=${{ needs.compute-build-info.outputs.sha_short }} \
+              --set-string imagePullSecrets[0].name=gcr-auth \
+              --set ingress.enabled=true \
+              --set-string ingress.className=nginx \
+              --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
+              --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/limit-rps"="100" \
+              --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
+              --set-string ingress.hosts[0].paths[0].path=/ \
+              --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
+              --set-string ingress.tls[0].secretName=myriad-federated-tls \
+              --set-string ingress.tls[0].hosts[0]=${{ secrets.INGRESS_HOST }} \
+              --set-string resources.requests.cpu=100m \
+              --set-string resources.requests.memory=128Mi \
+              --set-string resources.limits.cpu=300m \
+              --set-string resources.limits.memory=256Mi \
+              --set replicaCount=1 \
+              --set autoscaling.enabled=true \
+              --set autoscaling.minReplicas=1 \
+              --set autoscaling.maxReplicas=1 \
+              --set-string nodeSelector.pool=general
+            kubectl rollout status deployment/myriad-federated
+
+  deploy-beta-release:
+    if: "github.event.release.prerelease && contains(needs.compute-build-info.outputs.latest_tag, 'beta')"
+    runs-on: ubuntu-latest
+    needs: [compute-build-info]
+    environment: testnet
+    env:
+      DEPLOY: ${{ secrets.TESTNET_DEPLOY }}
+    steps:
+      - name: Checkout code
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Deploy
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            ./connect.sh
+            helm repo add debio https://charts.myriad.social
+            helm repo update
+            helm upgrade myriad-federated debio/myriad-federated \
+              --install \
+              --set-string image.repository=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }} \
+              --set-string image.tag=${{ needs.compute-build-info.outputs.latest_tag }} \
+              --set-string imagePullSecrets[0].name=gcr-auth \
+              --set ingress.enabled=true \
+              --set-string ingress.className=nginx \
+              --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
+              --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/limit-rps"="100" \
+              --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
+              --set-string ingress.hosts[0].paths[0].path=/ \
+              --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
+              --set-string ingress.tls[0].secretName=myriad-federated-tls \
+              --set-string ingress.tls[0].hosts[0]=${{ secrets.INGRESS_HOST }} \
+              --set-string resources.requests.cpu=100m \
+              --set-string resources.requests.memory=128Mi \
+              --set-string resources.limits.cpu=300m \
+              --set-string resources.limits.memory=256Mi \
+              --set replicaCount=1 \
+              --set autoscaling.enabled=true \
+              --set autoscaling.minReplicas=1 \
+              --set autoscaling.maxReplicas=11 \
+              --set-string nodeSelector.pool=general
+            kubectl rollout status deployment/myriad-federated
+
+  deploy-pre-release:
+    if: "github.event.release.prerelease && contains(needs.compute-build-info.outputs.latest_tag, 'rc')"
+    runs-on: ubuntu-latest
+    needs: [compute-build-info]
+    environment: mainnet
+    env:
+      DEPLOY: ${{ secrets.MAINNET_DEPLOY }}
+    steps:
+      - name: Checkout code
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Deploy
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            ./connect.sh
+            helm repo add debio https://charts.myriad.social
+            helm repo update
+            helm upgrade myriad-federated debio/myriad-federated \
+              --install \
+              --set-string image.repository=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }} \
+              --set-string image.tag=${{ needs.compute-build-info.outputs.latest_tag }} \
+              --set-string imagePullSecrets[0].name=gcr-auth \
+              --set ingress.enabled=true \
+              --set-string ingress.className=nginx \
+              --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
+              --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/limit-rps"="100" \
+              --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
+              --set-string ingress.hosts[0].paths[0].path=/ \
+              --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
+              --set-string ingress.tls[0].secretName=myriad-federated-tls \
+              --set-string ingress.tls[0].hosts[0]=${{ secrets.INGRESS_HOST }} \
+              --set-string resources.requests.cpu=100m \
+              --set-string resources.requests.memory=128Mi \
+              --set-string resources.limits.cpu=300m \
+              --set-string resources.limits.memory=256Mi \
+              --set replicaCount=1 \
+              --set autoscaling.enabled=true \
+              --set autoscaling.minReplicas=1 \
+              --set autoscaling.maxReplicas=11 \
+              --set-string nodeSelector.pool=general
+            kubectl rollout status deployment/myriad-federated
+
+  deploy-release:
+    if: "startsWith(github.ref, 'refs/tags/') && !github.event.release.prerelease"
+    runs-on: ubuntu-latest
+    needs: [compute-build-info]
+    environment: mainnet
+    env:
+      DEPLOY: ${{ secrets.MAINNET_DEPLOY }}
+    steps:
+      - name: Checkout code
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Deploy
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            ./connect.sh
+            helm repo add debio https://charts.myriad.social
+            helm repo update
+            helm upgrade myriad-federated debio/myriad-federated \
+              --install \
+              --set-string image.repository=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }} \
+              --set-string image.tag=${{ needs.compute-build-info.outputs.latest_tag }} \
+              --set-string imagePullSecrets[0].name=gcr-auth \
+              --set ingress.enabled=true \
+              --set-string ingress.className=nginx \
+              --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
+              --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/limit-rps"="10" \
+              --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
+              --set-string ingress.hosts[0].paths[0].path=/ \
+              --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
+              --set-string ingress.tls[0].secretName=myriad-federated-tls \
+              --set-string ingress.tls[0].hosts[0]=${{ secrets.INGRESS_HOST }} \
+              --set-string resources.requests.cpu=100m \
+              --set-string resources.requests.memory=128Mi \
+              --set-string resources.limits.cpu=300m \
+              --set-string resources.limits.memory=256Mi \
+              --set replicaCount=1 \
+              --set autoscaling.enabled=true \
+              --set autoscaling.minReplicas=1 \
+              --set autoscaling.maxReplicas=11 \
+              --set-string nodeSelector.pool=general
+            kubectl rollout status deployment/myriad-federated
