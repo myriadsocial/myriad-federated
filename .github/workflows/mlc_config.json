@@ -4,6 +4,9 @@
       "pattern": "^http://127.0.0.1"
     },
     {
+      "pattern": "^http://localhost:8000"
+    },
+    {
       "pattern": "^https://medium.com/@myriadsocial.blog"
     }
   ]
