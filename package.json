@@ -1,9 +1,15 @@
 {
-  "name": "myriad-server-list",
-  "version": "1.0.0",
+  "name": "myriad-federated",
+  "version": "0.0.1",
+  "description": "myriad-federated",
   "private": true,
-  "description": "myriad-server-list",
-  "author": "immhrmwn",
+  "license": "AGPL-3.0",
+  "author": "Myriad Dev Team <myriad.dev@blocksphere.id>",
+  "homepage": "https://myriad.social",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/myriadsocial/myriad-federated.git"
+  },
   "keywords": [
     "gatsby"
   ],
