@@ -23,12 +23,16 @@ import { useGetList } from "src/hooks/get-list.hooks";
 export const ServerListComponent = () => {
   const style = useStyles();
   const { servers, totalInstances, totalUsers, totalPosts } = useGetList();
+  const myriadWeb = "https://www.myriad.social/";
 
   return (
     <Container maxWidth="lg" disableGutters>
       <div className={style.root}>
         <header style={{ marginLeft: 10, position: "relative" }}>
-          <a href={process.env.MYRIAD_WEBSITE_URL} rel="noreferrer">
+          <a
+            href={process.env.MYRIAD_WEBSITE_URL || myriadWeb}
+            rel="noreferrer"
+          >
             <MyriadFullBlackIcon />
           </a>
           <div className={style.illustration}>
@@ -39,15 +43,7 @@ export const ServerListComponent = () => {
           </Typography>
           <div className={style.link}>
             <a
-              href={process.env.MYRIAD_APP_URL}
-              className={style.textDecoration}
-              rel="noreferrer"
-            >
-              <Typography color="primary">Go to App</Typography>
-            </a>
-            <div className={style.divider} />
-            <a
-              href={process.env.MYRIAD_WEBSITE_URL}
+              href={process.env.MYRIAD_WEBSITE_URL || myriadWeb}
               className={style.textDecoration}
               rel="noreferrer"
             >

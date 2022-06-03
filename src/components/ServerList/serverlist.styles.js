@@ -41,12 +41,6 @@ export const useStyles = makeStyles((theme) =>
       borderRadius: 10,
       color: "#FFF",
     },
-    divider: {
-      background: "#EDEDED",
-      margin: "0px 10px",
-      height: "32px",
-      width: "2px",
-    },
     text: {
       fontSize: "28px",
       marginBottom: 14,
