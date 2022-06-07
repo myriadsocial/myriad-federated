@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Container,
@@ -17,6 +17,7 @@ import { ServerIcon, UsersIcon, PencilAltIcon } from "@heroicons/react/outline";
 import { MyriadFullBlackIcon, IllustrationIcon } from "../Icons";
 import { useStyles } from "./serverlist.styles";
 
+import { Empty } from "src/components/Empty/Empty";
 import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
 import { useGetList } from "src/hooks/get-list.hooks";
 
@@ -24,6 +25,22 @@ export const ServerListComponent = () => {
   const style = useStyles();
   const { servers, totalInstances, totalUsers, totalPosts } = useGetList();
   const myriadWeb = "https://www.myriad.social/";
+  const [serverList, setServerList] = useState([]);
+
+  useEffect(() => {
+    setServerList(servers);
+  }, [servers]);
+
+  const handleSearch = (query) => {
+    const regex = new RegExp(`^${query.toLowerCase()}`, "i");
+
+    const result = servers.filter((server) =>
+      server.name.toLowerCase().match(regex)
+    );
+
+    if (!query) setServerList(servers);
+    else setServerList(result);
+  };
 
   return (
     <Container maxWidth="lg" disableGutters>
@@ -119,10 +136,10 @@ export const ServerListComponent = () => {
           </Grid>
         </Grid>
         <div>
-          <SearchBoxContainer onSubmitSearch={console.log} hidden={true} />
+          <SearchBoxContainer onSubmitSearch={handleSearch} hidden={true} />
         </div>
         <div className={style.list}>
-          {servers.map(
+          {serverList.map(
             (server, i) =>
               server.detail && (
                 <Card className={style.content} key={i}>
@@ -135,7 +152,7 @@ export const ServerListComponent = () => {
                         {server.name}
                       </Typography>
                       <Typography variant="body1" color="textSecondary">
-                        Crypto, Cryptocurrency, market, Ethereum, NFT
+                        {server.detail.categories.join(" ")}&nbsp;
                       </Typography>
                       <Typography
                         color="textPrimary"
@@ -148,6 +165,7 @@ export const ServerListComponent = () => {
                       href={server.webUrl}
                       rel="noreferrer"
                       className={style.textDecoration}
+                      target="_blank"
                     >
                       <Button variant="outlined" color="secondary" size="small">
                         Go to instance
@@ -156,6 +174,12 @@ export const ServerListComponent = () => {
                   </div>
                 </Card>
               )
+          )}
+          {!serverList.length && (
+            <Empty
+              title={"No results"}
+              subtitle={"Please make sure your keywords match."}
+            />
           )}
         </div>
       </div>
