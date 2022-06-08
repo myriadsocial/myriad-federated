@@ -63,7 +63,11 @@ export const useStyles = makeStyles((theme) =>
       alignItems: "center",
       display: "flex",
     },
-    list: {},
+    list: {
+      display: "flex",
+      flexDirection: "column",
+      gap: 10,
+    },
     badge: {
       display: "inline-block",
       background: "#EBE0FF",
