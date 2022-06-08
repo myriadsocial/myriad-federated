@@ -139,42 +139,34 @@ export const ServerListComponent = () => {
           <SearchBoxContainer onSubmitSearch={handleSearch} hidden={true} />
         </div>
         <div className={style.list}>
-          {serverList.map(
-            (server, i) =>
-              server.detail && (
-                <Card className={style.content} key={i}>
-                  <div className={style.flex}>
-                    <div>
-                      <Typography
-                        className={style.contentTitle}
-                        color="primary"
-                      >
-                        {server.name}
-                      </Typography>
-                      <Typography variant="body1" color="textSecondary">
-                        {server.detail.categories.join(" ")}&nbsp;
-                      </Typography>
-                      <Typography
-                        color="textPrimary"
-                        className={style.contentText}
-                      >
-                        {server.detail.description}
-                      </Typography>
-                    </div>
-                    <a
-                      href={server.webUrl}
-                      rel="noreferrer"
-                      className={style.textDecoration}
-                      target="_blank"
-                    >
-                      <Button variant="outlined" color="secondary" size="small">
-                        Go to instance
-                      </Button>
-                    </a>
-                  </div>
-                </Card>
-              )
-          )}
+          {serverList.map((server, i) => (
+            <Card className={style.content} key={i}>
+              <div className={style.flex}>
+                <div>
+                  <Typography className={style.contentTitle} color="primary">
+                    {server.name}
+                  </Typography>
+                  <Typography variant="body1" color="textSecondary">
+                    {server.detail && server.detail.categories.join(" ")}
+                    &nbsp;
+                  </Typography>
+                  <Typography color="textPrimary" className={style.contentText}>
+                    {server.detail && server.detail.description}&nbsp;
+                  </Typography>
+                </div>
+                <a
+                  href={server.webUrl}
+                  rel="noreferrer"
+                  className={style.textDecoration}
+                  target="_blank"
+                >
+                  <Button variant="outlined" color="secondary" size="small">
+                    Go to instance
+                  </Button>
+                </a>
+              </div>
+            </Card>
+          ))}
           {!serverList.length && (
             <Empty
               title={"No results"}
