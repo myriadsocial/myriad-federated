@@ -143,4 +143,3 @@ jobs:
           body: ${{ steps.build_changelog.outputs.changelog }}
           draft: true
           prerelease: ${{ needs.compute-build-info.outputs.pre_release }}
-          tag_name: ${{ needs.compute-build-info.outputs.revision_tag }}
