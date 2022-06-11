@@ -125,9 +125,12 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-      # publish-draft-release
+  draft-release:
+    if: "startsWith(github.ref, 'refs/tags/')"
+    runs-on: ubuntu-20.04
+    needs: [build, compute-build-info]
+    steps:
       - name: Build changelog
-        if: "startsWith(github.ref, 'refs/tags/')"
         id: build_changelog
         uses: mikepenz/release-changelog-builder-action@v2
         env:
@@ -135,7 +138,6 @@ jobs:
         with:
           configuration: '.github/workflows/rcb_config.json'
       - name: Create draft release
-        if: "startsWith(github.ref, 'refs/tags/')"
         uses: softprops/action-gh-release@v1
         with:
           body: ${{ steps.build_changelog.outputs.changelog }}
