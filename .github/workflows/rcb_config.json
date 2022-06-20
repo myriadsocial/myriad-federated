@@ -2,23 +2,33 @@
   "categories": [
     {
       "title": "## 🚀 Features",
-      "labels": ["feature"]
+      "labels": [
+        "feature"
+      ]
     },
     {
       "title": "## 👌 Improvements",
-      "labels": ["improvement"]
+      "labels": [
+        "improvement"
+      ]
     },
     {
       "title": "## 🐛 Fixes",
-      "labels": ["fix"]
+      "labels": [
+        "fix"
+      ]
     },
     {
       "title": "## 🤖 Tests",
-      "labels": ["test"]
+      "labels": [
+        "test"
+      ]
     },
     {
       "title": "## 📖 Documents",
-      "labels": ["document"]
+      "labels": [
+        "document"
+      ]
     }
   ],
   "ignore_labels": [
