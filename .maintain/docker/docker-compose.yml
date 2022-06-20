@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  web:
+    container_name: myriad-federated
+    image: myriadsocial/myriad-federated
+    build:
+      context: ../../
+      dockerfile: .maintain/docker/Dockerfile
+    env_file:
+      - ../../.env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3000
+    ports:
+      - 3004:3000
+    networks:
+      myriad:
+        ipv4_address: 172.27.1.5
+        aliases:
+          - myriad-federated
+
+networks:
+  myriad:
+    external: true
