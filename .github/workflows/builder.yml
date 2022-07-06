@@ -30,9 +30,9 @@ jobs:
         run: |
           SHA_SHORT=$(git rev-parse --short HEAD)
           REVISION_TAG=$SHA_SHORT
-          LATEST_TAG=latest-pre-alpha
+          LATEST_TAG=latest-beta
           PRE_RELEASE=true
-          ENVIRONMENT=development
+          ENVIRONMENT=testnet
 
           if [[ $GITHUB_REF =~ refs/tags/ ]] ;
           then
@@ -49,10 +49,8 @@ jobs:
                 SUFFIX=$(tmp=${TAG#$VERSION-} ; echo $tmp | sed -r 's/[0-9]//g' )
                 LATEST_TAG=latest-$SUFFIX
 
-                if [[ $TAG =~ [0-9].[0-9].[0-9]-alpha* ]] ; then
-                    ENVIRONMENT=staging
-                elif [[ $TAG =~ [0-9].[0-9].[0-9]-beta* ]] ; then
-                    ENVIRONMENT=testnet
+                if [[ $TAG =~ [0-9].[0-9].[0-9]-rc* ]] ; then
+                    ENVIRONMENT=mainnet
                 fi
             fi
           fi
