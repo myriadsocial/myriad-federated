@@ -127,7 +127,6 @@ jobs:
               --set ingress.enabled=true \
               --set-string ingress.className=nginx \
               --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
-              --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/limit-rps"="100" \
               --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
               --set-string ingress.hosts[0].paths[0].path=/ \
               --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
@@ -183,7 +182,6 @@ jobs:
               --set ingress.enabled=true \
               --set-string ingress.className=nginx \
               --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
-              --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/limit-rps"="10" \
               --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
               --set-string ingress.hosts[0].paths[0].path=/ \
               --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
