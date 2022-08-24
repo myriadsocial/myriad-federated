@@ -15,12 +15,14 @@ import {
 
 import { ServerIcon, UsersIcon, PencilAltIcon } from "@heroicons/react/outline";
 
-import { MyriadFullBlackIcon, IllustrationIcon } from "../Icons";
+// import { MyriadFullBlackIcon, IllustrationIcon } from "../Icons";
 import { useStyles } from "./server-list.styles";
 
 import { Empty } from "src/components/Empty/Empty";
 import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
 import { useGetList } from "src/hooks/server-list.hooks";
+import Image from "next/image";
+import { Illustration, MyriadFullBlack } from "public/icons";
 
 export const ServerListComponent = () => {
   const style = useStyles();
@@ -51,10 +53,10 @@ export const ServerListComponent = () => {
             href={process.env.MYRIAD_WEBSITE_URL || myriadWeb}
             rel="noreferrer"
           >
-            <MyriadFullBlackIcon />
+            <Image alt="" src={MyriadFullBlack} objectFit="contain" />
           </a>
           <div className={style.picture}>
-            <IllustrationIcon />
+            <Image alt="" src={Illustration} objectFit="contain" />
           </div>
           <Typography className={style.text} color="primary">
             Federated Instances

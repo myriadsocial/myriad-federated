@@ -19,8 +19,14 @@ import PostGray from "./PostGray.svg";
 import UserGray from "./UserGray.svg";
 import IcCalender from "./IcCalender.svg";
 import IcCopy from "./IcCopy.svg";
+import Magnifier from "./magnifierIcon.svg";
+import MyriadFullBlack from "./myriad-full-black.svg";
+import Illustration from "./Illustration.svg";
 
 export {
+  Magnifier,
+  MyriadFullBlack,
+  Illustration,
   IcCalender,
   IcCopy,
   ExperianceGray,

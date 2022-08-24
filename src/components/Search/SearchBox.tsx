@@ -9,6 +9,8 @@ import { SearchBoxProps, SearchBoxColor, useStyles } from ".";
 import { SearchIcon } from "../Icons";
 
 import { debounce } from "lodash";
+import Image from "next/image";
+import { Magnifier } from "public/icons";
 
 const SearchBox: React.FC<SearchBoxProps> = ({
   color = SearchBoxColor.PRIMARY,
@@ -63,7 +65,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         aria-label="search"
         onClick={submitClickSearch}
       >
-        <SearchIcon />
+        <Image src={Magnifier} alt="" height={24} width={24} />
       </IconButton>
       <InputBase
         onKeyUp={submitSearch}
