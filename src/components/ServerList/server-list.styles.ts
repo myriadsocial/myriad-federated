@@ -48,9 +48,9 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     picture: {
       position: "absolute",
-      zIndex: -99,
+      zIndex: 1,
       right: 0,
-      top: -130,
+      top: -100,
     },
     title: {
       fontSize: "16px",

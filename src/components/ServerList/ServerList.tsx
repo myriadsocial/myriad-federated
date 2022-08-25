@@ -47,7 +47,7 @@ export const ServerListComponent = () => {
   };
 
   return (
-    <div className=" min-h-screen">
+    <div className="bg-background-content min-h-screen">
       <Container maxWidth="lg" disableGutters>
         <div className={style.root}>
           <div className="mb-[60px] flex justify-between">
@@ -74,7 +74,7 @@ export const ServerListComponent = () => {
               </Button>
             </div>
           </div>
-          <header style={{ position: "relative" }}>
+          <header style={{ position: "relative", marginBottom: 85 }}>
             <div className={style.picture}>
               <Image alt="" src={Illustration} objectFit="contain" />
             </div>
@@ -94,6 +94,7 @@ export const ServerListComponent = () => {
             justifyContent="flex-start"
             alignContent="flex-start"
             spacing={2}
+            style={{ zIndex: 1 }}
           >
             <Grid item md={4} xs={6}>
               <Card variant="outlined" className={style.card}>
