@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      padding: "137px 30px 30px 30px",
+      paddingTop: 20,
       flexDirection: "column",
       display: "flex",
       rowGap: 20,
