@@ -23,8 +23,9 @@ import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
 import { useGetList } from "src/hooks/server-list.hooks";
 import Image from "next/image";
 import { Illustration, MyriadFullBlack } from "public/icons";
-
+import { useRouter } from "next/router";
 export const ServerListComponent = () => {
+  const router = useRouter();
   const style = useStyles();
   const { servers, totalInstances, totalUsers, totalPosts } = useGetList();
   const myriadWeb = "https://www.myriad.social/";
@@ -63,7 +64,12 @@ export const ServerListComponent = () => {
               <Button size="small" style={{ color: "black" }}>
                 Contact us
               </Button>
-              <Button size="small" variant="contained" color="primary">
+              <Button
+                onClick={() => router.push("/instance")}
+                size="small"
+                variant="contained"
+                color="primary"
+              >
                 Create Instance
               </Button>
             </div>
