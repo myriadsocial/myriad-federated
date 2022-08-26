@@ -15,7 +15,7 @@ export default function ContentLayout({
       <Head>
         <title>Myriad Dashboard</title>
         <meta name="description" content="Myriad Dashboard" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.svg" />
       </Head>
       <div className="flex w-full h-screen min-h-[600px] bg-background-content">
         <div className="w-[248px] h-full bg-white">

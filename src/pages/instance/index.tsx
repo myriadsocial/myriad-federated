@@ -117,7 +117,7 @@ export default function Instance() {
           type="small"
           open={isShowModalCreateInstance}
           onClose={() => setIsShowModalCreateInstance(false)}
-          title={"Respond"}
+          title={"Create Instance"}
         >
           <div className="min-h-[200px] mb-[100px]">
             <div className="mb-2">
