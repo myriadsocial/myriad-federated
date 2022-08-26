@@ -2,9 +2,9 @@
 
 const {
   NEXT_PUBLIC_APP_AUTH_URL,
+  NEXT_PUBLIC_MYRIAD_RPC_URL,
   NEXT_PUBLIC_MYRIAD_API_URL,
   NEXT_PUBLIC_MYRIAD_API_KEY,
-  NEXT_PUBLIC_MYRIAD_RPC_URL,
 } = process.env;
 
 const nextConfig = {
@@ -17,8 +17,8 @@ const nextConfig = {
     myriadAPIKey: NEXT_PUBLIC_MYRIAD_API_KEY ?? "s3cr3t",
   },
   publicRuntimeConfig: {
-    myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? "ws://localhost:9944",
     appAuthURL: NEXT_PUBLIC_APP_AUTH_URL ?? "http://localhost:3000",
+    myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? "ws://localhost:9944",
   },
   images: {
     domains: ["i.pravatar.cc", "firebasestorage.googleapis.com"],
