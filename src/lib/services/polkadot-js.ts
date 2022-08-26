@@ -26,7 +26,7 @@ interface ServerDetail {
 }
 
 export const connectToBlockchain = async (): Promise<ApiPromise> => {
-  const provider = new WsProvider(publicRuntimeConfig.urlRPC);
+  const provider = new WsProvider(publicRuntimeConfig.myriadRPCURL);
 
   const api: ApiPromise = await ApiPromise.create({ provider });
   await api.isReadyOrError;

@@ -4,7 +4,7 @@ const {
   NEXT_PUBLIC_APP_AUTH_URL,
   NEXT_PUBLIC_MYRIAD_API_URL,
   NEXT_PUBLIC_MYRIAD_API_KEY,
-  MYRIAD_RPC_URL,
+  NEXT_PUBLIC_MYRIAD_RPC_URL,
 } = process.env;
 
 const nextConfig = {
@@ -13,12 +13,12 @@ const nextConfig = {
     styledComponent: true,
   },
   serverRuntimeConfig: {
-    myriadAPIKey: NEXT_PUBLIC_MYRIAD_API_KEY,
-    myriadAPIURL: NEXT_PUBLIC_MYRIAD_API_URL,
+    myriadAPIKey: NEXT_PUBLIC_MYRIAD_API_KEY ?? "s3cr3t",
+    myriadAPIURL: NEXT_PUBLIC_MYRIAD_API_URL ?? "http://localhost:3001",
   },
   publicRuntimeConfig: {
-    urlRPC: MYRIAD_RPC_URL,
-    appAuthURL: NEXT_PUBLIC_APP_AUTH_URL,
+    myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? "ws://localhost:9944",
+    appAuthURL: NEXT_PUBLIC_APP_AUTH_URL ?? "http://localhost:3000",
   },
   images: {
     domains: ["i.pravatar.cc", "firebasestorage.googleapis.com"],
@@ -29,11 +29,6 @@ const nextConfig = {
       include: /node_modules/,
       type: "javascript/auto",
     });
-
-    // config.module.rules.push({
-    //   test: /\.svg$/,
-    //   use: ["@svgr/webpack"],
-    // });
 
     return config;
   },
