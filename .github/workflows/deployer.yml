@@ -75,7 +75,7 @@ jobs:
             RPC_URL:${{ secrets.TESTNET_GCP_PROJECT_ID }}/RPC_URL
             API_URL:${{ secrets.TESTNET_GCP_PROJECT_ID }}/API_URL
             API_KEY:${{ secrets.TESTNET_GCP_PROJECT_ID }}/API_KEY
-            DASHBOARD_DNS:${{ secrets.TESTNET_GCP_PROJECT_ID }}/DASHBOARD_DNS
+            WEB_FEDERATED_DNS:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_DNS
       - name: Deploy
         if: "${{ env.DEPLOY == 'true' }}"
         uses: appleboy/ssh-action@master
@@ -93,7 +93,7 @@ jobs:
               --set-string image.repository=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }} \
               --set-string image.tag=${{ needs.compute-build-info.outputs.sha_short }} \
               --set-string imagePullSecrets[0].name=gcr-auth \
-              --set-string config.appAuthURL=https://${{ secrets.INGRESS_HOST }} \
+              --set-string config.appAuthURL=https://${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
               --set-string config.rpcURL=${{ steps.secrets.outputs.RPC_URL }} \
               --set-string config.apiURL=${{ steps.secrets.outputs.API_URL }} \
               --set-string config.apiKey=${{ steps.secrets.outputs.API_KEY }} \
@@ -101,11 +101,11 @@ jobs:
               --set-string ingress.className=nginx \
               --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
               --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/limit-rps"="100" \
-              --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
+              --set-string ingress.hosts[0].host=${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
               --set-string ingress.hosts[0].paths[0].path=/ \
               --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
               --set-string ingress.tls[0].secretName=myriad-federated-tls \
-              --set-string ingress.tls[0].hosts[0]=${{ secrets.INGRESS_HOST }} \
+              --set-string ingress.tls[0].hosts[0]=${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
               --set-string resources.requests.cpu=300m \
               --set-string resources.requests.memory=512Mi \
               --set-string resources.limits.cpu=500m \
