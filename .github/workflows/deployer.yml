@@ -97,7 +97,7 @@ jobs:
               --set-string image.repository=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }} \
               --set-string image.tag=${{ needs.compute-build-info.outputs.sha_short }} \
               --set-string imagePullSecrets[0].name=gcr-auth \
-              --set-string config.appAuthURL=https://${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
+              --set-string config.app.authURL=https://${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
               --set-string config.rpcURL=${{ steps.secrets.outputs.RPC_URL }} \
               --set-string config.apiURL=${{ steps.secrets.outputs.API_URL }} \
               --set-string config.apiKey=${{ steps.secrets.outputs.API_KEY }} \
