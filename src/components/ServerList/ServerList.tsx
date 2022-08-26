@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { ServerListProps } from "src/lib/services/polkadot-js";
-
 import {
   Container,
   ListItem,
@@ -12,23 +11,21 @@ import {
   Button,
   SvgIcon,
 } from "@material-ui/core";
-
 import { ServerIcon, UsersIcon, PencilAltIcon } from "@heroicons/react/outline";
-
-// import { MyriadFullBlackIcon, IllustrationIcon } from "../Icons";
 import { useStyles } from "./server-list.styles";
-
 import { Empty } from "src/components/Empty/Empty";
 import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
 import { useGetList } from "src/hooks/server-list.hooks";
 import Image from "next/image";
 import { Illustration, MyriadFullBlack } from "public/icons";
 import { useRouter } from "next/router";
+import getConfig from "next/config";
+const { publicRuntimeConfig } = getConfig();
+
 export const ServerListComponent = () => {
   const router = useRouter();
   const style = useStyles();
   const { servers, totalInstances, totalUsers, totalPosts } = useGetList();
-  const myriadWeb = "https://www.myriad.social/";
   const [serverList, setServerList] = useState<ServerListProps[]>([]);
 
   useEffect(() => {
@@ -46,22 +43,40 @@ export const ServerListComponent = () => {
     else setServerList(result);
   };
 
+  const handleVisitWeb = () => {
+    window.open(
+      publicRuntimeConfig.myriadWebsiteURL,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
+
+  const handleContactUs = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    window.location.href = `mailto:${publicRuntimeConfig.myriadSupportMail}`;
+    e.preventDefault();
+  };
+
   return (
     <div className="bg-background-content min-h-screen">
       <Container maxWidth="lg" disableGutters>
         <div className={style.root}>
           <div className="mb-[60px] flex justify-between">
-            <a
-              href={process.env.MYRIAD_WEBSITE_URL || myriadWeb}
-              rel="noreferrer"
-            >
-              <Image alt="" src={MyriadFullBlack} objectFit="contain" />
-            </a>
+            <Image alt="" src={MyriadFullBlack} objectFit="contain" />
             <div>
-              <Button size="small" style={{ color: "black" }}>
+              <Button
+                size="small"
+                style={{ color: "black" }}
+                onClick={handleVisitWeb}
+              >
                 Visit website
               </Button>
-              <Button size="small" style={{ color: "black" }}>
+              <Button
+                size="small"
+                style={{ color: "black" }}
+                onClick={(e) => handleContactUs(e)}
+              >
                 Contact us
               </Button>
               <Button
