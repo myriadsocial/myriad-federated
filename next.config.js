@@ -13,8 +13,8 @@ const nextConfig = {
     styledComponent: true,
   },
   serverRuntimeConfig: {
-    myriadAPIKey: NEXT_PUBLIC_MYRIAD_API_KEY ?? "s3cr3t",
     myriadAPIURL: NEXT_PUBLIC_MYRIAD_API_URL ?? "http://localhost:3001",
+    myriadAPIKey: NEXT_PUBLIC_MYRIAD_API_KEY ?? "s3cr3t",
   },
   publicRuntimeConfig: {
     myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? "ws://localhost:9944",
