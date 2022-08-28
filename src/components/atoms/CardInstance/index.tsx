@@ -1,58 +1,64 @@
 import { Typography } from "@mui/material";
 import Image from "next/image";
-import { useRouter } from "next/router";
-import { ExperianceGray, PostGray, UserGray } from "../../../../public/icons";
-import { colors } from "../../../utils";
-import Button from "../../atoms/Button";
-const CardInstanceLeft = () => {
-  const router = useRouter();
+import { ExperianceGray, PostGray, UserGray } from "public/icons";
+import React from "react";
+import { colors } from "src/utils";
+
+interface CardInstanceInterface {
+  onClick?: () => void;
+  serverName: string | undefined;
+  serverDetail: string | undefined;
+  serverDescription: string | undefined;
+  image: string;
+  type?: string;
+}
+export default function CardInstance(props: CardInstanceInterface) {
+  const {
+    onClick,
+    serverName,
+    serverDescription,
+    serverDetail,
+    image = "https://i.pravatar.cc/300",
+    type,
+  } = props;
   return (
-    <div className="bg-white flex-1 mr-6 p-6 rounded-[10px] flex">
-      <div className="mr-4">
-        <Image
-          src={"https://i.pravatar.cc/300"}
-          height={212}
-          width={212}
-          style={{ borderRadius: 8 }}
-        />
-      </div>
-      <div>
-        <Typography
-          style={{
-            fontSize: 18,
-            fontWeight: 800,
-            color: colors.black,
-            marginBottom: 4,
-          }}
-        >
-          Art Space
-        </Typography>
-        <Typography
-          style={{
-            fontSize: 12,
-            fontWeight: 400,
-            color: colors.textGray,
-            marginBottom: 8,
-          }}
-        >
-          by 0xabcdefgh
-        </Typography>
-        <Typography
-          style={{
-            fontSize: 14,
-            fontWeight: 400,
-            color: colors.textDarkGray,
-            marginBottom: 24,
-          }}
-        >
-          Post votum promissa memini cuius adeptione cupis; quem pollicitus est
-          aversione aversi et fuga. Qui autem de re desit libido frustra miseri
-          qui incurrit odium sui obiecti. Post votum promissa memini cuius
-          adeptione. Post votum promissa memini cuius adeptione. Post votum
-          promissa.
-        </Typography>
+    <button
+      className="bg-white flex py-5 px-9 rounded-[10px] w-full mt-4 shadow-md"
+      onClick={onClick}
+    >
+      <Image
+        src={image}
+        alt=""
+        height={80}
+        width={80}
+        className="rounded-[5px]"
+      />
+      <div className="ml-4">
         <div>
-          <div className="flex">
+          <Typography
+            style={{
+              fontSize: 24,
+              color: colors.primary,
+              textAlign: "left",
+            }}
+          >
+            {serverName}
+          </Typography>
+          <Typography
+            style={{
+              fontSize: 14,
+              color: colors.textDarkGray,
+              textAlign: "left",
+            }}
+          >
+            {serverDetail}
+          </Typography>
+          <Typography style={{ fontSize: 16, textAlign: "left" }}>
+            {serverDescription}
+          </Typography>
+        </div>
+        {type === "landingPage" && (
+          <div className="flex mt-2">
             <div className="flex">
               <Image src={UserGray} height={20} width={20} alt="" />
               <div className="mx-2">
@@ -123,27 +129,8 @@ const CardInstanceLeft = () => {
               </Typography>
             </div>
           </div>
-        </div>
-        <div className="flex mt-[20px]">
-          <div className="mr-2">
-            <Button
-              isFullWidth
-              primary
-              label="Go to instance"
-              onClick={() => undefined}
-            />
-          </div>
-          <div className="">
-            <Button
-              isFullWidth
-              label="Edit instance"
-              onClick={() => router.push("/dashboard/instance/edit")}
-            />
-          </div>
-        </div>
+        )}
       </div>
-    </div>
+    </button>
   );
-};
-
-export default CardInstanceLeft;
+}

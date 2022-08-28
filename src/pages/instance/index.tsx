@@ -4,8 +4,9 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { IcOpenUrl, MyriadFullBlack } from "public/icons";
 import { useState } from "react";
+import CardInstance from "src/components/atoms/CardInstance";
+import EmptyState from "src/components/atoms/EmptyState";
 import ModalComponent from "src/components/molecules/Modal";
-import { colors } from "src/utils";
 export default function Instance() {
   const [isShowModalCreateInstance, setIsShowModalCreateInstance] =
     useState<boolean>(false);
@@ -59,57 +60,17 @@ export default function Instance() {
           </CustomButton>
         </div>
         {isEmptyInstance ? (
-          <div className="bg-white mt-6 rounded-[10px] w-full h-[400px] justify-center items-center flex">
-            <div className="">
-              <Typography
-                style={{ textAlign: "center", fontSize: 18, fontWeight: 600 }}
-              >
-                You don’t have an instance
-              </Typography>
-              <Typography
-                style={{ textAlign: "center", fontSize: 14, marginTop: 8 }}
-              >
-                Create your own instance and enjoy the decentralized Web 3
-                social network.
-              </Typography>
-            </div>
+          <div className="w-full h-[400px] mt-6">
+            <EmptyState
+              title={"You don’t have an instance"}
+              desc={
+                "Create your own instance and enjoy the decentralized Web 3 social network."
+              }
+            />
           </div>
         ) : (
           <div className="mt-2">
-            <button
-              className="bg-white flex py-5 px-9 rounded-[10px] w-full mt-4"
-              onClick={() => router.push("/dashboard")}
-            >
-              <Image
-                src="https://i.pravatar.cc/300"
-                alt=""
-                height={80}
-                width={80}
-              />
-              <div className="ml-4">
-                <Typography
-                  style={{
-                    fontSize: 24,
-                    color: colors.primary,
-                    textAlign: "left",
-                  }}
-                >
-                  345678
-                </Typography>
-                <Typography
-                  style={{
-                    fontSize: 14,
-                    color: colors.textDarkGray,
-                    textAlign: "left",
-                  }}
-                >
-                  by 0x1234...abcd
-                </Typography>
-                <Typography style={{ fontSize: 16, textAlign: "left" }}>
-                  Server id: 345678
-                </Typography>
-              </div>
-            </button>
+            <CardInstance onClick={() => router.push("/dashboard")} />
           </div>
         )}
 
