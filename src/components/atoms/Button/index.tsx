@@ -1,13 +1,16 @@
-import { Button as ButtonMui } from "@mui/material";
+import { Avatar } from "@material-ui/core";
+import { Button as ButtonMui, Typography } from "@mui/material";
+import { ReactNode } from "react";
 import { colors } from "../../../utils";
 
 interface ButtonOutlineInterface {
   onClick: any;
-  label: string;
+  label?: string;
   primary?: boolean;
   isFullWidth?: boolean;
   disable?: boolean;
   type?: string;
+  children?: ReactNode;
 }
 
 const Button = ({
@@ -17,6 +20,7 @@ const Button = ({
   isFullWidth,
   disable,
   type,
+  children,
   ...props
 }: ButtonOutlineInterface) => {
   if (type === "text") {
@@ -32,9 +36,31 @@ const Button = ({
           paddingRight: 20,
           height: 40,
           borderRadius: 20,
+          fontFamily: "mulish",
         }}
       >
         {label}
+      </ButtonMui>
+    );
+  }
+  if (type === "withChild") {
+    return (
+      <ButtonMui
+        variant="contained"
+        style={{
+          height: 36,
+          background: "white",
+          borderRadius: 36 / 2,
+          width: "auto",
+          minHeight: 0,
+          minWidth: 0,
+          padding: 0,
+          paddingRight: 10,
+          paddingLeft: 10,
+          fontFamily: "mulish",
+        }}
+      >
+        {children}
       </ButtonMui>
     );
   }
@@ -50,6 +76,7 @@ const Button = ({
           borderRadius: 20,
           color: "white",
           textTransform: "capitalize",
+          fontFamily: "mulish",
         }}
         fullWidth={isFullWidth}
         {...props}
@@ -71,6 +98,7 @@ const Button = ({
         color: disable ? "#C2C2C2" : "black",
         borderColor: disable ? "#C2C2C2" : "#FFD24D",
         textTransform: "capitalize",
+        fontFamily: "mulish",
       }}
       fullWidth={isFullWidth}
       {...props}

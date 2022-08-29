@@ -29,9 +29,7 @@ const ModalComponent = (props: ModalInterface) => {
       >
         <div className="flex items-center justify-between">
           <div className="w-[20px] h-[20px]" />
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            {title}
-          </Typography>
+          <div className="text-lg font-semibold text-black">{title}</div>
           <button
             className="text-purple-700 w-[20px] h-[20px]"
             onClick={onClose}

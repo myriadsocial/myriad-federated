@@ -35,98 +35,35 @@ export default function CardInstance(props: CardInstanceInterface) {
       />
       <div className="ml-4">
         <div>
-          <Typography
-            style={{
-              fontSize: 24,
-              color: colors.primary,
-              textAlign: "left",
-            }}
-          >
-            {serverName}
-          </Typography>
-          <Typography
-            style={{
-              fontSize: 14,
-              color: colors.textDarkGray,
-              textAlign: "left",
-            }}
-          >
-            {serverDetail}
-          </Typography>
-          <Typography style={{ fontSize: 16, textAlign: "left" }}>
-            {serverDescription}
-          </Typography>
+          <div className="text-2xl text-primary text-left">{serverName}</div>
+          <div className="text-sm text-textGray text-left">{serverDetail}</div>
+          <div className="text-base text-left">{serverDescription}</div>
         </div>
         {type === "landingPage" && (
           <div className="flex mt-2">
             <div className="flex">
               <Image src={UserGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <Typography
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: colors.textGray,
-                  }}
-                >
-                  80
-                </Typography>
+                <div className="text-sm font-semibold text-[#757575]">
+                  80 users
+                </div>
               </div>
-              <Typography
-                style={{
-                  fontSize: 14,
-                  fontWeight: 400,
-                  color: colors.textGray,
-                }}
-              >
-                Users
-              </Typography>
             </div>
             <div className="flex mx-6">
               <Image src={PostGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <Typography
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: colors.textGray,
-                  }}
-                >
-                  80
-                </Typography>
+                <div className="text-sm font-semibold text-[#757575]">
+                  80 Post
+                </div>
               </div>
-              <Typography
-                style={{
-                  fontSize: 14,
-                  fontWeight: 400,
-                  color: colors.textGray,
-                }}
-              >
-                Post
-              </Typography>
             </div>
             <div className="flex">
               <Image src={ExperianceGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <Typography
-                  style={{
-                    fontSize: 14,
-                    fontWeight: 600,
-                    color: colors.textGray,
-                  }}
-                >
-                  322
-                </Typography>
+                <div className="text-sm font-semibold text-[#757575]">
+                  322 Experiance
+                </div>
               </div>
-              <Typography
-                style={{
-                  fontSize: 14,
-                  fontWeight: 400,
-                  color: colors.textGray,
-                }}
-              >
-                Experiance
-              </Typography>
             </div>
           </div>
         )}

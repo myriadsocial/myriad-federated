@@ -57,7 +57,6 @@ export const useStyles = makeStyles((theme: Theme) =>
       alignItems: "center",
       display: "flex",
     },
-
     badge: {
       display: "inline-block",
       background: "#EBE0FF",

@@ -58,7 +58,7 @@ export const ServerListComponent = () => {
             <Image alt="" src={MyriadFullBlack} objectFit="contain" />
             <div className="flex">
               <Button
-                label=" Visit website"
+                label="Visit website"
                 type="text"
                 onClick={handleVisitWeb}
               />
