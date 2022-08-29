@@ -15,8 +15,8 @@ const nextConfig = {
     styledComponent: true,
   },
   serverRuntimeConfig: {
-    myriadAPIURL: NEXT_PUBLIC_MYRIAD_API_URL ?? "http://localhost:3001",
-    myriadAPIKey: NEXT_PUBLIC_MYRIAD_API_KEY ?? "s3cr3t",
+    myriadAPIURL: NEXT_PUBLIC_MYRIAD_API_URL ?? 'http://localhost:3001',
+    myriadAPIKey: NEXT_PUBLIC_MYRIAD_API_KEY ?? 's3cr3t',
   },
   publicRuntimeConfig: {
     appAuthURL: NEXT_PUBLIC_APP_AUTH_URL ?? "http://localhost:3000",
@@ -36,7 +36,7 @@ const nextConfig = {
     config.module.rules.push({
       test: /\.mjs$/,
       include: /node_modules/,
-      type: "javascript/auto",
+      type: 'javascript/auto',
     });
 
     return config;
