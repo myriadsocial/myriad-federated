@@ -5,8 +5,7 @@ import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
 import Paper from "@material-ui/core/Paper";
 
-import { SearchBoxProps, SearchBoxColor, useStyles } from ".";
-import { SearchIcon } from "../Icons";
+import { SearchBoxColor, SearchBoxProps, useStyles } from ".";
 
 import { debounce } from "lodash";
 import Image from "next/image";

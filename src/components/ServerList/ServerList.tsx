@@ -1,25 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { ServerListProps } from "src/lib/services/polkadot-js";
-import {
-  Container,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Card,
-  Typography,
-  Grid,
-  Button,
-  SvgIcon,
-} from "@material-ui/core";
-import { ServerIcon, UsersIcon, PencilAltIcon } from "@heroicons/react/outline";
-import { useStyles } from "./server-list.styles";
-import { Empty } from "src/components/Empty/Empty";
+import { ServerIcon } from "@heroicons/react/outline";
+import { Container, SvgIcon } from "@material-ui/core";
+import getConfig from "next/config";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { Illustration, MyriadFullBlack } from "public/icons";
+import React, { useEffect, useState } from "react";
 import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
 import { useGetList } from "src/hooks/server-list.hooks";
-import Image from "next/image";
-import { Illustration, MyriadFullBlack } from "public/icons";
-import { useRouter } from "next/router";
-import getConfig from "next/config";
+import { ServerListProps } from "src/lib/services/polkadot-js";
+import Button from "../atoms/Button";
+import CardInstance from "../atoms/CardInstance";
+import EmptyState from "../atoms/EmptyState";
+import { useStyles } from "./server-list.styles";
 const { publicRuntimeConfig } = getConfig();
 
 export const ServerListComponent = () => {
@@ -61,160 +53,108 @@ export const ServerListComponent = () => {
   return (
     <div className="bg-background-content min-h-screen">
       <Container maxWidth="lg" disableGutters>
-        <div className={style.root}>
+        <div className="flex flex-col pt-5 gap-5">
           <div className="mb-[60px] flex justify-between">
             <Image alt="" src={MyriadFullBlack} objectFit="contain" />
-            <div>
+            <div className="flex">
               <Button
-                size="small"
-                style={{ color: "black" }}
+                label="Visit website"
+                type="text"
                 onClick={handleVisitWeb}
-              >
-                Visit website
-              </Button>
+              />
+              <div className="mx-2">
+                <Button
+                  label="Contact us"
+                  type="text"
+                  onClick={(e: any) => handleContactUs(e)}
+                />
+              </div>
               <Button
-                size="small"
-                style={{ color: "black" }}
-                onClick={(e) => handleContactUs(e)}
-              >
-                Contact us
-              </Button>
-              <Button
+                primary
                 onClick={() => router.push("/instance")}
-                size="small"
-                variant="contained"
-                color="primary"
-              >
-                Create Instance
-              </Button>
+                label="Create Instance"
+              />
             </div>
           </div>
-          <header style={{ position: "relative", marginBottom: 85 }}>
-            <div className={style.picture}>
+          <header className="relative mb-[85px]">
+            <div className="absolute z-10 right-0 -top-24">
               <Image alt="" src={Illustration} objectFit="contain" />
             </div>
             <div className="max-w-[422px]">
-              <Typography className={style.text}>
+              <div className="text-[28px] mb-[14px] font-semibold">
                 Join the Myriad Federated Instance now!
-              </Typography>
-              <div className={style.link}>
+              </div>
+              <div className="content-start items-center mb-3 flex text-[14px]">
                 In Myriad Federated Instance, you can create your own instance
                 or join as a member of an instance.
               </div>
             </div>
           </header>
+          <div className="grid grid-cols-3 gap-5 z-20">
+            <div className="bg-primary rounded-[10px] p-[40px]">
+              <div className="flex">
+                <div className="h-[44px] w-[44px] bg-darkPrimary items-center justify-center flex rounded-lg">
+                  <SvgIcon component={ServerIcon} style={{ color: "white" }} />
+                </div>
+                <div className="ml-4">
+                  <div className="text-[16px] text-white">Total instances</div>
+                  <div className="text-[28px] text-white font-semibold">
+                    {totalInstances.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-primary rounded-[10px] p-[40px]">
+              <div className="flex">
+                <div className="h-[44px] w-[44px] bg-darkPrimary items-center justify-center flex rounded-lg">
+                  <SvgIcon component={ServerIcon} style={{ color: "white" }} />
+                </div>
+                <div className="ml-4">
+                  <div className="text-[16px] text-white">Total users</div>
+                  <div className="text-[28px] text-white font-semibold">
+                    {totalUsers.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-primary rounded-[10px] p-[40px]">
+              <div className="flex">
+                <div className="h-[44px] w-[44px] bg-darkPrimary items-center justify-center flex rounded-lg">
+                  <SvgIcon component={ServerIcon} style={{ color: "white" }} />
+                </div>
+                <div className="ml-4">
+                  <div className="text-[16px] text-white">Total posts</div>
+                  <div className="text-[28px] text-white font-semibold">
+                    {totalPosts.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          <Grid
-            container
-            justifyContent="flex-start"
-            alignContent="flex-start"
-            spacing={2}
-            style={{ zIndex: 1 }}
-          >
-            <Grid item md={4} xs={6}>
-              <Card variant="outlined" className={style.card}>
-                <ListItem>
-                  <ListItemIcon classes={{ root: style.icon }}>
-                    <SvgIcon component={ServerIcon} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography className={style.title}>
-                        Total instances
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography className={style.subtitle}>
-                        {totalInstances.toLocaleString()}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              </Card>
-            </Grid>
-            <Grid item md={4} xs={6}>
-              <Card variant="outlined" className={style.card}>
-                <ListItem>
-                  <ListItemIcon classes={{ root: style.icon }}>
-                    <SvgIcon component={UsersIcon} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography className={style.title}>
-                        Total users
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography className={style.subtitle}>
-                        {totalUsers.toLocaleString()}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              </Card>
-            </Grid>
-            <Grid item md={4} xs={6}>
-              <Card variant="outlined" className={style.card}>
-                <ListItem>
-                  <ListItemIcon classes={{ root: style.icon }}>
-                    <SvgIcon component={PencilAltIcon} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography className={style.title}>
-                        Total posts
-                      </Typography>
-                    }
-                    secondary={
-                      <Typography className={style.subtitle}>
-                        {totalPosts.toLocaleString()}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              </Card>
-            </Grid>
-          </Grid>
           <div>
             <SearchBoxContainer onSubmitSearch={handleSearch} hidden={true} />
           </div>
-          <div className={style.list}>
+          <div className="flex flex-col gap-2">
             {serverList.map((server, i) => (
-              <Card className={style.content} key={i}>
-                <div className={style.flex}>
-                  <div>
-                    <Typography className={style.contentTitle} color="primary">
-                      {server.name}
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary">
-                      {server.detail && server.detail.categories.join(" ")}
-                      &nbsp;
-                    </Typography>
-                    <Typography
-                      color="textPrimary"
-                      className={style.contentText}
-                    >
-                      {server.detail && server.detail.description}&nbsp;
-                    </Typography>
-                  </div>
-                  <a
-                    href={server.webUrl}
-                    rel="noreferrer"
-                    className={style.textDecoration}
-                    target="_blank"
-                  >
-                    <Button variant="outlined" color="secondary" size="small">
-                      Go to instance
-                    </Button>
-                  </a>
-                </div>
-              </Card>
+              <CardInstance
+                key={i}
+                serverName={server.name}
+                serverDetail={
+                  server.detail && server.detail.categories.join(" ")
+                }
+                serverDescription={server.detail && server.detail.description}
+                image={"https://i.pravatar.cc/300"}
+                type="landingPage"
+              />
             ))}
             {!serverList.length && (
-              <Empty
-                title={"No results"}
-                subtitle={"Please make sure your keywords match."}
-              />
+              <div className="h-[235px] w-full">
+                <EmptyState
+                  title={"No results"}
+                  desc={"Please make sure your keywords match."}
+                />
+              </div>
             )}
           </div>
         </div>

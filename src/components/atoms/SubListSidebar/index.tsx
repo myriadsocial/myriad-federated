@@ -1,4 +1,4 @@
-import {Collapse, List, ListItemButton, ListItemText} from '@mui/material';
+import { Collapse, List, ListItemButton, ListItemText } from "@mui/material";
 
 interface SubListSidebarInterface {
   onClick: () => void;
@@ -7,13 +7,13 @@ interface SubListSidebarInterface {
   isSelected: boolean;
 }
 const SubListSidebar = (props: SubListSidebarInterface) => {
-  const {onClick, title, inOpen, isSelected} = props;
+  const { onClick, title, inOpen, isSelected } = props;
   return (
     <Collapse in={inOpen} timeout="auto" unmountOnExit>
       <List component="div" disablePadding>
-        <div className={isSelected ? 'bg-selected-yellow' : ''}>
-          <ListItemButton style={{paddingLeft: 75}} onClick={onClick}>
-            <ListItemText primary={title} />
+        <div className={isSelected ? "bg-selected-yellow" : ""}>
+          <ListItemButton style={{ paddingLeft: 75 }} onClick={onClick}>
+            <div className="text-lg flex-1">{title}</div>
           </ListItemButton>
         </div>
       </List>

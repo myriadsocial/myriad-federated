@@ -2,12 +2,6 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      paddingTop: 20,
-      flexDirection: "column",
-      display: "flex",
-      rowGap: 20,
-    },
     container: {
       width: "674px",
     },
@@ -62,11 +56,6 @@ export const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "space-between",
       alignItems: "center",
       display: "flex",
-    },
-    list: {
-      display: "flex",
-      flexDirection: "column",
-      gap: 10,
     },
     badge: {
       display: "inline-block",

@@ -1,4 +1,4 @@
-import {Avatar, Typography} from '@mui/material';
+import { Avatar, Typography } from "@mui/material";
 
 interface AvatarWithButtonInterface {
   image: string;
@@ -6,17 +6,13 @@ interface AvatarWithButtonInterface {
   desc: string;
 }
 const AvatarWithName = (props: AvatarWithButtonInterface) => {
-  const {image, name, desc} = props;
+  const { image, name, desc } = props;
   return (
     <div className="flex">
       <Avatar src={image} />
       <div className="ml-2">
-        <Typography textTransform={'capitalize'} fontSize={14} color={'#0A0A0A'}>
-          {name}
-        </Typography>
-        <Typography textTransform={'capitalize'} fontSize={10} color={'#616161'}>
-          {desc}
-        </Typography>
+        <div className="text-sm text-black capitalize">{name}</div>
+        <div className="text-[10px] capitalize text-[#616161]">{desc}</div>
       </div>
     </div>
   );

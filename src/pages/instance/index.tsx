@@ -1,11 +1,12 @@
-import { Button as CustomButton } from "@material-ui/core";
 import { Avatar, Container, Typography } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { IcOpenUrl, MyriadFullBlack } from "public/icons";
 import { useState } from "react";
+import Button from "src/components/atoms/Button";
+import CardInstance from "src/components/atoms/CardInstance";
+import EmptyState from "src/components/atoms/EmptyState";
 import ModalComponent from "src/components/molecules/Modal";
-import { colors } from "src/utils";
 export default function Instance() {
   const [isShowModalCreateInstance, setIsShowModalCreateInstance] =
     useState<boolean>(false);
@@ -28,88 +29,50 @@ export default function Instance() {
       <Container>
         <div className="flex justify-between">
           <Image src={MyriadFullBlack} objectFit="contain" alt="" />
-          <div className="shadow-lg w-fit rounded-[20px]">
-            <CustomButton
-              variant="contained"
-              size="small"
-              style={{ backgroundColor: "white" }}
-            >
+          <div className="w-[144px]">
+            <Button onClick={undefined} type="withChild">
               <div className="flex items-center">
                 <Avatar
                   style={{ height: 24, width: 24, marginRight: 6 }}
                   src="https://i.pravatar.cc/300"
                   alt="profile"
                 />
-                <Typography color={"black"} fontSize={14}>
-                  0xabcd...1234
-                </Typography>
+                <div className="text-[14px] text-black">0xabcd...1234</div>
               </div>
-            </CustomButton>
+            </Button>
           </div>
         </div>
         <div className="flex justify-between mt-[50px]">
-          <Typography fontSize={28}>My Instance</Typography>
-          <CustomButton
-            onClick={() => setIsShowModalCreateInstance(true)}
-            size="small"
-            variant="contained"
-            color="primary"
-          >
-            Create Instance
-          </CustomButton>
+          <div className="text-[28px]">My instance</div>
+          <div className="w-[144px]">
+            <Button
+              isFullWidth
+              label="Crete Instance"
+              primary
+              onClick={() => setIsShowModalCreateInstance(true)}
+            />
+          </div>
         </div>
         {isEmptyInstance ? (
-          <div className="bg-white mt-6 rounded-[10px] w-full h-[400px] justify-center items-center flex">
-            <div className="">
-              <Typography
-                style={{ textAlign: "center", fontSize: 18, fontWeight: 600 }}
-              >
-                You don’t have an instance
-              </Typography>
-              <Typography
-                style={{ textAlign: "center", fontSize: 14, marginTop: 8 }}
-              >
-                Create your own instance and enjoy the decentralized Web 3
-                social network.
-              </Typography>
-            </div>
+          <div className="w-full h-[400px] mt-6">
+            <EmptyState
+              title={"You don’t have an instance"}
+              desc={
+                "Create your own instance and enjoy the decentralized Web 3 social network."
+              }
+            />
           </div>
         ) : (
           <div className="mt-2">
-            <button
-              className="bg-white flex py-5 px-9 rounded-[10px] w-full mt-4"
+            <CardInstance
               onClick={() => router.push("/dashboard")}
-            >
-              <Image
-                src="https://i.pravatar.cc/300"
-                alt=""
-                height={80}
-                width={80}
-              />
-              <div className="ml-4">
-                <Typography
-                  style={{
-                    fontSize: 24,
-                    color: colors.primary,
-                    textAlign: "left",
-                  }}
-                >
-                  345678
-                </Typography>
-                <Typography
-                  style={{
-                    fontSize: 14,
-                    color: colors.textDarkGray,
-                    textAlign: "left",
-                  }}
-                >
-                  by 0x1234...abcd
-                </Typography>
-                <Typography style={{ fontSize: 16, textAlign: "left" }}>
-                  Server id: 345678
-                </Typography>
-              </div>
-            </button>
+              serverName={"Metaverse Hunter"}
+              serverDetail={"by 0x1234...abcd"}
+              serverDescription={
+                "Metaverse hunter for all. Join us to get more metaverse knowledge and updates!"
+              }
+              image={"https://i.pravatar.cc/300"}
+            />
           </div>
         )}
 
@@ -121,22 +84,20 @@ export default function Instance() {
         >
           <div className="min-h-[200px] mb-[100px]">
             <div className="mb-2">
-              <Typography style={{ fontSize: 14 }}>
-                Step {isStepOne ? 1 : 2} of 2
-              </Typography>
+              <div className="text-sm">Step {isStepOne ? 1 : 2} of 2</div>
             </div>
-            <Typography style={{ fontSize: 24, fontWeight: 600 }}>
+            <div className="text-2xl font-semibold">
               {isStepOne ? "Deploy the server" : "Get server id"}
-            </Typography>
+            </div>
             {isStepOne ? (
               <>
                 <div className="my-2">
-                  <Typography style={{ fontSize: 14, color: "#404040" }}>
+                  <div className="text-sm text-textGray text-justify">
                     To create an instance, you have to deploy the server on your
                     own. Please carefully read the deployment guide linked
                     below. You can also access the deployment guide on the
                     settings page.
-                  </Typography>
+                  </div>
                 </div>
                 <div className="flex">
                   <a
@@ -148,32 +109,27 @@ export default function Instance() {
                       <Image src={IcOpenUrl} height={20} width={20} alt="" />
                     </button>
                   </a>
-                  <Typography
-                    style={{ fontSize: 14, color: "#7342CC", marginLeft: 8 }}
-                  >
+                  <div className="ml-2 text-[14px] text-primary">
                     View deployment guide
-                  </Typography>
+                  </div>
                 </div>
               </>
             ) : (
               <div className="mt-2">
-                <Typography style={{ fontSize: 14, color: "#404040" }}>
+                <div className="text-sm text-textGray text-justify">
                   To get a server id, you have to sign the contract on
                   Polkadot.js. The server id will show up in My Instance page,
                   once you sign the contract.
-                </Typography>
+                </div>
               </div>
             )}
           </div>
-          <CustomButton
+          <Button
+            isFullWidth
+            label={isStepOne ? "Continue" : "Get server id"}
+            primary
             onClick={handleClick}
-            type="button"
-            variant="contained"
-            fullWidth
-            color="primary"
-          >
-            {isStepOne ? "Continue" : "Get server id"}
-          </CustomButton>
+          />
         </ModalComponent>
       </Container>
     </div>
