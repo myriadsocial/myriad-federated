@@ -1,18 +1,32 @@
-import { Avatar, Container, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { IcOpenUrl, MyriadFullBlack } from "public/icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "src/components/atoms/Button";
 import CardInstance from "src/components/atoms/CardInstance";
 import EmptyState from "src/components/atoms/EmptyState";
 import ModalComponent from "src/components/molecules/Modal";
+import localforage from "localforage";
+import Identicon from '@polkadot/react-identicon';
+
+const CURRENT_ADDRESS = 'currentAddress';
+
 export default function Instance() {
+  const router = useRouter();
+
+  const [account, setAccount] = useState<string | null>(null);
   const [isShowModalCreateInstance, setIsShowModalCreateInstance] =
     useState<boolean>(false);
   const [isStepOne, setIsStepOne] = useState<boolean>(true);
   const [isEmptyInstance, setIsEmptyInstance] = useState<boolean>(true);
-  const router = useRouter();
+
+  useEffect(() => {
+    localforage.getItem(CURRENT_ADDRESS, (err, value) => {
+      if (err || !value) return router.push('/')
+      setAccount(value as string);
+    });
+  }, [])
 
   const handleClick = () => {
     if (isStepOne) {
@@ -24,6 +38,12 @@ export default function Instance() {
     }
   };
 
+  const formatAddress = () => {
+    if (!account) return;
+    if (account.length <= 14) return account;
+    return account.substring(0, 5) + '...' + account.substring(account.length - 5);
+  }
+
   return (
     <div className="bg-background-content min-h-screen p-5">
       <Container>
@@ -32,12 +52,10 @@ export default function Instance() {
           <div className="w-[144px]">
             <Button onClick={undefined} type="withChild">
               <div className="flex items-center">
-                <Avatar
-                  style={{ height: 24, width: 24, marginRight: 6 }}
-                  src="https://i.pravatar.cc/300"
-                  alt="profile"
-                />
-                <div className="text-[14px] text-black">0xabcd...1234</div>
+                <Identicon value={account} size={24} theme="polkadot" style={{marginRight: 5}}/>
+                <Typography color={"black"} fontSize={14}>
+                  {formatAddress()}
+                </Typography>
               </div>
             </Button>
           </div>

@@ -1,24 +1,46 @@
-import { ServerIcon } from "@heroicons/react/outline";
-import { Container, SvgIcon } from "@material-ui/core";
 import getConfig from "next/config";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { Illustration, MyriadFullBlack } from "public/icons";
 import React, { useEffect, useState } from "react";
-import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
-import { useGetList } from "src/hooks/server-list.hooks";
 import { ServerListProps } from "src/lib/services/polkadot-js";
 import { numberFormatter } from "src/utils/numberFormatter";
 import Button from "../atoms/Button";
 import CardInstance from "../atoms/CardInstance";
 import EmptyState from "../atoms/EmptyState";
-import { useStyles } from "./server-list.styles";
 const { publicRuntimeConfig } = getConfig();
+
+import {
+  Container,
+  SvgIcon,
+} from "@material-ui/core";
+
+import { ServerIcon } from "@heroicons/react/outline";
+
+import dynamic from 'next/dynamic';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
+import { useGetList } from "src/hooks/server-list.hooks";
+import Image from "next/image";
+import { Illustration, MyriadFullBlack } from "public/icons";
+import { useRouter } from "next/router";
+import { usePolkadotExtension } from "src/hooks/use-polkadot-app.hooks";
+import localforage from "localforage";
+
+const PolkadotAccountList = dynamic(
+  () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
+  {
+    ssr: false,
+  },
+);
+const CURRENT_ADDRESS = 'currentAddress';
 
 export const ServerListComponent = () => {
   const router = useRouter();
-  const style = useStyles();
+
+  const { enablePolkadotExtension, getPolkadotAccounts } = usePolkadotExtension();
   const { servers, totalInstances, totalUsers, totalPosts } = useGetList();
+
+  const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
+  const [extensionInstalled, setExtensionInstalled] = React.useState(false);
+  const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
   const [serverList, setServerList] = useState<ServerListProps[]>([]);
 
   console.log(serverList);
@@ -26,6 +48,13 @@ export const ServerListComponent = () => {
   useEffect(() => {
     setServerList(servers);
   }, [servers]);
+
+  useEffect(() => {
+    localforage.getItem(CURRENT_ADDRESS, (err, value) => {
+      if (err || !value) return;
+      router.push('/instance');
+    });
+  }, [])
 
   const handleSearch = (query: string) => {
     const regex = new RegExp(`^${query.toLowerCase()}`, "i");
@@ -53,6 +82,38 @@ export const ServerListComponent = () => {
     e.preventDefault();
   };
 
+  const checkExtensionInstalled = async () => {
+    const installed = await enablePolkadotExtension();
+
+    setShowAccountList(true);
+    setExtensionInstalled(installed);
+
+    getAvailableAccounts();
+  };
+
+  const closeAccountList = () => {
+    setShowAccountList(false);
+  };
+
+  const getAvailableAccounts = async () => {
+    const accounts = await getPolkadotAccounts().catch(() => []);
+
+    setAccounts(accounts);
+  };
+
+  const handleSelectedSubstrateAccount = (account: InjectedAccountWithMeta) => {
+    closeAccountList();
+
+    localforage.setItem(CURRENT_ADDRESS, account.address, (err) => {
+      if (err) return;
+      router.push('/instance');
+    });
+  }
+
+  const handleSignIn = () => {
+    checkExtensionInstalled();
+  }
+
   return (
     <div className="bg-background-content min-h-screen">
       <Container maxWidth="lg" disableGutters>
@@ -74,7 +135,7 @@ export const ServerListComponent = () => {
               </div>
               <Button
                 primary
-                onClick={() => router.push("/instance")}
+                onClick={handleSignIn}
                 label="Create Instance"
               />
             </div>
@@ -167,6 +228,14 @@ export const ServerListComponent = () => {
           </div>
         </div>
       </Container>
+      <PolkadotAccountList
+        align="left"
+        title="Select account"
+        isOpen={showAccountList && extensionInstalled}
+        accounts={accounts}
+        onSelect={handleSelectedSubstrateAccount}
+        onClose={closeAccountList}
+      />
     </div>
   );
 };
