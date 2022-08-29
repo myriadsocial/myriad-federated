@@ -202,7 +202,7 @@ export default function UserReported() {
               <div className="flex">
                 <div className="text-[14px] text-gray-500 w-[120px]">URL</div>
                 <div className="text-[14px] break-words max-w-[354px]">
-                  {`https://app.testnet.myriad.social/post/${userSelected?.referenceId}`}
+                  {`https://app.testnet.myriad.social/profile/${userSelected?.referenceId}`}
                 </div>
               </div>
               <div className="flex items-center justify-center">
@@ -215,7 +215,7 @@ export default function UserReported() {
               </div>
             </div>
             <a
-              href={`https://app.testnet.myriad.social/post/${userSelected?.referenceId}`}
+              href={`https://app.testnet.myriad.social/profile/${userSelected?.referenceId}`}
               target="_blank"
               rel="noreferrer"
             >

@@ -11,6 +11,9 @@ interface CardInstanceInterface {
   serverDescription: string | undefined;
   image: string;
   type?: string;
+  users?: number | string | string;
+  post?: number | string;
+  experiance?: number | string;
 }
 export default function CardInstance(props: CardInstanceInterface) {
   const {
@@ -18,21 +21,29 @@ export default function CardInstance(props: CardInstanceInterface) {
     serverName,
     serverDescription,
     serverDetail,
-    image = "https://i.pravatar.cc/300",
+    image = "",
     type,
+    users,
+    post,
+    experiance,
   } = props;
   return (
     <button
       className="bg-white flex py-5 px-9 rounded-[10px] w-full mt-4 shadow-md"
       onClick={onClick}
     >
-      <Image
-        src={image}
-        alt=""
-        height={80}
-        width={80}
-        className="rounded-[5px]"
-      />
+      {image ? (
+        <Image
+          src={image}
+          alt=""
+          height={80}
+          width={80}
+          className="rounded-[5px]"
+        />
+      ) : (
+        <div className="h-[80px] w-[80px] rounded-[5px] bg-slate-400"></div>
+      )}
+
       <div className="ml-4">
         <div>
           <div className="text-2xl text-primary text-left">{serverName}</div>
@@ -45,7 +56,7 @@ export default function CardInstance(props: CardInstanceInterface) {
               <Image src={UserGray} height={20} width={20} alt="" />
               <div className="mx-2">
                 <div className="text-sm font-semibold text-[#757575]">
-                  80 users
+                  {users} users
                 </div>
               </div>
             </div>
@@ -53,7 +64,7 @@ export default function CardInstance(props: CardInstanceInterface) {
               <Image src={PostGray} height={20} width={20} alt="" />
               <div className="mx-2">
                 <div className="text-sm font-semibold text-[#757575]">
-                  80 Post
+                  {post} Post
                 </div>
               </div>
             </div>
@@ -61,7 +72,7 @@ export default function CardInstance(props: CardInstanceInterface) {
               <Image src={ExperianceGray} height={20} width={20} alt="" />
               <div className="mx-2">
                 <div className="text-sm font-semibold text-[#757575]">
-                  322 Experiance
+                  {experiance} Experiance
                 </div>
               </div>
             </div>

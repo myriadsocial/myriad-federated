@@ -23,6 +23,9 @@ interface ServerDetail {
     totalUsers: number;
     totalVotes: number;
   };
+  images: {
+    logo_banner: string;
+  };
 }
 
 export const connectToBlockchain = async (): Promise<ApiPromise> => {
