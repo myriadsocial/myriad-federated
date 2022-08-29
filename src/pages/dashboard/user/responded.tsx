@@ -61,6 +61,9 @@ export default function UserResponded() {
       accessorKey: "status",
       header: "Penalty Status",
       size: 120,
+      cell: (value) => (
+        <div className="text-sm capitalize">{value.row.original.status}</div>
+      ),
     },
     {
       accessorKey: "id",
