@@ -26,7 +26,11 @@ const nextConfig = {
     myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? "ws://localhost:9944",
   },
   images: {
-    domains: ["i.pravatar.cc", "firebasestorage.googleapis.com"],
+    domains: [
+      "i.pravatar.cc",
+      "firebasestorage.googleapis.com",
+      "storage.googleapis.com",
+    ],
   },
   webpack(config) {
     config.module.rules.push({

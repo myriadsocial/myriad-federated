@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { SearchBoxContainer } from "src/components/Search/SearchBoxContainer";
 import { useGetList } from "src/hooks/server-list.hooks";
 import { ServerListProps } from "src/lib/services/polkadot-js";
+import { numberFormatter } from "src/utils/numberFormatter";
 import Button from "../atoms/Button";
 import CardInstance from "../atoms/CardInstance";
 import EmptyState from "../atoms/EmptyState";
@@ -19,6 +20,8 @@ export const ServerListComponent = () => {
   const style = useStyles();
   const { servers, totalInstances, totalUsers, totalPosts } = useGetList();
   const [serverList, setServerList] = useState<ServerListProps[]>([]);
+
+  console.log(serverList);
 
   useEffect(() => {
     setServerList(servers);
@@ -144,8 +147,13 @@ export const ServerListComponent = () => {
                   server.detail && server.detail.categories.join(" ")
                 }
                 serverDescription={server.detail && server.detail.description}
-                image={"https://i.pravatar.cc/300"}
+                image={server.detail?.images.logo_banner!}
                 type="landingPage"
+                experiance={numberFormatter(
+                  server.detail?.metric.totalExperiences!
+                )}
+                post={numberFormatter(server.detail?.metric.totalPosts!)}
+                users={numberFormatter(server.detail?.metric.totalUsers!)}
               />
             ))}
             {!serverList.length && (
