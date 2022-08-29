@@ -60,7 +60,7 @@ export default function PostResported() {
       size: 144,
       cell: (value) => (
         <div className="text-sm capitalize">
-          {value.row.original.type.replace("_", " ")}
+          {value.row.original.referenceType}
         </div>
       ),
     },
@@ -165,7 +165,7 @@ export default function PostResported() {
   return (
     <div className="bg-white rounded-[10px] p-6 h-full">
       <div className="mb-[5px]">
-        <div className="text-lg font-semibold">Reported User</div>
+        <div className="text-lg font-semibold">Reported Post</div>
       </div>
       <div className="text-sm text-[#757575]">
         {dataPostReported?.meta.totalItemCount ?? "0"} Reports
@@ -267,5 +267,5 @@ export default function PostResported() {
 }
 
 PostResported.getLayout = function getLayout(page: ReactNode) {
-  return <ContentLayout title="User">{page}</ContentLayout>;
+  return <ContentLayout title="Post">{page}</ContentLayout>;
 };
