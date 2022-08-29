@@ -47,7 +47,7 @@ export default function Instance() {
           <div className="w-[144px]">
             <Button
               isFullWidth
-              label="Crete Instance"
+              label="Create Instance"
               primary
               onClick={() => setIsShowModalCreateInstance(true)}
             />

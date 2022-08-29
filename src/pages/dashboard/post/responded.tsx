@@ -74,7 +74,7 @@ export default function PostResponded() {
       size: 120,
       cell: (value) => (
         <div className="text-sm capitalize">
-          {translationText(value.row.original.type as ReportType)}
+          {value.row.original.referenceType}
         </div>
       ),
     },
@@ -302,5 +302,5 @@ export default function PostResponded() {
 }
 
 PostResponded.getLayout = function getLayout(page: ReactNode) {
-  return <ContentLayout title="User">{page}</ContentLayout>;
+  return <ContentLayout title="Post">{page}</ContentLayout>;
 };
