@@ -1,7 +1,7 @@
-import Head from "next/head";
-import React from "react";
-import Header from "../components/organisms/Header";
-import Siderbar from "../components/organisms/Siderbar";
+import Head from 'next/head';
+import React from 'react';
+import Header from '../components/organisms/Header';
+import Siderbar from '../components/organisms/Siderbar';
 
 export default function ContentLayout({
   children,

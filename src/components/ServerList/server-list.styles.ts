@@ -1,75 +1,75 @@
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
+import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
-      width: "674px",
+      width: '674px',
     },
     content: {
-      flexDirection: "column",
+      flexDirection: 'column',
       gap: theme.spacing(1),
-      borderRadius: "10px",
-      display: "flex",
-      padding: "20px 36px",
+      borderRadius: '10px',
+      display: 'flex',
+      padding: '20px 36px',
     },
     contentTitle: {
-      fontSize: "24px",
+      fontSize: '24px',
     },
     contentText: {
       fontSize: 16,
       marginTop: theme.spacing(1),
     },
     link: {
-      justifyContent: "flex-start",
-      alignItems: "center",
+      justifyContent: 'flex-start',
+      alignItems: 'center',
       marginBottom: 12,
-      display: "flex",
+      display: 'flex',
       fontSize: 14,
     },
     textDecoration: {
-      textDecoration: "none",
+      textDecoration: 'none',
     },
     card: {
       background: theme.palette.primary.main,
       padding: theme.spacing(3),
       borderRadius: 10,
-      color: "#FFF",
+      color: '#FFF',
     },
     text: {
-      fontSize: "28px",
+      fontSize: '28px',
       marginBottom: 14,
       fontWeight: 700,
     },
     picture: {
-      position: "absolute",
+      position: 'absolute',
       zIndex: 1,
       right: 0,
       top: -100,
     },
     title: {
-      fontSize: "16px",
+      fontSize: '16px',
     },
     subtitle: {
-      fontSize: "24px",
+      fontSize: '24px',
     },
     flex: {
-      justifyContent: "space-between",
-      alignItems: "center",
-      display: "flex",
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      display: 'flex',
     },
     badge: {
-      display: "inline-block",
-      background: "#EBE0FF",
-      borderRadius: "20px",
-      padding: "4px 16px",
+      display: 'inline-block',
+      background: '#EBE0FF',
+      borderRadius: '20px',
+      padding: '4px 16px',
     },
     icon: {
-      background: "#452680",
+      background: '#452680',
       borderRadius: 6,
       marginRight: 16,
-      color: "#FFF",
+      color: '#FFF',
       minWidth: 24,
       padding: 7,
     },
-  })
+  }),
 );

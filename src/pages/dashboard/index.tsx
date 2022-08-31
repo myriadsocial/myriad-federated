@@ -1,7 +1,5 @@
-import Image from "next/image";
-import { Logo } from "public/icons";
-import { ReactNode } from "react";
-import ContentLayout from "../../layout/ContentLayout";
+import {ReactNode} from 'react';
+import ContentLayout from '../../layout/ContentLayout';
 
 export default function Dashboard() {
   return (

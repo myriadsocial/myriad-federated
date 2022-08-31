@@ -1,8 +1,6 @@
-import { Typography } from "@mui/material";
-import Image from "next/image";
-import { ExperianceGray, PostGray, UserGray } from "public/icons";
-import React from "react";
-import { colors } from "src/utils";
+import Image from 'next/image';
+import {ExperianceGray, PostGray, UserGray} from 'public/icons';
+import React from 'react';
 
 interface CardInstanceInterface {
   onClick?: () => void;
@@ -21,7 +19,7 @@ export default function CardInstance(props: CardInstanceInterface) {
     serverName,
     serverDescription,
     serverDetail,
-    image = "",
+    image = '',
     type,
     users,
     post,
@@ -30,16 +28,9 @@ export default function CardInstance(props: CardInstanceInterface) {
   return (
     <button
       className="bg-white flex py-5 px-9 rounded-[10px] w-full mt-4 shadow-md"
-      onClick={onClick}
-    >
+      onClick={onClick}>
       {image ? (
-        <Image
-          src={image}
-          alt=""
-          height={80}
-          width={80}
-          className="rounded-[5px]"
-        />
+        <Image src={image} alt="" height={80} width={80} className="rounded-[5px]" />
       ) : (
         <div className="h-[80px] w-[80px] rounded-[5px] bg-slate-400"></div>
       )}
@@ -50,30 +41,24 @@ export default function CardInstance(props: CardInstanceInterface) {
           <div className="text-sm text-textGray text-left">{serverDetail}</div>
           <div className="text-base text-left">{serverDescription}</div>
         </div>
-        {type === "landingPage" && (
+        {type === 'landingPage' && (
           <div className="flex mt-2">
             <div className="flex">
               <Image src={UserGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-[#757575]">
-                  {users} users
-                </div>
+                <div className="text-sm font-semibold text-[#757575]">{users} users</div>
               </div>
             </div>
             <div className="flex mx-6">
               <Image src={PostGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-[#757575]">
-                  {post} Post
-                </div>
+                <div className="text-sm font-semibold text-[#757575]">{post} Post</div>
               </div>
             </div>
             <div className="flex">
               <Image src={ExperianceGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-[#757575]">
-                  {experiance} Experiance
-                </div>
+                <div className="text-sm font-semibold text-[#757575]">{experiance} Experiance</div>
               </div>
             </div>
           </div>

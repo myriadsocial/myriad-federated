@@ -1,30 +1,29 @@
-import { CircularProgress } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-import { ReactNode, useEffect, useState } from "react";
-import { IcOpenUrl } from "../../../../public/icons";
-import { getReports } from "../../../api/GET_Reports";
-import { getReportsDetail } from "../../../api/GET_ReportsDetail";
-import { updateReports } from "../../../api/PATCH_Reports";
-import { AvatarWithName, DropdownFilter } from "../../../components/atoms";
-import Button from "../../../components/atoms/Button";
-import ListReporter from "../../../components/atoms/ListReporter";
-import Modal from "../../../components/molecules/Modal";
-import Table from "../../../components/organisms/Table";
-import { Arrays } from "../../../constans/array";
+import {CircularProgress} from '@mui/material';
+import {useMutation, useQuery} from '@tanstack/react-query';
+import {ColumnDef} from '@tanstack/react-table';
+import Image from 'next/image';
+import {ReactNode, useEffect, useState} from 'react';
+import {IcOpenUrl} from '../../../../public/icons';
+import {getReports} from '../../../api/GET_Reports';
+import {getReportsDetail} from '../../../api/GET_ReportsDetail';
+import {updateReports} from '../../../api/PATCH_Reports';
+import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
+import Button from '../../../components/atoms/Button';
+import ListReporter from '../../../components/atoms/ListReporter';
+import Modal from '../../../components/molecules/Modal';
+import Table from '../../../components/organisms/Table';
+import {Arrays} from '../../../constans/array';
 import {
   DataResponseUserReportedInterface,
   ReportType,
   ReportTypeCategoryMapper,
-} from "../../../interface/UserInterface";
-import ContentLayout from "../../../layout/ContentLayout";
-import { dateFormatter } from "../../../utils/dateFormatter";
+} from '../../../interface/UserInterface';
+import ContentLayout from '../../../layout/ContentLayout';
+import {dateFormatter} from '../../../utils/dateFormatter';
 export default function PostResported() {
   const [isShowModalRespond, setIsShowModalRespond] = useState<boolean>(false);
-  const [userSelected, setUserSelected] =
-    useState<DataResponseUserReportedInterface>();
-  const [sortingDate, setSortingDate] = useState<string>("DESC");
+  const [userSelected, setUserSelected] = useState<DataResponseUserReportedInterface>();
+  const [sortingDate, setSortingDate] = useState<string>('DESC');
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [reportId, setReportId] = useState<string | undefined>(undefined);
 
@@ -34,9 +33,9 @@ export default function PostResported() {
 
   const columns: ColumnDef<DataResponseUserReportedInterface>[] = [
     {
-      accessorKey: "reportedDetail",
-      header: "Post owner",
-      cell: (value) => (
+      accessorKey: 'reportedDetail',
+      header: 'Post owner',
+      cell: value => (
         <AvatarWithName
           image={value.row.original.reportedDetail.user.profilePictureURL}
           name={value.row.original.reportedDetail.user.name}
@@ -45,54 +44,41 @@ export default function PostResported() {
       ),
     },
     {
-      accessorKey: "createdAt",
-      header: "Report Date",
+      accessorKey: 'createdAt',
+      header: 'Report Date',
       size: 120,
-      cell: (value) => (
+      cell: value => (
         <div className="text-sm">
-          {dateFormatter(new Date(value.row.original.createdAt), "dd/MM/yy")}
+          {dateFormatter(new Date(value.row.original.createdAt), 'dd/MM/yy')}
         </div>
       ),
     },
     {
-      accessorKey: "type",
-      header: "Type",
+      accessorKey: 'type',
+      header: 'Type',
       size: 144,
-      cell: (value) => (
-        <div className="text-sm capitalize">
-          {value.row.original.referenceType}
-        </div>
-      ),
+      cell: value => <div className="text-sm capitalize">{value.row.original.referenceType}</div>,
     },
     {
-      accessorKey: "totalReported",
-      header: "Total reports",
+      accessorKey: 'totalReported',
+      header: 'Total reports',
       size: 144,
-      cell: (value) => (
-        <div className="text-sm capitalize">
-          {value.row.original.totalReported} reports
-        </div>
+      cell: value => (
+        <div className="text-sm capitalize">{value.row.original.totalReported} reports</div>
       ),
     },
     {
-      accessorKey: "type",
-      header: "Category",
-      cell: (value) => (
-        <div className="text-sm">
-          {translationText(value.row.original.type as ReportType)}
-        </div>
+      accessorKey: 'type',
+      header: 'Category',
+      cell: value => (
+        <div className="text-sm">{translationText(value.row.original.type as ReportType)}</div>
       ),
     },
     {
-      accessorKey: "id",
-      header: "Action",
+      accessorKey: 'id',
+      header: 'Action',
       size: 144,
-      cell: (value) => (
-        <Button
-          onClick={() => handleRespond(value.row.original)}
-          label="Respond"
-        />
-      ),
+      cell: value => <Button onClick={() => handleRespond(value.row.original)} label="Respond" />,
     },
   ];
 
@@ -103,7 +89,7 @@ export default function PostResported() {
   };
 
   const filter = JSON.stringify({
-    where: { status: "pending", referenceType: { inq: ["post", "comment"] } },
+    where: {status: 'pending', referenceType: {inq: ['post', 'comment']}},
     order: [`createdAt ${sortingDate}`],
   });
 
@@ -111,15 +97,15 @@ export default function PostResported() {
     refetch: refetchingGetAllPost,
     isFetching,
     data: dataPostReported,
-  } = useQuery(["/getAllPost"], () => getReports({ pageNumber, filter }), {
+  } = useQuery(['/getAllPost'], () => getReports({pageNumber, filter}), {
     enabled: false,
   });
 
   const handleIgnore = async () => {
-    const status = "ignored";
+    const status = 'ignored';
     const response = await mutateUpdateUserStatus({
       status,
-      reportId: userSelected?.id ?? "",
+      reportId: userSelected?.id ?? '',
     });
     if (response?.statusCode === 401) {
       setIsShowModalRespond(false);
@@ -130,10 +116,10 @@ export default function PostResported() {
   };
 
   const handleBanned = async () => {
-    const status = "removed";
+    const status = 'removed';
     const response = await mutateUpdateUserStatus({
       status,
-      reportId: userSelected?.id ?? "",
+      reportId: userSelected?.id ?? '',
     });
     if (response?.statusCode === 401) {
       setIsShowModalRespond(false);
@@ -143,7 +129,7 @@ export default function PostResported() {
     }
   };
 
-  const { mutateAsync: mutateUpdateUserStatus } = useMutation(updateReports);
+  const {mutateAsync: mutateUpdateUserStatus} = useMutation(updateReports);
 
   useEffect(() => {
     refetchingGetAllPost();
@@ -153,7 +139,7 @@ export default function PostResported() {
     refetch: refetchingAllReporter,
     isFetching: isFetchingReporter,
     data: dataReporter,
-  } = useQuery(["/getAllReporter"], () => getReportsDetail({ id: reportId }), {
+  } = useQuery(['/getAllReporter'], () => getReportsDetail({id: reportId}), {
     enabled: false,
   });
 
@@ -168,7 +154,7 @@ export default function PostResported() {
         <div className="text-lg font-semibold">Reported Post</div>
       </div>
       <div className="text-sm text-[#757575]">
-        {dataPostReported?.meta.totalItemCount ?? "0"} Reports
+        {dataPostReported?.meta.totalItemCount ?? '0'} Reports
       </div>
       <div className="my-6">
         <DropdownFilter
@@ -186,26 +172,21 @@ export default function PostResported() {
           data={dataPostReported?.data ?? []}
           columns={columns}
           meta={dataPostReported?.meta ?? []}
-          onClickNext={() =>
-            setPageNumber(dataPostReported?.meta.nextPage ?? 1)
-          }
-          onClickPrevios={() =>
-            setPageNumber((dataPostReported?.meta.currentPage ?? 2) - 1)
-          }
+          onClickNext={() => setPageNumber(dataPostReported?.meta.nextPage ?? 1)}
+          onClickPrevios={() => setPageNumber((dataPostReported?.meta.currentPage ?? 2) - 1)}
         />
       </div>
       <Modal
         open={isShowModalRespond}
         onClose={() => setIsShowModalRespond(false)}
-        title={"Respond"}
-      >
+        title={'Respond'}>
         <div className="mt-[20px]">
           <div className="text-sm">Reported user</div>
           <div className="mt-[12px]">
             <AvatarWithName
-              image={userSelected?.reportedDetail.user.profilePictureURL ?? ""}
-              name={userSelected?.reportedDetail.user.name ?? ""}
-              desc={userSelected?.reportedDetail.user.username ?? ""}
+              image={userSelected?.reportedDetail.user.profilePictureURL ?? ''}
+              name={userSelected?.reportedDetail.user.name ?? ''}
+              desc={userSelected?.reportedDetail.user.username ?? ''}
             />
           </div>
         </div>
@@ -220,19 +201,14 @@ export default function PostResported() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="w-[120px] text-[14px] text-gray-500">
-                  Total reports
-                </div>
-                <div className="flex-1 text-[14px]">
-                  {userSelected?.totalReported} report
-                </div>
+                <div className="w-[120px] text-[14px] text-gray-500">Total reports</div>
+                <div className="flex-1 text-[14px]">{userSelected?.totalReported} report</div>
               </div>
             </div>
             <a
               href={`https://app.testnet.myriad.social/post/${userSelected?.referenceId}`}
               target="_blank"
-              rel="noreferrer"
-            >
+              rel="noreferrer">
               <button className="w-[20px]">
                 <Image src={IcOpenUrl} height={20} width={20} alt="" />
               </button>
@@ -246,11 +222,9 @@ export default function PostResported() {
           {isFetchingReporter && dataReporter ? (
             <CircularProgress />
           ) : (
-            dataReporter?.data?.map(
-              (item: DataResponseUserReportedInterface) => {
-                return <ListReporter data={item} key={item.id} />;
-              }
-            )
+            dataReporter?.data?.map((item: DataResponseUserReportedInterface) => {
+              return <ListReporter data={item} key={item.id} />;
+            })
           )}
         </div>
         <div className="flex mt-[28px]">

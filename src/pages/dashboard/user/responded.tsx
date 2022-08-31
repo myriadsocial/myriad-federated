@@ -1,35 +1,34 @@
-import { CircularProgress, Typography } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-import { ReactNode, useEffect, useState } from "react";
-import { IcOpenUrl } from "../../../../public/icons";
-import { deleteReports } from "../../../api/DELETE_Reports";
-import { getReports } from "../../../api/GET_Reports";
-import { getReportsDetail } from "../../../api/GET_ReportsDetail";
-import { AvatarWithName, DropdownFilter } from "../../../components/atoms";
-import Button from "../../../components/atoms/Button";
-import ListReporter from "../../../components/atoms/ListReporter";
-import Modal from "../../../components/molecules/Modal";
-import Table from "../../../components/organisms/Table";
-import { Arrays } from "../../../constans/array";
-import { DataResponseUserReportedInterface } from "../../../interface/UserInterface";
-import ContentLayout from "../../../layout/ContentLayout";
-import { dateFormatter } from "../../../utils/dateFormatter";
+import {CircularProgress, Typography} from '@mui/material';
+import {useMutation, useQuery} from '@tanstack/react-query';
+import {ColumnDef} from '@tanstack/react-table';
+import Image from 'next/image';
+import {ReactNode, useEffect, useState} from 'react';
+import {IcOpenUrl} from '../../../../public/icons';
+import {deleteReports} from '../../../api/DELETE_Reports';
+import {getReports} from '../../../api/GET_Reports';
+import {getReportsDetail} from '../../../api/GET_ReportsDetail';
+import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
+import Button from '../../../components/atoms/Button';
+import ListReporter from '../../../components/atoms/ListReporter';
+import Modal from '../../../components/molecules/Modal';
+import Table from '../../../components/organisms/Table';
+import {Arrays} from '../../../constans/array';
+import {DataResponseUserReportedInterface} from '../../../interface/UserInterface';
+import ContentLayout from '../../../layout/ContentLayout';
+import {dateFormatter} from '../../../utils/dateFormatter';
 
 export default function UserResponded() {
   const [isShowModalRespond, setIsShowModalRespond] = useState<boolean>(false);
-  const [userSelected, setUserSelected] =
-    useState<DataResponseUserReportedInterface>();
-  const [sortingDate, setSortingDate] = useState("ASC");
+  const [userSelected, setUserSelected] = useState<DataResponseUserReportedInterface>();
+  const [sortingDate, setSortingDate] = useState('ASC');
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [reportId, setReportId] = useState<string | undefined>(undefined);
 
   const columns: ColumnDef<DataResponseUserReportedInterface>[] = [
     {
-      accessorKey: "reportedDetail",
-      header: "Reported user",
-      cell: (value) => (
+      accessorKey: 'reportedDetail',
+      header: 'Reported user',
+      cell: value => (
         <AvatarWithName
           image={value.row.original.reportedDetail.user.profilePictureURL}
           name={value.row.original.reportedDetail.user.name}
@@ -38,39 +37,37 @@ export default function UserResponded() {
       ),
     },
     {
-      accessorKey: "createdAt",
-      header: "Report Date",
+      accessorKey: 'createdAt',
+      header: 'Report Date',
       size: 120,
-      cell: (value) => (
+      cell: value => (
         <div className="text-sm">
-          {dateFormatter(new Date(value.row.original.createdAt), "dd/MM/yy")}
+          {dateFormatter(new Date(value.row.original.createdAt), 'dd/MM/yy')}
         </div>
       ),
     },
     {
-      accessorKey: "updatedAt",
-      header: "Respond Date",
+      accessorKey: 'updatedAt',
+      header: 'Respond Date',
       size: 120,
-      cell: (value) => (
+      cell: value => (
         <div className="text-sm">
-          {dateFormatter(new Date(value.row.original.updatedAt), "dd/MM/yy")}
+          {dateFormatter(new Date(value.row.original.updatedAt), 'dd/MM/yy')}
         </div>
       ),
     },
     {
-      accessorKey: "status",
-      header: "Penalty Status",
+      accessorKey: 'status',
+      header: 'Penalty Status',
       size: 120,
-      cell: (value) => (
-        <div className="text-sm capitalize">{value.row.original.status}</div>
-      ),
+      cell: value => <div className="text-sm capitalize">{value.row.original.status}</div>,
     },
     {
-      accessorKey: "id",
-      header: "Action",
-      cell: (value) => (
+      accessorKey: 'id',
+      header: 'Action',
+      cell: value => (
         <Button
-          disable={value.row.original.status === "ignored"}
+          disable={value.row.original.status === 'ignored'}
           onClick={() => handleRespond(value.row.original)}
           label="Respond"
         />
@@ -85,7 +82,7 @@ export default function UserResponded() {
   };
 
   const filter = JSON.stringify({
-    where: { status: { inq: ["ignored", "removed"] }, referenceType: "user" },
+    where: {status: {inq: ['ignored', 'removed']}, referenceType: 'user'},
     order: [`createdAt ${sortingDate}`],
   });
 
@@ -93,17 +90,13 @@ export default function UserResponded() {
     refetch: refetchingGetAllUser,
     isFetching,
     data: dataUserResponded,
-  } = useQuery(
-    ["/getAllUserResponded"],
-    () => getReports({ pageNumber, filter }),
-    {
-      enabled: false,
-    }
-  );
+  } = useQuery(['/getAllUserResponded'], () => getReports({pageNumber, filter}), {
+    enabled: false,
+  });
 
   const handleRestore = async () => {
     const response = await mutateDeleteUser({
-      reportId: userSelected?.id ?? "",
+      reportId: userSelected?.id ?? '',
     });
     if (response) {
       setIsShowModalRespond(false);
@@ -114,7 +107,7 @@ export default function UserResponded() {
     }
   };
 
-  const { mutateAsync: mutateDeleteUser } = useMutation(deleteReports);
+  const {mutateAsync: mutateDeleteUser} = useMutation(deleteReports);
 
   useEffect(() => {
     refetchingGetAllUser();
@@ -124,7 +117,7 @@ export default function UserResponded() {
     refetch: refetchingAllReporter,
     isFetching: isFetchingReporter,
     data: dataReporter,
-  } = useQuery(["/getAllReporter"], () => getReportsDetail({ id: reportId }), {
+  } = useQuery(['/getAllReporter'], () => getReportsDetail({id: reportId}), {
     enabled: false,
   });
 
@@ -139,7 +132,7 @@ export default function UserResponded() {
         <div className="text-lg font-semibold">Responded report</div>
       </div>
       <div className="text-sm text-[#757575]">
-        {dataUserResponded?.meta.totalItemCount ?? "0"} Reports
+        {dataUserResponded?.meta.totalItemCount ?? '0'} Reports
       </div>
       <div className="my-6">
         <DropdownFilter
@@ -156,27 +149,20 @@ export default function UserResponded() {
           data={dataUserResponded?.data ?? []}
           columns={columns}
           meta={dataUserResponded?.meta ?? []}
-          onClickNext={() =>
-            setPageNumber(dataUserResponded?.meta.nextPage ?? 1)
-          }
-          onClickPrevios={() =>
-            setPageNumber((dataUserResponded?.meta.currentPage ?? 2) - 1)
-          }
+          onClickNext={() => setPageNumber(dataUserResponded?.meta.nextPage ?? 1)}
+          onClickPrevios={() => setPageNumber((dataUserResponded?.meta.currentPage ?? 2) - 1)}
           isFetching={isFetching}
         />
       </div>
       <Modal
         open={isShowModalRespond}
         onClose={() => setIsShowModalRespond(false)}
-        title={"Respond"}
-      >
+        title={'Respond'}>
         <div className="mt-[20px]">
           <Typography fontSize={14}>Reported user</Typography>
           <div className="mt-[12px]">
             <AvatarWithName
-              image={
-                userSelected?.reportedDetail.user.profilePictureURL as string
-              }
+              image={userSelected?.reportedDetail.user.profilePictureURL as string}
               name={userSelected?.reportedDetail.user.name as string}
               desc={userSelected?.reportedDetail.user.username as string}
             />
@@ -193,19 +179,14 @@ export default function UserResponded() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="w-[120px] text-[14px] text-gray-500">
-                  Total reports
-                </div>
-                <div className="flex-1 text-[14px]">
-                  {userSelected?.totalReported} report
-                </div>
+                <div className="w-[120px] text-[14px] text-gray-500">Total reports</div>
+                <div className="flex-1 text-[14px]">{userSelected?.totalReported} report</div>
               </div>
             </div>
             <a
               href={`https://app.testnet.myriad.social/profile/${userSelected?.referenceId}`}
               target="_blank"
-              rel="noreferrer"
-            >
+              rel="noreferrer">
               <button className="w-[20px]">
                 <Image src={IcOpenUrl} height={20} width={20} alt="" />
               </button>
@@ -219,28 +200,17 @@ export default function UserResponded() {
           {isFetchingReporter ? (
             <CircularProgress />
           ) : (
-            dataReporter?.data?.map(
-              (item: DataResponseUserReportedInterface) => {
-                return <ListReporter data={item} key={item.id} />;
-              }
-            )
+            dataReporter?.data?.map((item: DataResponseUserReportedInterface) => {
+              return <ListReporter data={item} key={item.id} />;
+            })
           )}
         </div>
         <div className="flex mt-[28px]">
           <div className="flex-1 mr-3">
-            <Button
-              isFullWidth
-              onClick={() => setIsShowModalRespond(false)}
-              label="Cancel"
-            />
+            <Button isFullWidth onClick={() => setIsShowModalRespond(false)} label="Cancel" />
           </div>
           <div className="flex-1">
-            <Button
-              isFullWidth
-              onClick={handleRestore}
-              primary
-              label="Restore"
-            />
+            <Button isFullWidth onClick={handleRestore} primary label="Restore" />
           </div>
         </div>
       </Modal>
