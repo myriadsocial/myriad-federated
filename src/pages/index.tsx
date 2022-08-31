@@ -1,7 +1,7 @@
-import Head from "next/head";
-import React from "react";
+import React from 'react';
+import Head from 'next/head';
 
-import { ServerListComponent } from "src/components/ServerList/ServerList";
+import {ServerListComponent} from 'src/components/ServerList/ServerList';
 
 const HomeApp: React.FC = () => {
   return (

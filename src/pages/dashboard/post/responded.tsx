@@ -1,45 +1,36 @@
-import { CircularProgress } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ColumnDef } from "@tanstack/react-table";
-import Image from "next/image";
-import { ReactNode, useEffect, useState } from "react";
-import { IcOpenUrl } from "../../../../public/icons";
-import { deleteReports } from "../../../api/DELETE_Reports";
-import { getReports } from "../../../api/GET_Reports";
-import { getReportsDetail } from "../../../api/GET_ReportsDetail";
-import { AvatarWithName, DropdownFilter } from "../../../components/atoms";
-import Button from "../../../components/atoms/Button";
-import ListReporter from "../../../components/atoms/ListReporter";
-import Modal from "../../../components/molecules/Modal";
-import Table from "../../../components/organisms/Table";
-import { Arrays } from "../../../constans/array";
-import {
-  DataResponseUserReportedInterface,
-  ReportType,
-  ReportTypeCategoryMapper,
-} from "../../../interface/UserInterface";
-import ContentLayout from "../../../layout/ContentLayout";
-import { dateFormatter } from "../../../utils/dateFormatter";
+import {CircularProgress} from '@mui/material';
+import {useMutation, useQuery} from '@tanstack/react-query';
+import {ColumnDef} from '@tanstack/react-table';
+import Image from 'next/image';
+import {ReactNode, useEffect, useState} from 'react';
+import {IcOpenUrl} from '../../../../public/icons';
+import {deleteReports} from '../../../api/DELETE_Reports';
+import {getReports} from '../../../api/GET_Reports';
+import {getReportsDetail} from '../../../api/GET_ReportsDetail';
+import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
+import Button from '../../../components/atoms/Button';
+import ListReporter from '../../../components/atoms/ListReporter';
+import Modal from '../../../components/molecules/Modal';
+import Table from '../../../components/organisms/Table';
+import {Arrays} from '../../../constans/array';
+import {DataResponseUserReportedInterface} from '../../../interface/UserInterface';
+import ContentLayout from '../../../layout/ContentLayout';
+import {dateFormatter} from '../../../utils/dateFormatter';
 
 export default function PostResponded() {
   const [isShowModalRespond, setIsShowModalRespond] = useState<boolean>(false);
-  const [userSelected, setUserSelected] =
-    useState<DataResponseUserReportedInterface>();
-  const [sortingDate, setSortingDate] = useState("DESC");
-  const [sortingPostStatus, setSortingPostStatus] = useState("all");
-  const [sortingPostType, setSortingPostType] = useState("all");
+  const [userSelected, setUserSelected] = useState<DataResponseUserReportedInterface>();
+  const [sortingDate, setSortingDate] = useState('DESC');
+  const [sortingPostStatus, setSortingPostStatus] = useState('all');
+  const [sortingPostType, setSortingPostType] = useState('all');
   const [pageNumber, setPageNumber] = useState(1);
   const [reportId, setReportId] = useState<string | undefined>(undefined);
 
-  const translationText = (reportType: ReportType) => {
-    return ReportTypeCategoryMapper[reportType];
-  };
-
   const columns: ColumnDef<DataResponseUserReportedInterface>[] = [
     {
-      accessorKey: "reportedDetail",
-      header: "Post owner",
-      cell: (value) => (
+      accessorKey: 'reportedDetail',
+      header: 'Post owner',
+      cell: value => (
         <AvatarWithName
           image={value.row.original.reportedDetail.user.profilePictureURL}
           name={value.row.original.reportedDetail.user.name}
@@ -48,49 +39,43 @@ export default function PostResponded() {
       ),
     },
     {
-      accessorKey: "createdAt",
-      header: "Report Date",
+      accessorKey: 'createdAt',
+      header: 'Report Date',
       size: 120,
-      cell: (value) => (
+      cell: value => (
         <div className="text-sm">
-          {dateFormatter(new Date(value.row.original.createdAt), "dd/MM/yy")}
+          {dateFormatter(new Date(value.row.original.createdAt), 'dd/MM/yy')}
         </div>
       ),
     },
 
     {
-      accessorKey: "updatedAt",
-      header: "Respond date",
+      accessorKey: 'updatedAt',
+      header: 'Respond date',
       size: 120,
-      cell: (value) => (
+      cell: value => (
         <div className="text-sm">
-          {dateFormatter(new Date(value.row.original.updatedAt), "dd/MM/yy")}
+          {dateFormatter(new Date(value.row.original.updatedAt), 'dd/MM/yy')}
         </div>
       ),
     },
     {
-      accessorKey: "type",
-      header: "Type",
+      accessorKey: 'type',
+      header: 'Type',
       size: 120,
-      cell: (value) => (
-        <div className="text-sm capitalize">
-          {value.row.original.referenceType}
-        </div>
-      ),
+      cell: value => <div className="text-sm capitalize">{value.row.original.referenceType}</div>,
     },
     {
-      accessorKey: "status",
-      header: "Post Status",
-      cell: (value) => (
-        <div className="text-sm capitalize">{value.row.original.status}</div>
-      ),
+      accessorKey: 'status',
+      header: 'Post Status',
+      cell: value => <div className="text-sm capitalize">{value.row.original.status}</div>,
     },
     {
-      accessorKey: "id",
-      header: "Action",
-      cell: (value) => (
+      accessorKey: 'id',
+      header: 'Action',
+      cell: value => (
         <Button
-          disable={value.row.original.status === "ignored"}
+          disable={value.row.original.status === 'ignored'}
           onClick={() => handleRespond(value.row.original)}
           label="Respond"
         />
@@ -107,33 +92,32 @@ export default function PostResponded() {
   const filter = JSON.stringify({
     where: {
       status:
-        sortingPostStatus === "all"
-          ? { inq: ["ignored", "removed"] }
-          : sortingPostStatus === "ignored"
-          ? "ignored"
-          : "removed",
+        sortingPostStatus === 'all'
+          ? {inq: ['ignored', 'removed']}
+          : sortingPostStatus === 'ignored'
+          ? 'ignored'
+          : 'removed',
       referenceType:
-        sortingPostType === "all"
-          ? { inq: ["post", "comment"] }
-          : sortingPostType === "comment"
-          ? "comment"
-          : "post",
+        sortingPostType === 'all'
+          ? {inq: ['post', 'comment']}
+          : sortingPostType === 'comment'
+          ? 'comment'
+          : 'post',
     },
     order: [`updatedAt ${sortingDate}`],
   });
 
-  const { refetch: refetchingGetAllResponded, data: dataPostResponded } =
-    useQuery(
-      ["/getAllPostResponded"],
-      () => getReports({ pageNumber, filter }),
-      {
-        enabled: false,
-      }
-    );
+  const {refetch: refetchingGetAllResponded, data: dataPostResponded} = useQuery(
+    ['/getAllPostResponded'],
+    () => getReports({pageNumber, filter}),
+    {
+      enabled: false,
+    },
+  );
 
   const handleRestore = async () => {
     const response = await mutateDeleteUser({
-      reportId: userSelected?.id ?? "",
+      reportId: userSelected?.id ?? '',
     });
     if (response) {
       setIsShowModalRespond(false);
@@ -144,23 +128,17 @@ export default function PostResponded() {
     }
   };
 
-  const { mutateAsync: mutateDeleteUser } = useMutation(deleteReports);
+  const {mutateAsync: mutateDeleteUser} = useMutation(deleteReports);
 
   useEffect(() => {
     refetchingGetAllResponded();
-  }, [
-    sortingDate,
-    sortingPostType,
-    sortingPostStatus,
-    pageNumber,
-    refetchingGetAllResponded,
-  ]);
+  }, [sortingDate, sortingPostType, sortingPostStatus, pageNumber, refetchingGetAllResponded]);
 
   const {
     refetch: refetchingAllReporter,
     isFetching: isFetchingReporter,
     data: dataReporter,
-  } = useQuery(["/getAllReporter"], () => getReportsDetail({ id: reportId }), {
+  } = useQuery(['/getAllReporter'], () => getReportsDetail({id: reportId}), {
     enabled: false,
   });
 
@@ -175,7 +153,7 @@ export default function PostResponded() {
         <div className="text-lg font-semibold">Responded Post</div>
       </div>
       <div className="text-sm text-[#757575]">
-        {dataPostResponded?.meta.totalItemCount ?? "0"} Reports
+        {dataPostResponded?.meta.totalItemCount ?? '0'} Reports
       </div>
       <div className="my-6 flex">
         <div className="pr-4">
@@ -212,26 +190,21 @@ export default function PostResponded() {
           data={dataPostResponded?.data ?? []}
           columns={columns}
           meta={dataPostResponded?.meta ?? []}
-          onClickNext={() =>
-            setPageNumber(dataPostResponded?.meta.nextPage ?? 1)
-          }
-          onClickPrevios={() =>
-            setPageNumber((dataPostResponded?.meta.currentPage ?? 2) - 1)
-          }
+          onClickNext={() => setPageNumber(dataPostResponded?.meta.nextPage ?? 1)}
+          onClickPrevios={() => setPageNumber((dataPostResponded?.meta.currentPage ?? 2) - 1)}
         />
       </div>
       <Modal
         open={isShowModalRespond}
         onClose={() => setIsShowModalRespond(false)}
-        title={"Respond"}
-      >
+        title={'Respond'}>
         <div className="mt-[20px]">
           <div className="text-sm">Reported user</div>
           <div className="mt-[12px]">
             <AvatarWithName
-              image={userSelected?.reportedDetail.user.profilePictureURL ?? ""}
-              name={userSelected?.reportedDetail.user.name ?? ""}
-              desc={userSelected?.reportedDetail.user.username ?? ""}
+              image={userSelected?.reportedDetail.user.profilePictureURL ?? ''}
+              name={userSelected?.reportedDetail.user.name ?? ''}
+              desc={userSelected?.reportedDetail.user.username ?? ''}
             />
           </div>
         </div>
@@ -246,19 +219,14 @@ export default function PostResponded() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="w-[120px] text-[14px] text-gray-500">
-                  Total reports
-                </div>
-                <div className="flex-1 text-[14px]">
-                  {userSelected?.totalReported} report
-                </div>
+                <div className="w-[120px] text-[14px] text-gray-500">Total reports</div>
+                <div className="flex-1 text-[14px]">{userSelected?.totalReported} report</div>
               </div>
             </div>
             <a
               href={`https://app.testnet.myriad.social/post/${userSelected?.referenceId}`}
               target="_blank"
-              rel="noreferrer"
-            >
+              rel="noreferrer">
               <button className="w-[20px]">
                 <Image src={IcOpenUrl} height={20} width={20} alt="" />
               </button>
@@ -272,28 +240,17 @@ export default function PostResponded() {
           {isFetchingReporter ? (
             <CircularProgress />
           ) : (
-            dataReporter?.data?.map(
-              (item: DataResponseUserReportedInterface) => {
-                return <ListReporter data={item} key={item.id} />;
-              }
-            )
+            dataReporter?.data?.map((item: DataResponseUserReportedInterface) => {
+              return <ListReporter data={item} key={item.id} />;
+            })
           )}
         </div>
         <div className="flex mt-[28px]">
           <div className="flex-1 mr-3">
-            <Button
-              isFullWidth
-              onClick={() => setIsShowModalRespond(false)}
-              label="Cancel"
-            />
+            <Button isFullWidth onClick={() => setIsShowModalRespond(false)} label="Cancel" />
           </div>
           <div className="flex-1">
-            <Button
-              isFullWidth
-              onClick={handleRestore}
-              primary
-              label="Restore"
-            />
+            <Button isFullWidth onClick={handleRestore} primary label="Restore" />
           </div>
         </div>
       </Modal>

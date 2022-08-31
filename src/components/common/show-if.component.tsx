@@ -2,7 +2,7 @@ import * as React from 'react';
 
 export interface Props {
   condition: boolean;
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**

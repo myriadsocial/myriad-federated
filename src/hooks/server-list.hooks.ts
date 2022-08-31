@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from 'react';
 
-import { getServerList, ServerListProps } from "src/lib/services/polkadot-js";
+import {getServerList, ServerListProps} from 'src/lib/services/polkadot-js';
 
 export const useGetList = () => {
   const [loading, setLoading] = useState(false);
@@ -22,16 +22,16 @@ export const useGetList = () => {
       const data = await getServerList();
 
       if (data) {
-        data.map((list) => {
+        data.map(list => {
           fetch(`${list.apiUrl}/server`)
-            .then((response) => response.json())
-            .then((jsondata) => {
+            .then(response => response.json())
+            .then(jsondata => {
               list.detail = jsondata;
               setTotalUsers(totalUsers + jsondata.metric.totalUsers);
               setTotalPosts(totalUsers + jsondata.metric.totalPosts);
             })
-            .catch((error) => {
-              console.error("There was an error!", error);
+            .catch(error => {
+              console.error('There was an error!', error);
             });
 
           return list;

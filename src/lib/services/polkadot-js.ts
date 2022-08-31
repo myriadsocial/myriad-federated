@@ -1,6 +1,6 @@
-import { ApiPromise, WsProvider } from "@polkadot/api";
-import getConfig from "next/config";
-const { publicRuntimeConfig } = getConfig();
+import {ApiPromise, WsProvider} from '@polkadot/api';
+import getConfig from 'next/config';
+const {publicRuntimeConfig} = getConfig();
 
 export interface ServerListProps {
   id: string;
@@ -31,7 +31,7 @@ interface ServerDetail {
 export const connectToBlockchain = async (): Promise<ApiPromise> => {
   const provider = new WsProvider(publicRuntimeConfig.myriadRPCURL);
 
-  const api: ApiPromise = await ApiPromise.create({ provider });
+  const api: ApiPromise = await ApiPromise.create({provider});
   await api.isReadyOrError;
   return api;
 };
@@ -46,13 +46,13 @@ export const getServerList = async (): Promise<ServerListProps[] | null> => {
       pageSize,
     });
 
-    const data = result.map((list) => {
+    const data = result.map(list => {
       return list[1].toHuman();
     });
 
     return data as unknown as ServerListProps[];
   } catch (error) {
-    console.log({ error });
+    console.log({error});
     return null;
   }
 };

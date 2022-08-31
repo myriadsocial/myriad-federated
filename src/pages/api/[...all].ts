@@ -1,7 +1,7 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-import httpProxyMiddleware from "next-http-proxy-middleware";
-import getConfig from "next/config";
-const { serverRuntimeConfig } = getConfig();
+import type {NextApiRequest, NextApiResponse} from 'next';
+import httpProxyMiddleware from 'next-http-proxy-middleware';
+import getConfig from 'next/config';
+const {serverRuntimeConfig} = getConfig();
 
 export const config = {
   api: {
@@ -9,13 +9,10 @@ export const config = {
     externalResolver: true,
   },
 };
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const headers =
-      req.method === "GET"
+      req.method === 'GET'
         ? undefined
         : {
             Authorization: `Bearer ${serverRuntimeConfig.myriadAPIKey}`,
@@ -25,8 +22,8 @@ export default async function handler(
       target: serverRuntimeConfig.myriadAPIURL,
       pathRewrite: [
         {
-          patternStr: "/api",
-          replaceStr: "",
+          patternStr: '/api',
+          replaceStr: '',
         },
       ],
       changeOrigin: true,
@@ -34,6 +31,6 @@ export default async function handler(
     });
   } catch (e) {
     console.log(e);
-    return res.status(500).send({ error: e });
+    return res.status(500).send({error: e});
   }
 }
