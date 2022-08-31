@@ -1,58 +1,101 @@
 import {ApiPromise, WsProvider} from '@polkadot/api';
 import getConfig from 'next/config';
+import {ServerListProps} from 'src/interface/ServerListInterface';
+
 const {publicRuntimeConfig} = getConfig();
 
-export interface ServerListProps {
-  id: string;
-  name: string;
-  owner: string;
-  apiUrl: string;
-  webUrl: string;
-  detail?: ServerDetail;
-}
+export class PolkadotJs implements IProvider {
+  private readonly _provider: ApiPromise;
 
-interface ServerDetail {
-  id: string;
-  description: string;
-  name: string;
-  categories: string[];
-  metric: {
-    totalExperiences: number;
-    totalPosts: number;
-    totalTransactions: number;
-    totalUsers: number;
-    totalVotes: number;
-  };
-  images: {
-    logo_banner: string;
-  };
-}
-
-export const connectToBlockchain = async (): Promise<ApiPromise> => {
-  const provider = new WsProvider(publicRuntimeConfig.myriadRPCURL);
-
-  const api: ApiPromise = await ApiPromise.create({provider});
-  await api.isReadyOrError;
-  return api;
-};
-
-export const getServerList = async (): Promise<ServerListProps[] | null> => {
-  try {
-    const api = await connectToBlockchain();
-    const pageSize = 10;
-    // const startKey = "myriad";
-    const result = await api.query.server.serverById.entriesPaged({
-      args: [],
-      pageSize,
-    });
-
-    const data = result.map(list => {
-      return list[1].toHuman();
-    });
-
-    return data as unknown as ServerListProps[];
-  } catch (error) {
-    console.log({error});
-    return null;
+  constructor(provider: ApiPromise) {
+    this._provider = provider;
   }
-};
+
+  get provider() {
+    return this._provider;
+  }
+
+  static async connect() {
+    try {
+      const provider = new WsProvider(publicRuntimeConfig.myriadRPCURL);
+      const api = new ApiPromise({provider});
+
+      await api.isReadyOrError;
+
+      return new PolkadotJs(api);
+    } catch {
+      return null;
+    }
+  }
+
+  async totalServer(): Promise<number> {
+    try {
+      const result = await this.provider.query.server.serverCount();
+
+      return result.toJSON() as number;
+    } catch {
+      return 0;
+    }
+  }
+
+  async serverList(startKey?: string, pageSize = 10): Promise<ServerListProps[]> {
+    try {
+      const result = await this.provider.query.server.serverById.entriesPaged({
+        args: [],
+        pageSize,
+        startKey,
+      });
+
+      const data = result.map(list => {
+        return list[1].toHuman();
+      });
+
+      return data as unknown as ServerListProps[];
+    } catch (error) {
+      console.log({error});
+      return [];
+    }
+  }
+
+  async serverListByOwner(
+    accountId: string,
+    startKey?: string,
+    pageSize = 10,
+  ): Promise<ServerListProps[]> {
+    try {
+      const result = await this.provider.query.server.serverByOwner.entriesPaged({
+        args: [accountId],
+        pageSize,
+        startKey,
+      });
+
+      const data = result.map(list => {
+        return list[1].toHuman();
+      });
+
+      return data as unknown as ServerListProps[];
+    } catch {
+      return [];
+    }
+  }
+
+  async disconnect(): Promise<void> {
+    await this.provider.disconnect();
+  }
+}
+
+interface IProvider {
+  provider: ApiPromise;
+
+  totalServer: () => Promise<number>;
+
+  serverList: (startKey?: string, pageSize?: number) => Promise<ServerListProps[]>;
+
+  serverListByOwner: (
+    accountId: string,
+    startKey?: string,
+    pageSize?: number,
+  ) => Promise<ServerListProps[]>;
+
+  disconnect: () => Promise<void>;
+}

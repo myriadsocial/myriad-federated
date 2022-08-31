@@ -45,6 +45,7 @@ const Button = ({
     return (
       <ButtonMui
         variant="contained"
+        onClick={onClick}
         style={{
           height: 36,
           background: 'white',

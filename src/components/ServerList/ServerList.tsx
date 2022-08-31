@@ -1,6 +1,6 @@
 import getConfig from 'next/config';
-import React, {useEffect, useState} from 'react';
-import {ServerListProps} from 'src/lib/services/polkadot-js';
+import React from 'react';
+('src/lib/services/polkadot-js');
 import Button from '../atoms/Button';
 import CardInstance from '../atoms/CardInstance';
 import EmptyState from '../atoms/EmptyState';
@@ -13,16 +13,14 @@ import {ServerIcon} from '@heroicons/react/outline';
 import dynamic from 'next/dynamic';
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
-import {useGetList} from 'src/hooks/server-list.hooks';
 import Image from 'next/image';
 import {Illustration, MyriadFullBlack} from 'public/icons';
 import {useRouter} from 'next/router';
 import {numberFormatter} from 'src/utils/numberFormatter';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
+import {setCookie} from 'nookies';
+import {ServerListProps} from 'src/interface/ServerListInterface';
 
-import localforage from 'localforage';
-
-const CURRENT_ADDRESS = 'currentAddress';
 const PolkadotAccountList = dynamic(
   () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
   {
@@ -30,35 +28,32 @@ const PolkadotAccountList = dynamic(
   },
 );
 
-export const ServerListComponent = () => {
+type ServerListComponentProps = {
+  servers: ServerListProps[];
+  metric: {
+    totalUsers: number;
+    totalPosts: number;
+    totalInstances: number;
+  };
+};
+
+export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers, metric}) => {
   const router = useRouter();
 
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
-  const {servers, totalInstances, totalUsers, totalPosts} = useGetList();
 
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
-  const [serverList, setServerList] = useState<ServerListProps[]>([]);
+  const [serverList, setServerList] = React.useState<ServerListProps[]>(servers);
 
-  useEffect(() => {
-    setServerList(servers);
-  }, [servers]);
+  const handleSearch = (query?: string) => {
+    if (!query) return setServerList(servers);
 
-  useEffect(() => {
-    localforage.getItem(CURRENT_ADDRESS, (err, value) => {
-      if (err || !value) return;
-      router.push('/instance');
-    });
-  }, []);
-
-  const handleSearch = (query: string) => {
     const regex = new RegExp(`^${query.toLowerCase()}`, 'i');
-
     const result = servers.filter(server => server.name.toLowerCase().match(regex));
 
-    if (!query) setServerList(servers);
-    else setServerList(result);
+    setServerList(result);
   };
 
   const handleVisitWeb = () => {
@@ -92,15 +87,15 @@ export const ServerListComponent = () => {
   const handleSelectedSubstrateAccount = (account: InjectedAccountWithMeta) => {
     closeAccountList();
 
-    localforage.setItem(CURRENT_ADDRESS, account.address, err => {
-      if (err) return;
-      router.push('/instance');
-    });
+    setCookie(null, 'currentAddress', account.address);
+    router.push('/instance');
   };
 
   const handleSignIn = () => {
     checkExtensionInstalled();
   };
+
+  const goToMyriadApp = (webUrl: string) => () => window.open(webUrl);
 
   return (
     <>
@@ -140,7 +135,7 @@ export const ServerListComponent = () => {
                   <div className="ml-4">
                     <div className="text-[16px] text-white">Total instances</div>
                     <div className="text-[28px] text-white font-semibold">
-                      {totalInstances.toLocaleString()}
+                      {metric.totalInstances.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -153,7 +148,7 @@ export const ServerListComponent = () => {
                   <div className="ml-4">
                     <div className="text-[16px] text-white">Total users</div>
                     <div className="text-[28px] text-white font-semibold">
-                      {totalUsers.toLocaleString()}
+                      {metric.totalUsers.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -166,7 +161,7 @@ export const ServerListComponent = () => {
                   <div className="ml-4">
                     <div className="text-[16px] text-white">Total posts</div>
                     <div className="text-[28px] text-white font-semibold">
-                      {totalPosts.toLocaleString()}
+                      {metric.totalPosts.toLocaleString()}
                     </div>
                   </div>
                 </div>
@@ -188,6 +183,7 @@ export const ServerListComponent = () => {
                   experiance={numberFormatter(server.detail?.metric?.totalExperiences ?? 0)}
                   post={numberFormatter(server.detail?.metric?.totalPosts ?? 0)}
                   users={numberFormatter(server.detail?.metric?.totalUsers ?? 0)}
+                  onClick={goToMyriadApp(server.webUrl)}
                 />
               ))}
               {!serverList.length && (

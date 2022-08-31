@@ -2,36 +2,33 @@ import {Container, Typography} from '@mui/material';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {IcOpenUrl, MyriadFullBlack} from 'public/icons';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Button from 'src/components/atoms/Button';
 import CardInstance from 'src/components/atoms/CardInstance';
 import EmptyState from 'src/components/atoms/EmptyState';
 import ModalComponent from 'src/components/molecules/Modal';
-import localforage from 'localforage';
 import dynamic from 'next/dynamic';
+import {GetServerSidePropsContext} from 'next';
+import nookies from 'nookies';
+import {PolkadotJs} from 'src/lib/services/polkadot-js';
+import {ServerListProps} from 'src/interface/ServerListInterface';
+import {destroyCookie} from 'nookies';
 
-const CURRENT_ADDRESS = 'currentAddress';
-const PolkadotIcon = dynamic(
-  () => import('@polkadot/react-identicon'),
-  {
-    ssr: false,
-  },
-);
+const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
+  ssr: false,
+});
 
-export default function Instance() {
+type InstanceProps = {
+  accountId: string;
+  servers: ServerListProps[];
+};
+
+export const Instance: React.FC<InstanceProps> = ({accountId}) => {
   const router = useRouter();
 
-  const [account, setAccount] = useState<string | null>(null);
   const [isShowModalCreateInstance, setIsShowModalCreateInstance] = useState<boolean>(false);
   const [isStepOne, setIsStepOne] = useState<boolean>(true);
   const [isEmptyInstance, setIsEmptyInstance] = useState<boolean>(true);
-
-  useEffect(() => {
-    localforage.getItem(CURRENT_ADDRESS, (err, value) => {
-      if (err || !value) return router.push('/');
-      setAccount(value as string);
-    });
-  }, []);
 
   const handleClick = () => {
     if (isStepOne) {
@@ -43,10 +40,15 @@ export default function Instance() {
     }
   };
 
+  // TODO: Handle logout
+  const handleLogout = () => {
+    destroyCookie(null, 'currentAddress');
+    router.push('/');
+  };
+
   const formatAddress = () => {
-    if (!account) return;
-    if (account.length <= 14) return account;
-    return account.substring(0, 5) + '...' + account.substring(account.length - 5);
+    if (accountId.length <= 14) return accountId;
+    return accountId.substring(0, 5) + '...' + accountId.substring(accountId.length - 5);
   };
 
   return (
@@ -55,9 +57,14 @@ export default function Instance() {
         <div className="flex justify-between">
           <Image src={MyriadFullBlack} objectFit="contain" alt="" />
           <div className="w-[144px]">
-            <Button onClick={undefined} type="withChild">
+            <Button onClick={handleLogout} type="withChild">
               <div className="flex items-center">
-                <PolkadotIcon value={account} size={24} theme="polkadot" style={{marginRight: 5}} />
+                <PolkadotIcon
+                  value={accountId}
+                  size={24}
+                  theme="polkadot"
+                  style={{marginRight: 5}}
+                />
                 <Typography color={'black'} fontSize={14}>
                   {formatAddress()}
                 </Typography>
@@ -149,4 +156,39 @@ export default function Instance() {
       </Container>
     </div>
   );
-}
+};
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+
+  if (!cookies?.currentAddress) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  let servers: ServerListProps[] = [];
+
+  try {
+    const accountId = cookies.currentAddress;
+    const polkadot = await PolkadotJs.connect();
+    const result = await polkadot?.serverListByOwner(accountId);
+
+    if (polkadot) await polkadot.disconnect();
+    if (result) servers = result;
+  } catch {
+    // ignore
+  }
+
+  return {
+    props: {
+      accountId: cookies.currentAddress,
+      servers,
+    },
+  };
+};
+
+export default Instance;
