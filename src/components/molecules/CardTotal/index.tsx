@@ -1,5 +1,5 @@
-import Image from "next/image";
-import React from "react";
+import Image from 'next/image';
+import React from 'react';
 
 interface CardTotalInterface {
   image: string;
@@ -7,7 +7,7 @@ interface CardTotalInterface {
   label: string;
 }
 export default function CardTotal(props: CardTotalInterface) {
-  const { image, count, label } = props;
+  const {image, count, label} = props;
   return (
     <div className="p-5 bg-white shadow-lg rounded-2xl flex">
       <Image src={image} alt="total user" />

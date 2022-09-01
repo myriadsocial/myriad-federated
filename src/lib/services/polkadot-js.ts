@@ -1,6 +1,7 @@
 import {ApiPromise, WsProvider} from '@polkadot/api';
 import getConfig from 'next/config';
 import {ServerListProps} from 'src/interface/ServerListInterface';
+import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -25,6 +26,96 @@ export class PolkadotJs implements IProvider {
       return new PolkadotJs(api);
     } catch {
       return null;
+    }
+  }
+
+  async signer(accountId: string): Promise<InjectedAccountWithMeta> {
+    const {enableExtension} = await import('src/helpers/extension');
+    const allAccounts = await enableExtension();
+
+    if (!allAccounts || allAccounts.length === 0) {
+      throw new Error('Please import your account first!');
+    }
+
+    const currentAccount = allAccounts.find(account => {
+      // address from session must match address on polkadot extension
+      return account.address === accountId;
+    });
+
+    if (!currentAccount) {
+      throw new Error('Account not registered on Polkadot.js extension');
+    }
+
+    return currentAccount;
+  }
+
+  async createServer(
+    name: string,
+    owner: string,
+    apiURL: string,
+    webURL: string,
+    callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
+  ): Promise<string | null> {
+    try {
+      const {web3FromSource} = await import('@polkadot/extension-dapp');
+
+      const signer = await this.signer(owner);
+      const injector = await web3FromSource(signer.meta.source);
+
+      callback && callback(undefined, true);
+
+      const extrinsic = this.provider.tx.server.register(name, apiURL, webURL);
+      const txInfo = await extrinsic.signAsync(signer.address, {
+        signer: injector.signer,
+        nonce: -1,
+      });
+
+      let server;
+
+      const txHash: string = await new Promise((resolve, reject) => {
+        txInfo
+          .send(({status, isError, dispatchError, events}) => {
+            events.forEach(record => {
+              const {event} = record;
+
+              if (event.method === 'Registered') server = event.data[0].toHuman();
+            });
+
+            if (status.isInBlock) {
+              console.log(`\tBlock hash    : ${status.asInBlock.toHex()}`);
+            } else if (status.isFinalized) {
+              console.log(`\tFinalized     : ${status.asFinalized.toHex()}`);
+              resolve(status.asFinalized.toHex());
+            } else if (isError) {
+              console.log(`\tFinalized     : null`);
+              reject('FailedToSendTip');
+            }
+
+            if (dispatchError) {
+              if (dispatchError.isModule) {
+                const {name} = this.provider.registry.findMetaError(dispatchError.asModule);
+
+                reject(new Error(name));
+              } else {
+                const dispatchErrorType = dispatchError.toString();
+                const parseDispatch = JSON.parse(dispatchErrorType);
+
+                const values: string[] = Object.values(parseDispatch);
+
+                reject(new Error(values[0] ?? 'ExtrinsicFailed'));
+              }
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+
+      callback && callback(server);
+
+      return txHash;
+    } catch (err) {
+      throw err;
     }
   }
 
@@ -86,6 +177,16 @@ export class PolkadotJs implements IProvider {
 
 interface IProvider {
   provider: ApiPromise;
+
+  signer: (accountId: string) => Promise<InjectedAccountWithMeta>;
+
+  createServer: (
+    name: string,
+    owner: string,
+    apiURL: string,
+    webURL: string,
+    callback?: () => void,
+  ) => Promise<string | null>;
 
   totalServer: () => Promise<number>;
 

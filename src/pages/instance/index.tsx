@@ -12,6 +12,7 @@ import {GetServerSidePropsContext} from 'next';
 import {PolkadotJs} from 'src/lib/services/polkadot-js';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import nookies, {destroyCookie} from 'nookies';
+import ShowIf from 'src/components/common/show-if.component';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
@@ -22,20 +23,47 @@ type InstanceProps = {
   servers: ServerListProps[];
 };
 
-export const Instance: React.FC<InstanceProps> = ({accountId}) => {
+export const Instance: React.FC<InstanceProps> = ({accountId, servers}) => {
   const router = useRouter();
 
   const [isShowModalCreateInstance, setIsShowModalCreateInstance] = useState<boolean>(false);
   const [isStepOne, setIsStepOne] = useState<boolean>(true);
-  const [isEmptyInstance, setIsEmptyInstance] = useState<boolean>(true);
+  const [serverList] = useState<ServerListProps[]>(servers);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (isStepOne) {
       setIsStepOne(false);
     } else {
       setIsStepOne(true);
       setIsShowModalCreateInstance(false);
-      setIsEmptyInstance(false);
+
+      // TODO: Handle create instance
+      //   const polkadot = await PolkadotJs.connect();
+
+      //   try {
+      //     const txHash = await polkadot?.createServer(
+      //       'myriad',
+      //       accountId,
+      //       'https://api.testnet.myriad.social',
+      //       'https://app.testnet.myriad.social',
+      //       async server => {
+      //         if (server) {
+      //           fetch(`${server.apiUrl}/server`)
+      //             .then(res => res.json())
+      //             .then(data => {
+      //               server.detail = data;
+      //             })
+      //             .catch(console.log)
+      //             .finally(() => setServerList([...serverList, server]));
+      //         }
+      //       },
+      //     );
+      //     console.log(txHash);
+      //   } catch (err) {
+      //     console.log(err);
+      //   } finally {
+      //     await polkadot?.disconnect();
+      //   }
     }
   };
 
@@ -83,27 +111,30 @@ export const Instance: React.FC<InstanceProps> = ({accountId}) => {
             />
           </div>
         </div>
-        {isEmptyInstance ? (
+        <ShowIf condition={serverList.length === 0}>
           <div className="w-full h-[400px] mt-6">
             <EmptyState
               title={'You don’t have an instance'}
               desc={'Create your own instance and enjoy the decentralized Web 3 social network.'}
             />
           </div>
-        ) : (
+        </ShowIf>
+        <ShowIf condition={serverList.length > 0}>
           <div className="mt-2">
-            <CardInstance
-              onClick={() => router.push('/dashboard')}
-              serverName={'Metaverse Hunter'}
-              serverDetail={'by 0x1234...abcd'}
-              serverDescription={
-                'Metaverse hunter for all. Join us to get more metaverse knowledge and updates!'
-              }
-              image={'https://i.pravatar.cc/300'}
-            />
+            {serverList.map(server => {
+              return (
+                <CardInstance
+                  key={server.id}
+                  onClick={() => router.push('/dashboard')}
+                  serverName={server.name}
+                  serverDetail={`by ${accountId}`}
+                  serverDescription={server?.detail?.description ?? 'Welcome to myriad social!'}
+                  image={server.detail?.images?.logo_banner ?? ''}
+                />
+              );
+            })}
           </div>
-        )}
-
+        </ShowIf>
         <ModalComponent
           type="small"
           open={isShowModalCreateInstance}
@@ -173,12 +204,29 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
   let servers: ServerListProps[] = [];
 
   try {
-    const accountId = cookies.currentAddress;
     const polkadot = await PolkadotJs.connect();
-    const result = await polkadot?.serverListByOwner(accountId);
+    const result = await polkadot?.serverListByOwner(cookies.currentAddress);
 
     if (polkadot) await polkadot.disconnect();
-    if (result) servers = result;
+    if (result) {
+      servers = await Promise.all(
+        result.map(async e => {
+          let data = null;
+
+          try {
+            const response = await fetch(`${e.apiUrl}/server`);
+            data = await response.json();
+          } catch {
+            // ignore
+          }
+
+          return {
+            ...e,
+            detail: data,
+          };
+        }),
+      );
+    }
   } catch {
     // ignore
   }
