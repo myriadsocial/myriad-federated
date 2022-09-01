@@ -34,7 +34,7 @@ const Siderbar = () => {
   }, [router.pathname, getMainMenu]);
 
   return (
-    <>
+    <div className="min-h-screen">
       <div className="p-6 text-center pb-[48px]">
         <Image src={Logo} height={32} width={141} alt="logo" />
       </div>
@@ -73,7 +73,7 @@ const Siderbar = () => {
           );
         })}
       </List>
-    </>
+    </div>
   );
 };
 

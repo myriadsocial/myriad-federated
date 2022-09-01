@@ -17,8 +17,8 @@ export default function ContentLayout({
         <meta name="description" content="Myriad Dashboard" />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <div className="flex w-full h-screen min-h-[600px] bg-background-content">
-        <div className="w-[248px] h-full bg-white">
+      <div className="flex w-full h-min-screen bg-background-content">
+        <div className="w-[248px] h-auto bg-white">
           <Siderbar />
         </div>
         <div className="flex-1 h-full">

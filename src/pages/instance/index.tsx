@@ -9,10 +9,9 @@ import EmptyState from 'src/components/atoms/EmptyState';
 import ModalComponent from 'src/components/molecules/Modal';
 import dynamic from 'next/dynamic';
 import {GetServerSidePropsContext} from 'next';
-import nookies from 'nookies';
 import {PolkadotJs} from 'src/lib/services/polkadot-js';
 import {ServerListProps} from 'src/interface/ServerListInterface';
-import {destroyCookie} from 'nookies';
+import nookies, {destroyCookie} from 'nookies';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
@@ -56,6 +55,7 @@ export const Instance: React.FC<InstanceProps> = ({accountId}) => {
       <Container>
         <div className="flex justify-between">
           <Image src={MyriadFullBlack} objectFit="contain" alt="" />
+
           <div className="w-[144px]">
             <Button onClick={handleLogout} type="withChild">
               <div className="flex items-center">
@@ -74,7 +74,7 @@ export const Instance: React.FC<InstanceProps> = ({accountId}) => {
         </div>
         <div className="flex justify-between mt-[50px]">
           <div className="text-[28px]">My instance</div>
-          <div className="w-[144px]">
+          <div className="w-[154px]">
             <Button
               isFullWidth
               label="Create Instance"
