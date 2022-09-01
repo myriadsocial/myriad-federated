@@ -22,8 +22,26 @@ import IcCopy from './IcCopy.svg';
 import Magnifier from './magnifierIcon.svg';
 import MyriadFullBlack from './myriad-full-black.svg';
 import Illustration from './Illustration.svg';
+import IcCountExperiance from './CountExperiences.svg';
+import IcCountPost from './CountPost.svg';
+import IcCountTip from './CountTip.svg';
+import IcCountUser from './CountUser.svg';
+import IcDebio from './Debio.svg';
+import IcKusama from './Kusama.svg';
+import IcMyriad from './Myriad.svg';
+import IcNear from './Near.svg';
+import IcPolkadot from './Polkadot.svg';
 
 export {
+  IcDebio,
+  IcKusama,
+  IcMyriad,
+  IcNear,
+  IcPolkadot,
+  IcCountExperiance,
+  IcCountPost,
+  IcCountTip,
+  IcCountUser,
   Magnifier,
   MyriadFullBlack,
   Illustration,
