@@ -1,16 +1,15 @@
 export interface ServerListProps {
   id: string;
-  name: string;
   owner: string;
   apiUrl: string;
-  webUrl: string;
   detail?: ServerDetail;
 }
 
 export interface ServerDetail {
   id: string;
-  description: string;
   name: string;
+  serverImageURL: string;
+  description: string;
   categories: string[];
   metric: {
     totalExperiences: number;
