@@ -1,19 +1,19 @@
-import getConfig from 'next/config';
 import React from 'react';
-('src/lib/services/polkadot-js');
+
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
+import getConfig from 'next/config';
+
+import {Container, SvgIcon} from '@material-ui/core';
+import {ServerIcon} from '@heroicons/react/outline';
+import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
+
 import Button from '../atoms/Button';
 import CardInstance from '../atoms/CardInstance';
 import EmptyState from '../atoms/EmptyState';
-const {publicRuntimeConfig} = getConfig();
+import ShowIf from '../common/show-if.component';
 
-import {Container, SvgIcon} from '@material-ui/core';
-
-import {ServerIcon} from '@heroicons/react/outline';
-
-import dynamic from 'next/dynamic';
-import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
-import Image from 'next/image';
 import {Illustration, MyriadFullBlack} from 'public/icons';
 import {useRouter} from 'next/router';
 import {numberFormatter} from 'src/utils/numberFormatter';
@@ -27,6 +27,8 @@ const PolkadotAccountList = dynamic(
     ssr: false,
   },
 );
+
+const {publicRuntimeConfig} = getConfig();
 
 type ServerListComponentProps = {
   servers: ServerListProps[];
@@ -51,7 +53,10 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers
     if (!query) return setServerList(servers);
 
     const regex = new RegExp(`^${query.toLowerCase()}`, 'i');
-    const result = servers.filter(server => server.name.toLowerCase().match(regex));
+    const result = servers.filter(server => {
+      if (!server?.detail) return false;
+      return server.detail.name.toLowerCase().match(regex);
+    });
 
     setServerList(result);
   };
@@ -172,25 +177,30 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers
               <SearchBoxContainer onSubmitSearch={handleSearch} hidden={true} />
             </div>
             <div className="flex flex-col gap-2">
-              {serverList.map((server, i) => (
-                <CardInstance
-                  key={i}
-                  serverName={server.name}
-                  serverDetail={server.detail && server.detail.categories.join(' ')}
-                  serverDescription={server.detail && server.detail.description}
-                  image={server.detail?.images?.logo_banner ?? ''}
-                  type="landingPage"
-                  experiance={numberFormatter(server.detail?.metric?.totalExperiences ?? 0)}
-                  post={numberFormatter(server.detail?.metric?.totalPosts ?? 0)}
-                  users={numberFormatter(server.detail?.metric?.totalUsers ?? 0)}
-                  onClick={goToMyriadApp(server.webUrl)}
-                />
-              ))}
-              {!serverList.length && (
+              <ShowIf condition={serverList.length === 0}>
                 <div className="h-[235px] w-full">
                   <EmptyState title={'No results'} desc={'Please make sure your keywords match.'} />
                 </div>
-              )}
+              </ShowIf>
+              <ShowIf condition={serverList.length > 0}>
+                {serverList.map(server => {
+                  if (!server?.detail) return <React.Fragment key={server.id} />;
+                  return (
+                    <CardInstance
+                      key={server.id}
+                      serverName={server.detail.name}
+                      serverDetail={server.detail.categories.join(' ')}
+                      serverDescription={server.detail.description}
+                      image={server.detail.serverImageURL}
+                      type="landingPage"
+                      experiance={numberFormatter(server.detail.metric.totalExperiences)}
+                      post={numberFormatter(server.detail.metric.totalPosts)}
+                      users={numberFormatter(server.detail.metric.totalUsers)}
+                      onClick={goToMyriadApp('https://app.testnet.myriad.social')} // TODO: change to dynamic url
+                    />
+                  );
+                })}
+              </ShowIf>
             </div>
           </div>
         </Container>

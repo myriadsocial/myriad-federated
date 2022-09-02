@@ -50,10 +50,8 @@ export class PolkadotJs implements IProvider {
   }
 
   async createServer(
-    name: string,
     owner: string,
     apiURL: string,
-    webURL: string,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ): Promise<string | null> {
     try {
@@ -64,7 +62,7 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(undefined, true);
 
-      const extrinsic = this.provider.tx.server.register(name, apiURL, webURL);
+      const extrinsic = this.provider.tx.server.register(apiURL);
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -180,13 +178,7 @@ interface IProvider {
 
   signer: (accountId: string) => Promise<InjectedAccountWithMeta>;
 
-  createServer: (
-    name: string,
-    owner: string,
-    apiURL: string,
-    webURL: string,
-    callback?: () => void,
-  ) => Promise<string | null>;
+  createServer: (owner: string, apiURL: string, callback?: () => void) => Promise<string | null>;
 
   totalServer: () => Promise<number>;
 
