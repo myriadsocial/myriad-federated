@@ -17,7 +17,7 @@ export default function Instance() {
   const columns: ColumnDef<DataArtSpaceInterface>[] = [
     {
       accessorKey: 'displayName',
-      header: 'Reported user',
+      header: 'Display Name',
       size: 268,
     },
     {
