@@ -173,12 +173,16 @@ export class PolkadotJs implements IProvider {
   }
 }
 
-interface IProvider {
+export interface IProvider {
   provider: ApiPromise;
 
   signer: (accountId: string) => Promise<InjectedAccountWithMeta>;
 
-  createServer: (owner: string, apiURL: string, callback?: () => void) => Promise<string | null>;
+  createServer: (
+    owner: string,
+    apiURL: string,
+    callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
+  ) => Promise<string | null>;
 
   totalServer: () => Promise<number>;
 
