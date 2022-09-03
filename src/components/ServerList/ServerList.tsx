@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 
+import CountUp from 'react-countup';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import getConfig from 'next/config';
@@ -7,6 +8,7 @@ import getConfig from 'next/config';
 import {Container, SvgIcon} from '@material-ui/core';
 import {ServerIcon} from '@heroicons/react/outline';
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
+import {useRouter} from 'next/router';
 
 import Button from '../atoms/Button';
 import CardInstance from '../atoms/CardInstance';
@@ -15,11 +17,12 @@ import ShowIf from '../common/show-if.component';
 
 import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
 import {Illustration, MyriadFullBlack} from 'public/icons';
-import {useRouter} from 'next/router';
 import {numberFormatter} from 'src/utils/numberFormatter';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
+import {useAllInstances} from 'src/hooks/use-all-instances.hooks';
 import {setCookie} from 'nookies';
 import {ServerListProps} from 'src/interface/ServerListInterface';
+import {ShimerComponent} from './Shimer';
 
 const PolkadotAccountList = dynamic(
   () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
@@ -30,35 +33,33 @@ const PolkadotAccountList = dynamic(
 
 const {publicRuntimeConfig} = getConfig();
 
-type ServerListComponentProps = {
-  servers: ServerListProps[];
-  metric: {
-    totalUsers: number;
-    totalPosts: number;
-    totalInstances: number;
-  };
-};
-
-export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers, metric}) => {
+export const ServerListComponent: React.FC = () => {
   const router = useRouter();
 
+  const {servers, metric, loading} = useAllInstances();
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
-  const [serverList, setServerList] = React.useState<ServerListProps[]>(servers);
+  const [query, setQuery] = React.useState<string | null>(null);
 
-  const handleSearch = (query?: string) => {
-    if (!query) return setServerList(servers);
-
+  const search = (query: string | null) => {
+    if (!query) return servers;
     const regex = new RegExp(`^${query.toLowerCase()}`, 'i');
-    const result = servers.filter(server => {
+
+    return servers.filter(server => {
       if (!server?.detail) return false;
       return server.detail.name.toLowerCase().match(regex);
     });
+  };
 
-    setServerList(result);
+  const serverList: ServerListProps[] = useMemo(() => search(query), [query, loading]);
+
+  // TODO: handle search
+  const handleSearch = (q?: string) => {
+    if (!q) setQuery(null);
+    else setQuery(q);
   };
 
   const handleVisitWeb = () => {
@@ -140,7 +141,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers
                   <div className="ml-4">
                     <div className="text-[16px] text-white">Total instances</div>
                     <div className="text-[28px] text-white font-semibold">
-                      {metric.totalInstances.toLocaleString()}
+                      <CountUp start={0} end={metric.totalInstances} separator="," />
                     </div>
                   </div>
                 </div>
@@ -153,7 +154,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers
                   <div className="ml-4">
                     <div className="text-[16px] text-white">Total users</div>
                     <div className="text-[28px] text-white font-semibold">
-                      {metric.totalUsers.toLocaleString()}
+                      <CountUp start={0} end={metric.totalUsers} separator="," />
                     </div>
                   </div>
                 </div>
@@ -166,7 +167,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers
                   <div className="ml-4">
                     <div className="text-[16px] text-white">Total posts</div>
                     <div className="text-[28px] text-white font-semibold">
-                      {metric.totalPosts.toLocaleString()}
+                      <CountUp start={0} end={metric.totalPosts} separator="," />
                     </div>
                   </div>
                 </div>
@@ -177,29 +178,37 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({servers
               <SearchBoxContainer onSubmitSearch={handleSearch} hidden={true} />
             </div>
             <div className="flex flex-col gap-2">
-              <ShowIf condition={serverList.length === 0}>
-                <div className="h-[235px] w-full">
-                  <EmptyState title={'No results'} desc={'Please make sure your keywords match.'} />
-                </div>
+              <ShowIf condition={loading}>
+                <ShimerComponent />
               </ShowIf>
-              <ShowIf condition={serverList.length > 0}>
-                {serverList.map(server => {
-                  if (!server?.detail) return <React.Fragment key={server.id} />;
-                  return (
-                    <CardInstance
-                      key={server.id}
-                      serverName={server.detail.name}
-                      serverDetail={server.detail.categories.join(' ')}
-                      serverDescription={server.detail.description}
-                      image={server.detail.serverImageURL}
-                      type="landingPage"
-                      experiance={numberFormatter(server.detail.metric.totalExperiences)}
-                      post={numberFormatter(server.detail.metric.totalPosts)}
-                      users={numberFormatter(server.detail.metric.totalUsers)}
-                      onClick={goToMyriadApp('https://app.testnet.myriad.social')} // TODO: change to dynamic url
+              <ShowIf condition={!loading}>
+                <ShowIf condition={serverList.length === 0}>
+                  <div className="h-[235px] w-full">
+                    <EmptyState
+                      title={'No results'}
+                      desc={'Please make sure your keywords match.'}
                     />
-                  );
-                })}
+                  </div>
+                </ShowIf>
+                <ShowIf condition={serverList.length > 0}>
+                  {serverList.map(server => {
+                    if (!server?.detail) return <React.Fragment key={server.id} />;
+                    return (
+                      <CardInstance
+                        key={server.id}
+                        serverName={server.detail.name}
+                        serverDetail={server.detail.categories.join(', ')}
+                        serverDescription={server.detail.description}
+                        image={server.detail.serverImageURL}
+                        type="landingPage"
+                        experiance={numberFormatter(server.detail.metric.totalExperiences)}
+                        post={numberFormatter(server.detail.metric.totalPosts)}
+                        users={numberFormatter(server.detail.metric.totalUsers)}
+                        onClick={goToMyriadApp('https://app.testnet.myriad.social')} // TODO: change to dynamic url
+                      />
+                    );
+                  })}
+                </ShowIf>
               </ShowIf>
             </div>
           </div>

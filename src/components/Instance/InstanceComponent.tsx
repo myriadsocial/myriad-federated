@@ -9,8 +9,7 @@ import {Backdrop, CircularProgress} from '@material-ui/core';
 import {InstanceList} from './InstanceList';
 import {useStyles} from './Instance.styles';
 import {InstanceHeader} from './InstanceHeader';
-import {PolkadotJs} from 'src/lib/services/polkadot-js';
-import {ServerListProps} from 'src/interface/ServerListInterface';
+import {useOwnerInstances} from 'src/hooks/use-owner-instances.hooks';
 
 const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
   ssr: false,
@@ -18,46 +17,15 @@ const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
 
 type InstanceComponentProps = {
   accountId: string;
-  servers: ServerListProps[];
 };
 
-export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId, servers}) => {
+export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId}) => {
   const router = useRouter();
   const style = useStyles();
 
-  const [open, setOpen] = useState<boolean>(false);
-  const [serverList, setServerList] = useState<ServerListProps[]>(servers);
-  const [loading, setLoading] = useState<boolean>(false);
+  const {createInstance, servers, loading} = useOwnerInstances(accountId);
 
-  const handleCreateInstance = async (apiURL: string, callback?: () => void) => {
-    // TODO: Handle create instance
-    const polkadot = await PolkadotJs.connect();
-    try {
-      const txHash = await polkadot?.createServer(
-        accountId,
-        apiURL,
-        async (server, signerOpened) => {
-          if (signerOpened) setLoading(true);
-          if (server) {
-            fetch(`${server.apiUrl}/server`)
-              .then(res => res.json())
-              .then(data => {
-                server.detail = data;
-              })
-              .catch(console.log)
-              .finally(() => setServerList([...serverList, server]));
-          }
-        },
-      );
-      console.log(txHash);
-    } catch (err) {
-      console.log(err);
-    } finally {
-      await polkadot?.disconnect();
-      callback && callback();
-      setLoading(false);
-    }
-  };
+  const [open, setOpen] = useState<boolean>(false);
 
   // TODO: Handle logout
   const handleLogout = () => {
@@ -72,12 +40,8 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId, 
   return (
     <React.Fragment>
       <InstanceHeader accountId={accountId} onLogout={handleLogout} onOpenStepper={toogleOpen} />
-      <InstanceList servers={serverList} accountId={accountId} />
-      <InstanceStepperModal
-        onCreateInstance={handleCreateInstance}
-        open={open}
-        onClose={toogleOpen}
-      />
+      <InstanceList servers={servers} accountId={accountId} />
+      <InstanceStepperModal onCreateInstance={createInstance} open={open} onClose={toogleOpen} />
       <Backdrop className={style.backdrop} open={loading}>
         <CircularProgress />
       </Backdrop>
