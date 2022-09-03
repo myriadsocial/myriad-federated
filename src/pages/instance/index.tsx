@@ -6,15 +6,12 @@ import {GetServerSidePropsContext} from 'next';
 import {Container} from '@mui/material';
 
 import {InstanceComponent} from 'src/components/Instance/InstanceComponent';
-import {PolkadotJs} from 'src/lib/services/polkadot-js';
-import {ServerListProps} from 'src/interface/ServerListInterface';
 
 type InstanceProps = {
   accountId: string;
-  servers: ServerListProps[];
 };
 
-export const Instance: React.FC<InstanceProps> = ({accountId, servers}) => {
+export const Instance: React.FC<InstanceProps> = ({accountId}) => {
   return (
     <React.Fragment>
       <Head>
@@ -23,7 +20,7 @@ export const Instance: React.FC<InstanceProps> = ({accountId, servers}) => {
       </Head>
       <div className="bg-background-content min-h-screen p-5">
         <Container>
-          <InstanceComponent accountId={accountId} servers={servers} />
+          <InstanceComponent accountId={accountId} />
         </Container>
       </div>
     </React.Fragment>
@@ -32,8 +29,9 @@ export const Instance: React.FC<InstanceProps> = ({accountId, servers}) => {
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const cookies = nookies.get(context);
+  const accountId = cookies?.currentAddress;
 
-  if (!cookies?.currentAddress) {
+  if (!accountId) {
     return {
       redirect: {
         destination: '/',
@@ -42,41 +40,8 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     };
   }
 
-  let servers: ServerListProps[] = [];
-
-  try {
-    const polkadot = await PolkadotJs.connect();
-    const result = await polkadot?.serverListByOwner(cookies.currentAddress);
-
-    if (polkadot) await polkadot.disconnect();
-    if (result) {
-      servers = await Promise.all(
-        result.map(async e => {
-          let data = null;
-
-          try {
-            const response = await fetch(`${e.apiUrl}/server`);
-            data = await response.json();
-          } catch {
-            // ignore
-          }
-
-          return {
-            ...e,
-            detail: data,
-          };
-        }),
-      );
-    }
-  } catch {
-    // ignore
-  }
-
   return {
-    props: {
-      accountId: cookies.currentAddress,
-      servers,
-    },
+    props: {accountId},
   };
 };
 
