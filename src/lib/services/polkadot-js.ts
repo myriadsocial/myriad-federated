@@ -117,6 +117,72 @@ export class PolkadotJs implements IProvider {
     }
   }
 
+  async updateApiURL(
+    owner: string,
+    serverId: number,
+    newApiURL: string,
+    callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
+  ): Promise<string | null> {
+    try {
+      const {web3FromSource} = await import('@polkadot/extension-dapp');
+
+      const signer = await this.signer(owner);
+      const injector = await web3FromSource(signer.meta.source);
+
+      callback && callback(undefined, true);
+
+      const extrinsic = this.provider.tx.server.updateApiURL(serverId, newApiURL);
+      const txInfo = await extrinsic.signAsync(signer.address, {
+        signer: injector.signer,
+        nonce: -1,
+      });
+
+      const txHash: string = await new Promise((resolve, reject) => {
+        txInfo
+          .send(({status, isError, dispatchError}) => {
+            if (status.isInBlock) {
+              console.log(`\tBlock hash    : ${status.asInBlock.toHex()}`);
+            } else if (status.isFinalized) {
+              console.log(`\tFinalized     : ${status.asFinalized.toHex()}`);
+              resolve(status.asFinalized.toHex());
+            } else if (isError) {
+              console.log(`\tFinalized     : null`);
+              reject('FailedToSendTip');
+            }
+
+            if (dispatchError) {
+              if (dispatchError.isModule) {
+                const {name} = this.provider.registry.findMetaError(dispatchError.asModule);
+
+                reject(new Error(name));
+              } else {
+                const dispatchErrorType = dispatchError.toString();
+                const parseDispatch = JSON.parse(dispatchErrorType);
+
+                const values: string[] = Object.values(parseDispatch);
+
+                reject(new Error(values[0] ?? 'ExtrinsicFailed'));
+              }
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+
+      callback &&
+        callback({
+          id: serverId,
+          owner: owner,
+          apiUrl: newApiURL,
+        });
+
+      return txHash;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async totalServer(): Promise<number> {
     try {
       const result = await this.provider.query.server.serverCount();
@@ -181,6 +247,13 @@ export interface IProvider {
   createServer: (
     owner: string,
     apiURL: string,
+    callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
+  ) => Promise<string | null>;
+
+  updateApiURL: (
+    owner: string,
+    serverId: number,
+    newApiURL: string,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ) => Promise<string | null>;
 

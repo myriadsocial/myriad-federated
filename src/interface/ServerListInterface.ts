@@ -1,5 +1,5 @@
 export interface ServerListProps {
-  id: string;
+  id: number;
   owner: string;
   apiUrl: string;
   detail?: ServerDetail;

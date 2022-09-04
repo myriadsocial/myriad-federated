@@ -9,7 +9,7 @@ import {Backdrop, CircularProgress} from '@material-ui/core';
 import {InstanceList} from './InstanceList';
 import {useStyles} from './Instance.styles';
 import {InstanceHeader} from './InstanceHeader';
-import {useOwnerInstances} from 'src/hooks/use-owner-instances.hooks';
+import {useInstances, InstanceType} from 'src/hooks/use-instances.hooks';
 
 const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
   ssr: false,
@@ -23,7 +23,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
   const router = useRouter();
   const style = useStyles();
 
-  const {createInstance, servers, loading} = useOwnerInstances(accountId);
+  const {createInstance, servers, loading} = useInstances(InstanceType.OWNED, accountId);
 
   const [open, setOpen] = useState<boolean>(false);
 

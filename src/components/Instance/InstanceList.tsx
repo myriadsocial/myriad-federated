@@ -29,15 +29,14 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
   return (
     <div className="mt-2">
       {servers.map(server => {
-        if (!server?.detail) return <React.Fragment key={server.id} />;
         return (
           <CardInstance
             key={server.id}
             onClick={() => router.push('/dashboard')}
-            serverName={server.detail.name}
+            serverName={server?.detail?.name ?? 'Unknown Instance'}
             serverDetail={`by ${accountId}`}
-            serverDescription={server.detail.description}
-            image={server.detail.serverImageURL}
+            serverDescription={`Instance Id: ${server.id}`}
+            image={server?.detail?.serverImageURL ?? ''}
           />
         );
       })}

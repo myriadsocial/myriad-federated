@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
+
 import {IProvider, PolkadotJs} from 'src/lib/services/polkadot-js';
+import {useIsMountedRef} from './useIsMountedRef.hook';
 
 import BlockchainContext from './Blockchain.context';
 
@@ -7,15 +9,17 @@ type BlockchainProviderProps = {
   children: React.ReactNode;
 };
 
-export const BlockchainProvider: React.ComponentType<BlockchainProviderProps> = ({children}) => {
+const BlockchainProvider: React.ComponentType<BlockchainProviderProps> = ({children}) => {
   const [provider, setProvider] = useState<IProvider | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
+  const isMountedRef = useIsMountedRef();
+
   useEffect(() => {
-    if (error) return;
+    if (!isMountedRef.current) return;
     connect();
-  }, [provider, error]);
+  }, [isMountedRef]);
 
   const connect = async () => {
     try {
@@ -34,3 +38,5 @@ export const BlockchainProvider: React.ComponentType<BlockchainProviderProps> = 
     </BlockchainContext.Provider>
   );
 };
+
+export default BlockchainProvider;
