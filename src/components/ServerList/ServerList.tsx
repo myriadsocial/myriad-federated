@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+  import React, {useMemo} from 'react';
 
 import CountUp from 'react-countup';
 import dynamic from 'next/dynamic';
@@ -19,10 +19,10 @@ import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
 import {Illustration, MyriadFullBlack} from 'public/icons';
 import {numberFormatter} from 'src/utils/numberFormatter';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
-import {useAllInstances} from 'src/hooks/use-all-instances.hooks';
 import {setCookie} from 'nookies';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {ShimerComponent} from './Shimer';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
 
 const PolkadotAccountList = dynamic(
   () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
@@ -36,7 +36,7 @@ const {publicRuntimeConfig} = getConfig();
 export const ServerListComponent: React.FC = () => {
   const router = useRouter();
 
-  const {servers, metric, loading} = useAllInstances();
+  const {servers, metric, loading} = useInstances(InstanceType.ALL);
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
