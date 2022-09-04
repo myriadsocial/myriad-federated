@@ -130,25 +130,30 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
     try {
       if (!provider || !accountId) return;
 
-      await provider.updateApiURL(accountId, server.id, newApiURL, async (newServer, signerOpened) => {
-        if (signerOpened) setLoading(true);
-        if (newServer) {
-          fetch(`${newServer.apiUrl}/server`)
-            .then(res => res.json())
-            .then(data => {
-              newServer.detail = data;
-            })
-            .catch(console.log)
-            .finally(() => {
-              const newServerList = serverList.map(e => {
-                if (e.id === server.id) return newServer;
-                return e;
+      await provider.updateApiURL(
+        accountId,
+        server.id,
+        newApiURL,
+        async (newServer, signerOpened) => {
+          if (signerOpened) setLoading(true);
+          if (newServer) {
+            fetch(`${newServer.apiUrl}/server`)
+              .then(res => res.json())
+              .then(data => {
+                newServer.detail = data;
               })
+              .catch(console.log)
+              .finally(() => {
+                const newServerList = serverList.map(e => {
+                  if (e.id === server.id) return newServer;
+                  return e;
+                });
 
-              setServerList([...newServerList])
-            });
-        }
-      });
+                setServerList([...newServerList]);
+              });
+          }
+        },
+      );
     } catch (err) {
       console.log(err);
     } finally {

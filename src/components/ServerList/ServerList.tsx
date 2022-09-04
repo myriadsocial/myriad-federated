@@ -1,4 +1,4 @@
-  import React, {useMemo} from 'react';
+import React, {useMemo} from 'react';
 
 import CountUp from 'react-countup';
 import dynamic from 'next/dynamic';
