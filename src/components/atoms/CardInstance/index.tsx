@@ -58,7 +58,7 @@ export default function CardInstance(props: CardInstanceInterface) {
             <div className="flex">
               <Image src={ExperianceGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-[#757575]">{experiance} experiances</div>
+                <div className="text-sm font-semibold text-[#757575]">{experiance} experiences</div>
               </div>
             </div>
           </div>
