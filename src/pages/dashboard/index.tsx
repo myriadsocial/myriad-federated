@@ -139,13 +139,13 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-3 gap-6">
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
-            <div className="text-lg font-semibold">Post Precentage</div>
+            <div className="text-lg font-semibold">Post Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
               <Doughnut data={dataPostPersentage} options={optionsPie} height={175} />
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
-            <div className="text-lg font-semibold">Top 5 Coint</div>
+            <div className="text-lg font-semibold">Top 5 Coints</div>
             <div className="grid gap-5 mt-6">
               {dataTopCoint
                 .sort((a, b) => b.coint - a.coint)
@@ -164,7 +164,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
-            <div className="text-lg font-semibold">Wallet Prcentage</div>
+            <div className="text-lg font-semibold">Wallet Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
               <Pie data={dataPostPersentage} options={optionsPie} height={175} />
             </div>
