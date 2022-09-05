@@ -36,6 +36,7 @@ const Button = ({
           height: 40,
           borderRadius: 20,
           fontFamily: 'mulish',
+          color: 'black',
         }}>
         {label}
       </ButtonMui>
