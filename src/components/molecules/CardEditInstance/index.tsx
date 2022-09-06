@@ -23,7 +23,13 @@ const CardEditInstance = () => {
         File types supported JPG or PNG. Max size: 5MB
       </Typography>
 
-      <Image src={'https://i.pravatar.cc/300'} height={160} width={160} style={{borderRadius: 8}} />
+      <Image
+        src={'https://i.pravatar.cc/300'}
+        height={160}
+        width={160}
+        style={{borderRadius: 8}}
+        alt=""
+      />
       <Typography style={{fontSize: 14, color: colors.primary, marginTop: 8}}>
         Change picture
       </Typography>

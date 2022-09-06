@@ -17,6 +17,7 @@ import Image from 'next/image';
 import {Bar, Doughnut, Pie} from 'react-chartjs-2';
 import CardRecentReported from 'src/components/organisms/CardRecentReported';
 import DashCounter from 'src/components/organisms/DashCounter';
+import {useMediaQuery, useTheme} from '@mui/material';
 
 const labels = [
   '11/07',
@@ -57,9 +58,9 @@ export const dataPostPersentage = {
 };
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 export const optionsUserGrowth = {
-  responsive: true,
+  responsive: false,
   plugins: {
-    maintainAspectRatio: true,
+    maintainAspectRatio: false,
     legend: {
       position: 'bottom' as const,
     },
@@ -112,8 +113,24 @@ const dataTopCoint = [
     coint: 10,
   },
 ];
+import {Breakpoint, Theme} from '@mui/material/styles';
+type BreakpointOrNull = Breakpoint | null;
 export default function Dashboard() {
   const [sortingDate, setSortingDate] = useState<string>('DESC');
+
+  function useWidth() {
+    const theme: Theme = useTheme();
+    const keys: readonly Breakpoint[] = [...theme.breakpoints.keys].reverse();
+    return (
+      keys.reduce((output: BreakpointOrNull, key: Breakpoint) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const matches = useMediaQuery(theme.breakpoints.up(key));
+        return !output && matches ? key : output;
+      }, null) || 'xs'
+    );
+  }
+  const widthScreen = useWidth();
+  console.log(widthScreen);
 
   return (
     <div className="bg-background-content">
@@ -131,7 +148,12 @@ export default function Dashboard() {
           <div className="col-span-2 p-5 bg-white shadow-lg rounded-2xl h-[320px] relative">
             <div className="text-lg font-semibold pb-4">User Growth</div>
             <div className="flex">
-              <Bar options={optionsUserGrowth} data={dataUserGrowth} height={100} />
+              <Bar
+                options={optionsUserGrowth}
+                data={dataUserGrowth}
+                height={250}
+                width={widthScreen === 'xl' ? 600 : 500}
+              />
             </div>
           </div>
           <CardRecentReported title="Recent reported user" />

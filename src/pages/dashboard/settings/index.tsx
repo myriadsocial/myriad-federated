@@ -42,7 +42,7 @@ export default function Settings() {
               }>
               <div className="text-left">
                 <div className="text-base text-black">{item.name}</div>
-                <div className="text-xs text-[#757575]">{item.desc}</div>
+                <div className="text-xs text-softGray">{item.desc}</div>
               </div>
               <ArrowForwardIosOutlinedIcon />
             </button>
@@ -52,7 +52,7 @@ export default function Settings() {
       {dataSelected === 0 ? (
         <div className="bg-white shadow-lg col-span-4 p-6 rounded-[10px]">
           <div className="text-lg font-semibold">Server verification</div>
-          <div className="text-xs text-[#757575]">
+          <div className="text-xs text-softGray">
             Verify your deployed server to activate the instance
           </div>
           <div className="my-4">
@@ -64,7 +64,7 @@ export default function Settings() {
                 <Image src={IcOpenUrl} height={20} width={20} alt="" />
               </button>
             </a>
-            <div className="ml-2 text-[14px] text-primary">View deployment guide</div>
+            <div className="ml-2 text-sm text-primary">View deployment guide</div>
           </div>
           <Button label="Verify now" onClick={undefined} primary />
         </div>

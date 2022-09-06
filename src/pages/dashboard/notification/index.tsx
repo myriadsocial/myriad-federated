@@ -92,7 +92,7 @@ export default function Notification() {
         )}
       </div>
       {(metaNotification?.currentPage ?? 0) > 0 && (
-        <div className="flex items-center gap-2 justify-end mb-[10px] text-[14px] mt-4">
+        <div className="flex items-center gap-2 justify-end mb-[10px] text-sm mt-4">
           {metaNotification?.currentPage !== 1 && (
             <button onClick={() => setPageNumber(pageNumber - 1)} className="text-slate-600">
               {'<'}

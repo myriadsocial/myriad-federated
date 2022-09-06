@@ -16,7 +16,7 @@ const DropdownFilter = (props: DropdownFilterInterface) => {
   return (
     <div className="flex items-center">
       <div className="mr-2 h-[25px]">
-        <div className="text-sm text-[#757575]">{label}</div>
+        <div className="text-sm text-softGray">{label}</div>
       </div>
       <NativeSelect
         onChange={onChange}

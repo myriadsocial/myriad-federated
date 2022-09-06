@@ -65,7 +65,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
         {isStepOne ? (
           <>
             <div className="my-2">
-              <div className="text-sm text-textGray text-justify">
+              <div className="text-sm text-darkGray text-justify">
                 To create an instance, you have to deploy the server on your own. Please carefully
                 read the deployment guide linked below. You can also access the deployment guide on
                 the settings page.
@@ -77,12 +77,12 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
                   <Image src={IcOpenUrl} height={20} width={20} alt="" />
                 </button>
               </a>
-              <div className="ml-2 text-[14px] text-primary">View deployment guide</div>
+              <div className="ml-2 text-sm text-primary">View deployment guide</div>
             </div>
           </>
         ) : (
           <div className="mt-2">
-            <div className="text-sm text-textGray text-justify">
+            <div className="text-sm text-darkGray text-justify">
               To get a server id, you have to sign the contract on Polkadot.js. The server id will
               show up in My Instance page, once you sign the contract.
             </div>

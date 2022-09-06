@@ -126,7 +126,7 @@ export const ServerListComponent: React.FC = () => {
                 <div className="text-[28px] mb-[14px] font-semibold">
                   Join the Myriad Federated Instance now!
                 </div>
-                <div className="content-start items-center mb-3 flex text-[14px]">
+                <div className="content-start items-center mb-3 flex text-sm">
                   In Myriad Federated Instance, you can create your own instance or join as a member
                   of an instance.
                 </div>
@@ -139,7 +139,7 @@ export const ServerListComponent: React.FC = () => {
                     <SvgIcon component={ServerIcon} style={{color: 'white'}} />
                   </div>
                   <div className="ml-4">
-                    <div className="text-[16px] text-white">Total instances</div>
+                    <div className="text-base text-white">Total instances</div>
                     <div className="text-[28px] text-white font-semibold">
                       <CountUp start={0} end={metric.totalInstances} separator="," />
                     </div>
@@ -152,7 +152,7 @@ export const ServerListComponent: React.FC = () => {
                     <SvgIcon component={ServerIcon} style={{color: 'white'}} />
                   </div>
                   <div className="ml-4">
-                    <div className="text-[16px] text-white">Total users</div>
+                    <div className="text-base text-white">Total users</div>
                     <div className="text-[28px] text-white font-semibold">
                       <CountUp start={0} end={metric.totalUsers} separator="," />
                     </div>
@@ -165,7 +165,7 @@ export const ServerListComponent: React.FC = () => {
                     <SvgIcon component={ServerIcon} style={{color: 'white'}} />
                   </div>
                   <div className="ml-4">
-                    <div className="text-[16px] text-white">Total posts</div>
+                    <div className="text-base text-white">Total posts</div>
                     <div className="text-[28px] text-white font-semibold">
                       <CountUp start={0} end={metric.totalPosts} separator="," />
                     </div>

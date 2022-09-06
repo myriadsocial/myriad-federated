@@ -17,6 +17,7 @@ export interface ReportDetailInterface {
   platform: string;
   text: string;
   user: UserDetailInterface;
+  postId?: string;
 }
 
 export interface ReportersInterface {

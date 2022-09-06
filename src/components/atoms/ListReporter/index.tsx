@@ -13,7 +13,7 @@ export default function ListReporter({data}: {data: DataResponseUserReportedInte
           desc={data?.reporter?.username ?? ''}
         />
         {data?.createdAt && (
-          <div className="text-xs text-[616161]">
+          <div className="text-xs text-[#616161]">
             {dateFormatter(new Date(data?.createdAt), 'dd MMM yyyy')}
           </div>
         )}

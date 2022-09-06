@@ -15,7 +15,7 @@ export const ShimerComponent: React.FC = () => {
           <div className="text-2xl text-primary text-left">
             <Skeleton variant="text" width={390} height={25} style={{borderRadius: 10}} />
           </div>
-          <div className="text-sm text-textGray text-left">
+          <div className="text-sm text-darkGray text-left">
             <Skeleton variant="text" width={390} height={25} style={{borderRadius: 10}} />
           </div>
           <div className="text-base text-left">
@@ -26,7 +26,7 @@ export const ShimerComponent: React.FC = () => {
           <div className="flex">
             <Image src={UserGray} height={20} width={20} alt="" />
             <div className="mx-2">
-              <div className="text-sm font-semibold text-[#757575]">
+              <div className="text-sm font-semibold text-softGray">
                 <Skeleton variant="text" width={80} height={25} style={{borderRadius: 10}} />
               </div>
             </div>
@@ -34,7 +34,7 @@ export const ShimerComponent: React.FC = () => {
           <div className="flex mx-6">
             <Image src={PostGray} height={20} width={20} alt="" />
             <div className="mx-2">
-              <div className="text-sm font-semibold text-[#757575]">
+              <div className="text-sm font-semibold text-softGray">
                 <Skeleton variant="text" width={80} height={25} style={{borderRadius: 10}} />
               </div>
             </div>
@@ -42,7 +42,7 @@ export const ShimerComponent: React.FC = () => {
           <div className="flex">
             <Image src={ExperianceGray} height={20} width={20} alt="" />
             <div className="mx-2">
-              <div className="text-sm font-semibold text-[#757575]">
+              <div className="text-sm font-semibold text-softGray">
                 <Skeleton variant="text" width={80} height={25} style={{borderRadius: 10}} />
               </div>
             </div>
