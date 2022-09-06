@@ -1,7 +1,7 @@
 import axios from './axiosInstance';
 
 export const getHealtcheck = async () => {
-  return axios
+  return axios()
     .get(`/health`)
     .then(() => {
       return true;
