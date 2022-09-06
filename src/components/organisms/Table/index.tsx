@@ -60,7 +60,7 @@ export default function Table({
               {table.getRowModel().rows.map(row => (
                 <tr className="" key={row.id}>
                   {row.getVisibleCells().map(cell => (
-                    <td className="px-4 py-[14px] text-" key={cell.id}>
+                    <td className="px-4 py-[14px] text-sm" key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
