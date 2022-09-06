@@ -145,7 +145,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
-            <div className="text-lg font-semibold">Top 5 Coints</div>
+            <div className="text-lg font-semibold">Top 5 Coins</div>
             <div className="grid gap-5 mt-6">
               {dataTopCoint
                 .sort((a, b) => b.coint - a.coint)
