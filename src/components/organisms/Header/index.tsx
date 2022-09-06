@@ -1,13 +1,10 @@
 import {Avatar, Button, Typography} from '@mui/material';
-import Cookies from 'js-cookie';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
 const Header = ({title}: {title: string}) => {
   const router = useRouter();
   const handleClickNotification = () => {
-    Cookies.set('active_menu', '10');
-    Cookies.set('active_sub_menu', '10');
     router.push('/dashboard/notification');
   };
 

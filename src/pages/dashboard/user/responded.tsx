@@ -131,7 +131,7 @@ export default function UserResponded() {
       <div className="mb-[5px]">
         <div className="text-lg font-semibold">Responded report</div>
       </div>
-      <div className="text-sm text-[#757575]">
+      <div className="text-sm text-softGray">
         {dataUserResponded?.meta.totalItemCount ?? '0'} Reports
       </div>
       <div className="my-6">
@@ -173,14 +173,14 @@ export default function UserResponded() {
           <div className="flex justify-between">
             <div>
               <div className="flex">
-                <div className="text-[14px] text-gray-500 w-[120px]">URL</div>
-                <div className="text-[14px] break-words max-w-[354px]">
+                <div className="text-sm text-gray-500 w-[120px]">URL</div>
+                <div className="text-sm break-words max-w-[354px]">
                   {`https://app.testnet.myriad.social/profile/${userSelected?.referenceId}`}
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="w-[120px] text-[14px] text-gray-500">Total reports</div>
-                <div className="flex-1 text-[14px]">{userSelected?.totalReported} report</div>
+                <div className="w-[120px] text-sm text-gray-500">Total reports</div>
+                <div className="flex-1 text-sm">{userSelected?.totalReported} report</div>
               </div>
             </div>
             <a

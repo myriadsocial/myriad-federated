@@ -38,7 +38,7 @@ export default function CardInstance(props: CardInstanceInterface) {
       <div className="ml-4">
         <div>
           <div className="text-2xl text-primary text-left">{serverName}</div>
-          <div className="text-sm text-textGray text-left">{serverDetail}</div>
+          <div className="text-sm text-darkGray text-left">{serverDetail}</div>
           <div className="text-base text-left">{serverDescription}</div>
         </div>
         {type === 'landingPage' && (
@@ -46,19 +46,19 @@ export default function CardInstance(props: CardInstanceInterface) {
             <div className="flex">
               <Image src={UserGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-[#757575]">{users} users</div>
+                <div className="text-sm font-semibold text-softGray">{users} users</div>
               </div>
             </div>
             <div className="flex mx-6">
               <Image src={PostGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-[#757575]">{post} posts</div>
+                <div className="text-sm font-semibold text-softGray">{post} posts</div>
               </div>
             </div>
             <div className="flex">
               <Image src={ExperianceGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-[#757575]">{experiance} experiances</div>
+                <div className="text-sm font-semibold text-softGray">{experiance} experiances</div>
               </div>
             </div>
           </div>

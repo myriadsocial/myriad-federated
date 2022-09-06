@@ -40,7 +40,7 @@ export default function Table({
                   {headerGroup.headers.map(header => (
                     <th
                       style={{width: header.column.columnDef.size ?? '100%'}}
-                      className={'text-[14px] py-[14px] px-4 text-start font-semibold text-black'}
+                      className={'text-sm py-[14px] px-4 text-start font-semibold text-black'}
                       key={header.id}
                       colSpan={header.colSpan}>
                       {header.isPlaceholder
@@ -60,7 +60,7 @@ export default function Table({
               {table.getRowModel().rows.map(row => (
                 <tr className="" key={row.id}>
                   {row.getVisibleCells().map(cell => (
-                    <td className="px-4 py-[14px] text-[14px]" key={cell.id}>
+                    <td className="px-4 py-[14px] text-" key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -71,7 +71,7 @@ export default function Table({
         </table>
       </div>
       {meta?.totalPageCount > 0 && (
-        <div className="flex items-center gap-2 justify-end mb-[10px] text-[14px]">
+        <div className="flex items-center gap-2 justify-end mb-[10px] text-sm">
           {meta?.currentPage !== 1 && (
             <button onClick={onClickPrevios} className="text-slate-600">
               {'<'}
