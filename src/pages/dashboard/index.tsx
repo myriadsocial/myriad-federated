@@ -1,8 +1,12 @@
+import React from 'react';
+import Image from 'next/image';
+import nookies from 'nookies';
+
+import {GetServerSidePropsContext} from 'next';
 import {IcDebio, IcKusama, IcMyriad, IcNear, IcPolkadot} from 'public/icons';
-import {ReactNode, useState} from 'react';
+import {useState} from 'react';
 import {DropdownFilter} from 'src/components/atoms';
 import {Arrays} from 'src/constans/array';
-import ContentLayout from '../../layout/ContentLayout';
 import {
   ArcElement,
   BarElement,
@@ -13,8 +17,9 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import Image from 'next/image';
 import {Bar, Doughnut, Pie} from 'react-chartjs-2';
+import {Breakpoint, Theme} from '@mui/material/styles';
+import ContentLayout from '../../layout/ContentLayout';
 import CardRecentReported from 'src/components/organisms/CardRecentReported';
 import DashCounter from 'src/components/organisms/DashCounter';
 import {useMediaQuery, useTheme} from '@mui/material';
@@ -113,8 +118,9 @@ const dataTopCoint = [
     coint: 10,
   },
 ];
-import {Breakpoint, Theme} from '@mui/material/styles';
+
 type BreakpointOrNull = Breakpoint | null;
+
 export default function Dashboard() {
   const [sortingDate, setSortingDate] = useState<string>('DESC');
 
@@ -196,6 +202,28 @@ export default function Dashboard() {
     </div>
   );
 }
-Dashboard.getLayout = function getLayout(page: ReactNode) {
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
+
+Dashboard.getLayout = function getLayout(page: React.ReactNode) {
   return <ContentLayout title="Dashboard">{page}</ContentLayout>;
 };

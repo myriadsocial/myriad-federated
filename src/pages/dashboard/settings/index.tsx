@@ -1,5 +1,7 @@
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
 import {TextField, Switch} from '@mui/material';
+import {GetServerSidePropsContext} from 'next';
+import nookies from 'nookies';
 import Image from 'next/image';
 import {IcOpenUrl} from 'public/icons';
 import {ReactNode, useState} from 'react';
@@ -90,6 +92,27 @@ export default function Settings() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 Settings.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Settings">{page}</ContentLayout>;

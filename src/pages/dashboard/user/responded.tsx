@@ -1,6 +1,8 @@
 import {CircularProgress, Typography} from '@mui/material';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {ColumnDef} from '@tanstack/react-table';
+import {GetServerSidePropsContext} from 'next';
+import nookies from 'nookies';
 import Image from 'next/image';
 import {ReactNode, useEffect, useState} from 'react';
 import {IcOpenUrl} from '../../../../public/icons';
@@ -217,6 +219,27 @@ export default function UserResponded() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 UserResponded.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="User">{page}</ContentLayout>;

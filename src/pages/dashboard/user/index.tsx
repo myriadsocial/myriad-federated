@@ -1,6 +1,7 @@
 import {Backdrop, CircularProgress} from '@mui/material';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {ColumnDef} from '@tanstack/react-table';
+import nookies from 'nookies';
 import Image from 'next/image';
 import {ReactNode, useEffect, useState} from 'react';
 import {IcOpenUrl} from '../../../../public/icons';
@@ -20,6 +21,7 @@ import {
 } from '../../../interface/UserInterface';
 import ContentLayout from '../../../layout/ContentLayout';
 import {dateFormatter} from '../../../utils/dateFormatter';
+import {GetServerSidePropsContext} from 'next';
 
 export default function UserReported() {
   const [isShowModalRespond, setIsShowModalRespond] = useState<boolean>(false);
@@ -233,6 +235,27 @@ export default function UserReported() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 UserReported.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="User">{page}</ContentLayout>;
