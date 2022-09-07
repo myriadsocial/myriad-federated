@@ -1,3 +1,4 @@
+import {useEnqueueSnackbar} from './../components/molecules/Snackbar/useEnqueueSnackbar.hook';
 import {useEffect, useState} from 'react';
 
 import {ServerListProps} from 'src/interface/ServerListInterface';
@@ -11,7 +12,7 @@ export enum InstanceType {
 
 export const useInstances = (instanceType: InstanceType, accountId?: string) => {
   const {provider, loading: loadingBlockchain, error} = useBlockchain();
-
+  const enqueueSnackbar = useEnqueueSnackbar();
   const [serverList, setServerList] = useState<ServerListProps[]>([]);
   const [metric, setMetric] = useState({totalUsers: 0, totalPosts: 0, totalInstances: 0});
   const [loading, setLoading] = useState<boolean>(true);
@@ -114,8 +115,11 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
             .finally(() => setServerList([...serverList, server]));
         }
       });
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      enqueueSnackbar({
+        message: err.toString(),
+        variant: 'error',
+      });
     } finally {
       callback && callback();
       setLoading(false);

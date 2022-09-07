@@ -2,14 +2,14 @@ import React, {useState} from 'react';
 
 import dynamic from 'next/dynamic';
 
+import {Backdrop, CircularProgress} from '@material-ui/core';
 import {useRouter} from 'next/router';
 import {destroyCookie} from 'nookies';
-import {Backdrop, CircularProgress} from '@material-ui/core';
 
-import {InstanceList} from './InstanceList';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
 import {useStyles} from './Instance.styles';
 import {InstanceHeader} from './InstanceHeader';
-import {useInstances, InstanceType} from 'src/hooks/use-instances.hooks';
+import {InstanceList} from './InstanceList';
 
 const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
   ssr: false,
