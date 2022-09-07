@@ -201,7 +201,7 @@ export const ServerListComponent: React.FC = () => {
                         serverDescription={server.detail.description}
                         image={server.detail.serverImageURL}
                         type="landingPage"
-                        experiance={numberFormatter(server.detail.metric.totalExperiences)}
+                        experience={numberFormatter(server.detail.metric.totalExperiences)}
                         post={numberFormatter(server.detail.metric.totalPosts)}
                         users={numberFormatter(server.detail.metric.totalUsers)}
                         onClick={goToMyriadApp('https://app.testnet.myriad.social')} // TODO: change to dynamic url
