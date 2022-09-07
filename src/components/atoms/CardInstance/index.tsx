@@ -11,7 +11,7 @@ interface CardInstanceInterface {
   type?: string;
   users?: number | string | string;
   post?: number | string;
-  experiance?: number | string;
+  experience?: number | string;
 }
 export default function CardInstance(props: CardInstanceInterface) {
   const {
@@ -23,7 +23,7 @@ export default function CardInstance(props: CardInstanceInterface) {
     type,
     users,
     post,
-    experiance,
+    experience,
   } = props;
   return (
     <button
@@ -58,7 +58,7 @@ export default function CardInstance(props: CardInstanceInterface) {
             <div className="flex">
               <Image src={ExperianceGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-softGray">{experiance} experiances</div>
+                <div className="text-sm font-semibold text-softGray">{experience} experiences</div>
               </div>
             </div>
           </div>
