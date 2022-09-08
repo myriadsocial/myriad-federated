@@ -60,7 +60,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
           <div className="text-sm">Step {isStepOne ? 1 : 2} of 2</div>
         </div>
         <div className="text-2xl font-semibold">
-          {isStepOne ? 'Deploy the server' : 'Get server id'}
+          {isStepOne ? 'Deploy the server' : ' Register Instance'}
         </div>
         {isStepOne ? (
           <>
@@ -84,8 +84,9 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
         ) : (
           <div className="mt-2">
             <div className="text-sm text-darkGray text-justify">
-              To get a server id, you have to sign the contract on Polkadot.js. The server id will
-              show up in My Instance page, once you sign the contract.
+              To register your instance, you must enter the API URL of the deployed server. After
+              signing the contract on Polkadot.js, your instance will be listed in Myriad app and
+              published on Myriad Federation site.
             </div>
             <div className="my-[24px]">
               <TextField
