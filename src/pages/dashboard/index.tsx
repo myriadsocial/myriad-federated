@@ -136,7 +136,6 @@ export default function Dashboard() {
     );
   }
   const widthScreen = useWidth();
-  console.log(widthScreen);
 
   return (
     <div className="bg-background-content">

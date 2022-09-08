@@ -7,6 +7,11 @@ import Button from 'src/components/atoms/Button';
 
 import {MyriadFullBlack} from 'public/icons';
 import {Typography} from '@mui/material';
+import {formatAddress} from 'src/helpers/formatAddress';
+
+const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
+  ssr: false,
+});
 
 type InstanceHeaderProps = {
   accountId: string;
@@ -14,20 +19,11 @@ type InstanceHeaderProps = {
   onOpenStepper: () => void;
 };
 
-const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
-  ssr: false,
-});
-
 export const InstanceHeader: React.FC<InstanceHeaderProps> = ({
   accountId,
   onLogout,
   onOpenStepper,
 }) => {
-  const formatAddress = () => {
-    if (accountId.length <= 14) return accountId;
-    return accountId.substring(0, 5) + '...' + accountId.substring(accountId.length - 5);
-  };
-
   return (
     <React.Fragment>
       <div className="flex justify-between">
@@ -38,7 +34,7 @@ export const InstanceHeader: React.FC<InstanceHeaderProps> = ({
             <div className="flex items-center">
               <PolkadotIcon value={accountId} size={24} theme="polkadot" style={{marginRight: 5}} />
               <Typography color={'black'} fontSize={14}>
-                {formatAddress()}
+                {formatAddress(accountId)}
               </Typography>
             </div>
           </Button>

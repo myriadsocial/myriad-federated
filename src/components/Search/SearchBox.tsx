@@ -26,30 +26,23 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   const [input, setInput] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInput(event.target.value);
+    const value = event.target.value;
+
+    setInput(value);
+    debouncedSubmit(value);
   };
 
   const submitClickSearch = () => {
-    const debouncedSubmit = debounce(() => {
-      if (onSubmit) {
-        onSubmit(input);
-      }
-    }, 500);
-
     debouncedSubmit();
   };
 
   const submitSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      const debouncedSubmit = debounce(() => {
-        if (onSubmit) {
-          onSubmit(input);
-        }
-      }, 500);
-
-      debouncedSubmit();
-    }
+    if (event.key === 'Enter') debouncedSubmit();
   };
+
+  const debouncedSubmit = debounce((value?: string) => {
+    if (onSubmit) onSubmit(value ?? input);
+  }, 500);
 
   return (
     <Grid

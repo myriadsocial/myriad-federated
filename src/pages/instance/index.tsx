@@ -29,9 +29,16 @@ export const Instance: React.FC<InstanceProps> = ({accountId}) => {
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const cookies = nookies.get(context);
-  const accountId = cookies?.currentAddress;
+  const session = cookies?.session;
 
-  if (!accountId) {
+  try {
+    const data = JSON.parse(session);
+
+    if (!data?.currentAddress) throw 'AccountNotFound';
+    return {
+      props: {accountId: data.currentAddress},
+    };
+  } catch {
     return {
       redirect: {
         destination: '/',
@@ -39,10 +46,6 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       },
     };
   }
-
-  return {
-    props: {accountId},
-  };
 };
 
 export default Instance;
