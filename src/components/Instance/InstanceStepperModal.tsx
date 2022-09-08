@@ -64,20 +64,21 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
         </div>
         {isStepOne ? (
           <>
-            <div className="my-2">
+            <div className="my-5">
               <div className="text-sm text-darkGray text-justify">
-                To create an instance, you have to deploy the server on your own. Please carefully
+                To create an instance, you have to{' '}
+                <span className="font-bold">deploy the server on your own</span>. Please carefully
                 read the deployment guide linked below. You can also access the deployment guide on
                 the settings page.
               </div>
             </div>
-            <div className="flex">
+            <div className="flex justify-center">
               <a href={`https://app.testnet.myriad.social/post/`} target="_blank" rel="noreferrer">
                 <button className="w-[20px]">
                   <Image src={IcOpenUrl} height={20} width={20} alt="" />
                 </button>
               </a>
-              <div className="ml-2 text-sm text-primary">View deployment guide</div>
+              <div className="ml-2 text-base text-primary font-bold">View deployment guide</div>
             </div>
           </>
         ) : (
