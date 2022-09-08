@@ -29,7 +29,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
 
   // TODO: Handle logout
   const handleLogout = () => {
-    destroyCookie(null, 'currentAddress');
+    destroyCookie(null, 'session');
     router.push('/');
   };
 

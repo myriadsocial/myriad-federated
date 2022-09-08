@@ -22,12 +22,9 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
   const [error, setError] = useState<boolean>(false);
 
   const handleClick = async () => {
-    if (isStepOne) {
-      setIsStepOne(false);
-    } else {
-      if (error || !value) return setError(true);
-      onCreateInstance(value, () => handleClose());
-    }
+    if (isStepOne) return setIsStepOne(false);
+    if (error || !value) return setError(true);
+    onCreateInstance(value, () => handleClose());
   };
 
   const handleClose = () => {

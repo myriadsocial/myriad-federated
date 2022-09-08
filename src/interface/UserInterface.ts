@@ -75,6 +75,10 @@ export interface ResponseUserReported {
   meta: MetaResponseUserReportedInterface;
 }
 
+export interface UserNonce {
+  nonce: number;
+}
+
 export const ReportTypeCategoryMapper: Record<ReportType, string> = {
   abusive_violent: 'Abusive behavior and violent threats',
   unauthorize_copyright: 'Unauthorized use of copyrighted materials',

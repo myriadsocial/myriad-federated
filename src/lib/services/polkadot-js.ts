@@ -1,7 +1,9 @@
-import {ApiPromise, WsProvider} from '@polkadot/api';
 import getConfig from 'next/config';
+
+import {ApiPromise, WsProvider} from '@polkadot/api';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
+import {numberToHex} from '@polkadot/util';
 
 const {publicRuntimeConfig} = getConfig();
 
@@ -26,6 +28,35 @@ export class PolkadotJs implements IProvider {
       return new PolkadotJs(api);
     } catch {
       return null;
+    }
+  }
+
+  static async signWithWallet(
+    account: InjectedAccountWithMeta,
+    nonce: number,
+    callback?: (signerOpened: boolean) => void,
+  ): Promise<string> {
+    try {
+      const {web3FromSource} = await import('@polkadot/extension-dapp');
+
+      callback && callback(true);
+
+      const injector = await web3FromSource(account.meta.source);
+      const signRaw = injector?.signer?.signRaw;
+
+      if (signRaw) {
+        const {signature} = await signRaw({
+          address: account.address,
+          data: numberToHex(nonce),
+          type: 'bytes',
+        });
+
+        return signature;
+      } else {
+        throw 'ErrorSignature';
+      }
+    } catch (err) {
+      throw err;
     }
   }
 

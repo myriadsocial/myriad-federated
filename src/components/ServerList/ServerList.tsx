@@ -33,7 +33,11 @@ const PolkadotAccountList = dynamic(
 
 const {publicRuntimeConfig} = getConfig();
 
-export const ServerListComponent: React.FC = () => {
+type ServerListComponentProps = {
+  signIn: boolean;
+};
+
+export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}) => {
   const router = useRouter();
 
   const {servers, metric, loading} = useInstances(InstanceType.ALL);
@@ -46,7 +50,7 @@ export const ServerListComponent: React.FC = () => {
 
   const search = (query: string | null) => {
     if (!query) return servers;
-    const regex = new RegExp(`^${query.toLowerCase()}`, 'i');
+    const regex = new RegExp(`${query.toLowerCase()}`, 'gi');
 
     return servers.filter(server => {
       if (!server?.detail) return false;
@@ -90,14 +94,14 @@ export const ServerListComponent: React.FC = () => {
     setAccounts(accounts);
   };
 
-  const handleSelectedSubstrateAccount = (account: InjectedAccountWithMeta) => {
+  const handleSelectedSubstrateAccount = async (account: InjectedAccountWithMeta) => {
     closeAccountList();
-
-    setCookie(null, 'currentAddress', account.address);
+    setCookie(null, 'session', JSON.stringify({currentAddress: account.address}));
     router.push('/instance');
   };
 
   const handleSignIn = () => {
+    if (signIn) return router.push('/instance');
     checkExtensionInstalled();
   };
 
@@ -115,7 +119,11 @@ export const ServerListComponent: React.FC = () => {
                 <div className="mx-2">
                   <Button label="Contact us" type="text" onClick={(e: any) => handleContactUs(e)} />
                 </div>
-                <Button primary onClick={handleSignIn} label="Create Instance" />
+                <Button
+                  primary
+                  onClick={handleSignIn}
+                  label={signIn ? 'My Instances' : 'Create Instance'}
+                />
               </div>
             </div>
             <header className="relative mb-[85px]">
