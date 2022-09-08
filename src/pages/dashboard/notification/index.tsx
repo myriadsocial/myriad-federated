@@ -1,6 +1,13 @@
-import {CircularProgress, Typography} from '@mui/material';
 import {useQuery} from '@tanstack/react-query';
+
 import {ReactNode, useEffect, useState} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+
+import {CircularProgress, Typography} from '@mui/material';
+
+import nookies from 'nookies';
+
 import {getNotifications} from '../../../api/GET_Notifications';
 import {DropdownFilter, ListAllNotifications} from '../../../components/atoms';
 import EmptyState from '../../../components/molecules/EmptyState';
@@ -112,6 +119,27 @@ export default function Notification() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 Notification.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Notification">{page}</ContentLayout>;

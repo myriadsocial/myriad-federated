@@ -1,5 +1,7 @@
-import {Button as ButtonMui} from '@mui/material';
 import {ReactNode} from 'react';
+
+import {Button as ButtonMui} from '@mui/material';
+
 import {colors} from '../../../utils';
 
 interface ButtonOutlineInterface {

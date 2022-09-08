@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
 
 import {IProvider, PolkadotJs} from 'src/lib/services/polkadot-js';
-import {useIsMountedRef} from './useIsMountedRef.hook';
 
 import BlockchainContext from './Blockchain.context';
+import {useIsMountedRef} from './useIsMountedRef.hook';
 
 type BlockchainProviderProps = {
   children: React.ReactNode;

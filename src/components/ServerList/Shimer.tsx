@@ -1,7 +1,9 @@
 import React from 'react';
+
 import Image from 'next/image';
 
 import {Skeleton} from '@mui/material';
+
 import {ExperianceGray, PostGray, UserGray} from 'public/icons';
 
 export const ShimerComponent: React.FC = () => {

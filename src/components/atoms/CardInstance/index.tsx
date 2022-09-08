@@ -1,6 +1,8 @@
-import Image from 'next/image';
-import {ExperianceGray, PostGray, UserGray} from 'public/icons';
 import React from 'react';
+
+import Image from 'next/image';
+
+import {ExperianceGray, PostGray, UserGray} from 'public/icons';
 
 interface CardInstanceInterface {
   onClick?: () => void;

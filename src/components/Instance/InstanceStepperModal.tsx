@@ -2,11 +2,12 @@ import React, {useState} from 'react';
 
 import Image from 'next/image';
 
+import {TextField} from '@mui/material';
+
 import Button from 'src/components/atoms/Button';
 import ModalComponent from 'src/components/molecules/Modal';
 
 import {IcOpenUrl} from 'public/icons';
-import {TextField} from '@mui/material';
 
 type InstanceStepperModalProps = {
   onCreateInstance: (apiURL: string, callback?: () => void) => void;
@@ -22,12 +23,9 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
   const [error, setError] = useState<boolean>(false);
 
   const handleClick = async () => {
-    if (isStepOne) {
-      setIsStepOne(false);
-    } else {
-      if (error || !value) return setError(true);
-      onCreateInstance(value, () => handleClose());
-    }
+    if (isStepOne) return setIsStepOne(false);
+    if (error || !value) return setError(true);
+    onCreateInstance(value, () => handleClose());
   };
 
   const handleClose = () => {

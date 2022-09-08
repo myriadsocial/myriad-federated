@@ -1,6 +1,9 @@
-import {Modal as ModalMaterialUi} from '@mui/material';
-import Image from 'next/image';
 import {ReactNode} from 'react';
+
+import Image from 'next/image';
+
+import {Modal as ModalMaterialUi} from '@mui/material';
+
 import {IcClosePurple} from '../../../../public/icons';
 
 interface ModalInterface {

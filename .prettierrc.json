@@ -10,12 +10,16 @@
   "arrowParens": "avoid",
   "endOfLine": "lf",
   "importOrder": [
-    "^(react)([-a-zA-Z]+)?$",
+    "^react([-a-zA-Z]+)?$",
     "^(next)([-a-zA-Z/]+)?$",
+    "^@mui/(.*)$",
     "^@material-ui/(.*)$",
     "^@polkadot/(.*)$",
-    "^[./]",
-    "^[-a-zA-Z/]+"
+    "^src/(.*)$",
+    "^[-a-zA-Z/]+",
+    "^[./]"
   ],
-  "importOrderSeparation": true
+  "importOrderSeparation": true,
+  "importOrderCaseInsensitive": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports"]
 }

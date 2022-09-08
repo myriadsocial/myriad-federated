@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {DataResponseUserReportedInterface} from '../../../interface/UserInterface';
 import {dateFormatter} from '../../../utils/dateFormatter';
 import AvatarWithName from '../AvatarWithName';

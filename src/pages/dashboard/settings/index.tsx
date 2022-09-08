@@ -1,9 +1,16 @@
-import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
-import {TextField, Switch} from '@mui/material';
-import Image from 'next/image';
-import {IcOpenUrl} from 'public/icons';
 import {ReactNode, useState} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+import Image from 'next/image';
+
+import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
+import {Switch, TextField} from '@mui/material';
+
 import Button from 'src/components/atoms/Button';
+
+import nookies from 'nookies';
+import {IcOpenUrl} from 'public/icons';
+
 import ContentLayout from '../../../layout/ContentLayout';
 
 interface dataSettingInterface {
@@ -90,6 +97,27 @@ export default function Settings() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 Settings.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Settings">{page}</ContentLayout>;

@@ -1,7 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
-import getConfig from 'next/config';
-const {serverRuntimeConfig} = getConfig();
+
+import {parseCookies} from 'nookies';
 
 export const config = {
   api: {
@@ -11,15 +11,12 @@ export const config = {
 };
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const headers =
-      req.method === 'GET'
-        ? undefined
-        : {
-            Authorization: `Bearer ${serverRuntimeConfig.myriadAPIKey}`,
-          };
+    const cookies = parseCookies({req});
+    const data = JSON.parse(cookies.session);
+    const headers = {Authorization: `Bearer ${data.token}`};
 
     return httpProxyMiddleware(req, res, {
-      target: serverRuntimeConfig.myriadAPIURL,
+      target: data.apiURL,
       pathRewrite: [
         {
           patternStr: '/api',

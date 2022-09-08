@@ -1,6 +1,9 @@
-import {ListItemButton} from '@mui/material';
-import Image from 'next/image';
 import {useMemo} from 'react';
+
+import Image from 'next/image';
+
+import {ListItemButton} from '@mui/material';
+
 import {
   NotificationJoinInstance,
   NotificationsDeployNode,

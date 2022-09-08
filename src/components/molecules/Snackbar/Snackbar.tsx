@@ -1,7 +1,7 @@
 import {
-  ExclamationIcon,
   CheckCircleIcon,
   ExclamationCircleIcon,
+  ExclamationIcon,
   InformationCircleIcon,
   QuestionMarkCircleIcon,
   XIcon,
@@ -13,10 +13,10 @@ import IconButton from '@material-ui/core/IconButton';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import Typography from '@material-ui/core/Typography';
 
+import {SnackbarContent, useSnackbar} from 'notistack';
+
 import {SnackbarProps} from './Snackbar.interface';
 import {useStyles} from './Snackbar.style';
-
-import {useSnackbar, SnackbarContent} from 'notistack';
 
 export const Snackbar = React.forwardRef<HTMLDivElement, SnackbarProps>((props, ref) => {
   const style = useStyles(props);

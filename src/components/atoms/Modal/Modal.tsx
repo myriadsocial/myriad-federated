@@ -7,10 +7,10 @@ import Dialog, {DialogProps} from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
+import ShowIf from 'src/components/common/show-if.component';
+
 import {useStyles} from './Modal.styles';
 import {AllignTitle, TitleSize} from './Modal.types';
-
-import ShowIf from 'src/components/common/show-if.component';
 
 export type ModalProps = DialogProps & {
   title?: string | React.ReactNode;

@@ -1,6 +1,8 @@
-import {IcCountExperiance, IcCountPost, IcCountTip, IcCountUser} from 'public/icons';
 import React from 'react';
+
 import CardTotal from 'src/components/molecules/CardTotal';
+
+import {IcCountExperiance, IcCountPost, IcCountTip, IcCountUser} from 'public/icons';
 
 export default function DashCounter() {
   return (

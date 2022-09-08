@@ -1,11 +1,13 @@
 import React from 'react';
-import nookies from 'nookies';
-import Head from 'next/head';
 
 import {GetServerSidePropsContext} from 'next';
+import Head from 'next/head';
+
 import {Container} from '@mui/material';
 
 import {InstanceComponent} from 'src/components/Instance/InstanceComponent';
+
+import nookies from 'nookies';
 
 type InstanceProps = {
   accountId: string;
@@ -29,9 +31,16 @@ export const Instance: React.FC<InstanceProps> = ({accountId}) => {
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const cookies = nookies.get(context);
-  const accountId = cookies?.currentAddress;
+  const session = cookies?.session;
 
-  if (!accountId) {
+  try {
+    const data = JSON.parse(session);
+
+    if (!data?.currentAddress) throw 'AccountNotFound';
+    return {
+      props: {accountId: data.currentAddress},
+    };
+  } catch {
     return {
       redirect: {
         destination: '/',
@@ -39,10 +48,6 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       },
     };
   }
-
-  return {
-    props: {accountId},
-  };
 };
 
 export default Instance;

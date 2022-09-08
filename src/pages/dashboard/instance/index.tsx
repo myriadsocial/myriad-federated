@@ -1,6 +1,13 @@
-import {Typography} from '@mui/material';
 import {ColumnDef} from '@tanstack/react-table';
+
 import {ReactNode} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+
+import {Typography} from '@mui/material';
+
+import nookies from 'nookies';
+
 import CardInstanceLeft from '../../../components/molecules/CardInstanceLeft';
 import CardInstanceRight from '../../../components/molecules/CardInstanceRight';
 import Table from '../../../components/organisms/Table';
@@ -102,6 +109,27 @@ export default function Instance() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 Instance.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Instance">{page}</ContentLayout>;

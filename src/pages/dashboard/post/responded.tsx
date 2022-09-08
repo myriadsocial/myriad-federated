@@ -1,8 +1,15 @@
-import {CircularProgress} from '@mui/material';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {ColumnDef} from '@tanstack/react-table';
-import Image from 'next/image';
+
 import {ReactNode, useEffect, useState} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+import Image from 'next/image';
+
+import {CircularProgress} from '@mui/material';
+
+import nookies from 'nookies';
+
 import {IcOpenUrl} from '../../../../public/icons';
 import {deleteReports} from '../../../api/DELETE_Reports';
 import {getReports} from '../../../api/GET_Reports';
@@ -257,6 +264,27 @@ export default function PostResponded() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 PostResponded.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Post">{page}</ContentLayout>;

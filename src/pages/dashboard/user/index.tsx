@@ -1,18 +1,26 @@
-import {Backdrop, CircularProgress} from '@mui/material';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {ColumnDef} from '@tanstack/react-table';
-import Image from 'next/image';
+
 import {ReactNode, useEffect, useState} from 'react';
-import {IcOpenUrl} from '../../../../public/icons';
-import {getReports} from '../../../api/GET_Reports';
-import {getReportsDetail} from '../../../api/GET_ReportsDetail';
-import {updateReports} from '../../../api/PATCH_Reports';
-import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
+
+import {GetServerSidePropsContext} from 'next';
+import Image from 'next/image';
+
+import {Backdrop, CircularProgress} from '@mui/material';
+
 import Button from 'src/components/atoms/Button';
 import ListReporter from 'src/components/atoms/ListReporter';
 import Modal from 'src/components/molecules/Modal';
 import Table from 'src/components/organisms/Table';
 import {Arrays} from 'src/constans/array';
+
+import nookies from 'nookies';
+
+import {IcOpenUrl} from '../../../../public/icons';
+import {getReports} from '../../../api/GET_Reports';
+import {getReportsDetail} from '../../../api/GET_ReportsDetail';
+import {updateReports} from '../../../api/PATCH_Reports';
+import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
 import {
   DataResponseUserReportedInterface,
   ReportType,
@@ -233,6 +241,27 @@ export default function UserReported() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 UserReported.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="User">{page}</ContentLayout>;

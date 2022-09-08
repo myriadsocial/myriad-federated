@@ -1,28 +1,31 @@
-import React, {useMemo} from 'react';
+import {ServerIcon} from '@heroicons/react/outline';
 
+import React, {useMemo} from 'react';
 import CountUp from 'react-countup';
+
+import getConfig from 'next/config';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import getConfig from 'next/config';
+import {useRouter} from 'next/router';
 
 import {Container, SvgIcon} from '@material-ui/core';
-import {ServerIcon} from '@heroicons/react/outline';
+
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
-import {useRouter} from 'next/router';
+
+import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
+import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
+import {ServerListProps} from 'src/interface/ServerListInterface';
+import {numberFormatter} from 'src/utils/numberFormatter';
+
+import {setCookie} from 'nookies';
+import {Illustration, MyriadFullBlack} from 'public/icons';
 
 import Button from '../atoms/Button';
 import CardInstance from '../atoms/CardInstance';
 import EmptyState from '../atoms/EmptyState';
 import ShowIf from '../common/show-if.component';
-
-import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
-import {Illustration, MyriadFullBlack} from 'public/icons';
-import {numberFormatter} from 'src/utils/numberFormatter';
-import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
-import {setCookie} from 'nookies';
-import {ServerListProps} from 'src/interface/ServerListInterface';
 import {ShimerComponent} from './Shimer';
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
 
 const PolkadotAccountList = dynamic(
   () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
@@ -33,7 +36,11 @@ const PolkadotAccountList = dynamic(
 
 const {publicRuntimeConfig} = getConfig();
 
-export const ServerListComponent: React.FC = () => {
+type ServerListComponentProps = {
+  signIn: boolean;
+};
+
+export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}) => {
   const router = useRouter();
 
   const {servers, metric, loading} = useInstances(InstanceType.ALL);
@@ -46,7 +53,7 @@ export const ServerListComponent: React.FC = () => {
 
   const search = (query: string | null) => {
     if (!query) return servers;
-    const regex = new RegExp(`^${query.toLowerCase()}`, 'i');
+    const regex = new RegExp(`${query.toLowerCase()}`, 'gi');
 
     return servers.filter(server => {
       if (!server?.detail) return false;
@@ -90,14 +97,14 @@ export const ServerListComponent: React.FC = () => {
     setAccounts(accounts);
   };
 
-  const handleSelectedSubstrateAccount = (account: InjectedAccountWithMeta) => {
+  const handleSelectedSubstrateAccount = async (account: InjectedAccountWithMeta) => {
     closeAccountList();
-
-    setCookie(null, 'currentAddress', account.address);
+    setCookie(null, 'session', JSON.stringify({currentAddress: account.address}));
     router.push('/instance');
   };
 
   const handleSignIn = () => {
+    if (signIn) return router.push('/instance');
     checkExtensionInstalled();
   };
 
@@ -115,7 +122,11 @@ export const ServerListComponent: React.FC = () => {
                 <div className="mx-2">
                   <Button label="Contact us" type="text" onClick={(e: any) => handleContactUs(e)} />
                 </div>
-                <Button primary onClick={handleSignIn} label="Create Instance" />
+                <Button
+                  primary
+                  onClick={handleSignIn}
+                  label={signIn ? 'My Instances' : 'Create Instance'}
+                />
               </div>
             </div>
             <header className="relative mb-[85px]">

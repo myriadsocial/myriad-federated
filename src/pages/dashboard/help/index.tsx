@@ -1,4 +1,9 @@
 import {ReactNode} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+
+import nookies from 'nookies';
+
 import ContentLayout from '../../../layout/ContentLayout';
 
 export default function Help() {
@@ -8,6 +13,27 @@ export default function Help() {
     </div>
   );
 }
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const cookies = nookies.get(context);
+  const session = cookies?.session ?? '';
+
+  try {
+    const data = JSON.parse(session);
+    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
+  } catch {
+    return {
+      redirect: {
+        destination: '/instance',
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
 
 Help.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Help">{page}</ContentLayout>;

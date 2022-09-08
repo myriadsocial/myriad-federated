@@ -1,11 +1,34 @@
-import {Avatar, Button, Typography} from '@mui/material';
+import React, {useMemo} from 'react';
+
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
+
+import {Avatar, Button, Typography} from '@mui/material';
+
+import {formatAddress} from 'src/helpers/formatAddress';
+import {parseCookie} from 'src/helpers/parseCookie';
+
+import {destroyCookie, parseCookies} from 'nookies';
+
 import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
+
+const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
+  ssr: false,
+});
+
 const Header = ({title}: {title: string}) => {
   const router = useRouter();
+  const cookies = parseCookies();
+  const accountId = useMemo(() => parseCookie(cookies?.session), [cookies?.session]);
+
   const handleClickNotification = () => {
     router.push('/dashboard/notification');
+  };
+
+  const handleLogout = () => {
+    destroyCookie(null, 'session');
+    router.push('/');
   };
 
   return (
@@ -42,6 +65,7 @@ const Header = ({title}: {title: string}) => {
         </Button>
         <Button
           variant="contained"
+          onClick={handleLogout}
           style={{
             height: 36,
             background: 'white',
@@ -54,13 +78,9 @@ const Header = ({title}: {title: string}) => {
             paddingLeft: 10,
           }}>
           <div className="flex items-center">
-            <Avatar
-              style={{height: 24, width: 24, marginRight: 6}}
-              src="https://i.pravatar.cc/300"
-              alt="profile"
-            />
+            <PolkadotIcon value={accountId} size={24} theme="polkadot" style={{marginRight: 5}} />
             <Typography color={'black'} fontSize={14}>
-              0xabcd...1234
+              {formatAddress(accountId)}
             </Typography>
           </div>
         </Button>

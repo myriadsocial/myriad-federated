@@ -1,15 +1,18 @@
-import dynamic from 'next/dynamic';
-import themeV2 from '../themes/light-theme';
-
-import type {AppProps} from 'next/app';
-import {ThemeProvider} from '@material-ui/core/styles';
-import {NextPage} from 'next';
-import {ReactElement, ReactNode} from 'react';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
+
+import {ReactElement, ReactNode} from 'react';
+
+import {NextPage} from 'next';
+import type {AppProps} from 'next/app';
+import dynamic from 'next/dynamic';
+
+import {ThemeProvider} from '@material-ui/core/styles';
+
 import {SnackbarProvider} from 'notistack';
 
 import '../../styles/globals.css';
+import themeV2 from '../themes/light-theme';
 
 const BlockchainProvider = dynamic(
   () => import('src/components/common/Blockchain/Blockchain.provider'),
