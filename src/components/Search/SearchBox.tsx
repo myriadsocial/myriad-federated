@@ -1,15 +1,16 @@
 import React, {useState} from 'react';
 
+import Image from 'next/image';
+
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
 import Paper from '@material-ui/core/Paper';
 
-import {SearchBoxProps, SearchBoxColor, useStyles} from '.';
-
 import {debounce} from 'lodash';
-import Image from 'next/image';
 import {Magnifier} from 'public/icons';
+
+import {SearchBoxColor, SearchBoxProps, useStyles} from '.';
 
 const SearchBox: React.FC<SearchBoxProps> = ({
   color = SearchBoxColor.PRIMARY,

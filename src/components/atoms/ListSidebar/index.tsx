@@ -1,6 +1,7 @@
+import Image from 'next/image';
+
 import {ExpandLess, ExpandMore} from '@mui/icons-material';
 import {ListItemButton} from '@mui/material';
-import Image from 'next/image';
 
 interface ListSidebar {
   onClick: () => void;

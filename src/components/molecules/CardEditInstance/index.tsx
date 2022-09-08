@@ -1,8 +1,11 @@
-import {TextField, Typography} from '@mui/material';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
+
+import {TextField, Typography} from '@mui/material';
+
 import {colors} from '../../../utils';
 import Button from '../../atoms/Button';
+
 const CardEditInstance = () => {
   const router = useRouter();
   return (

@@ -1,5 +1,7 @@
-import axios from 'axios';
 import getConfig from 'next/config';
+
+import axios from 'axios';
+
 const {publicRuntimeConfig} = getConfig();
 
 const instance = (api?: string) =>

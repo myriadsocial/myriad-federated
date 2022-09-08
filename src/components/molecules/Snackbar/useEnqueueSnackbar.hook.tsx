@@ -1,9 +1,9 @@
 import {useMediaQuery, useTheme} from '@material-ui/core';
 
+import {useSnackbar as useDefaultSnackbar} from 'notistack';
+
 import {Snackbar} from './Snackbar';
 import {SnackbarProps} from './Snackbar.interface';
-
-import {useSnackbar as useDefaultSnackbar} from 'notistack';
 
 export const useEnqueueSnackbar = () => {
   const {enqueueSnackbar} = useDefaultSnackbar();

@@ -1,10 +1,11 @@
-import {CircularProgress} from '@mui/material';
 import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+
+import {CircularProgress} from '@mui/material';
 
 interface TableInterface {
   data: any;

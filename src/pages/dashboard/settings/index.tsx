@@ -1,11 +1,16 @@
-import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
-import {TextField, Switch} from '@mui/material';
-import {GetServerSidePropsContext} from 'next';
-import nookies from 'nookies';
-import Image from 'next/image';
-import {IcOpenUrl} from 'public/icons';
 import {ReactNode, useState} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+import Image from 'next/image';
+
+import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
+import {Switch, TextField} from '@mui/material';
+
 import Button from 'src/components/atoms/Button';
+
+import nookies from 'nookies';
+import {IcOpenUrl} from 'public/icons';
+
 import ContentLayout from '../../../layout/ContentLayout';
 
 interface dataSettingInterface {

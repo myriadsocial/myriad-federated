@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 
 import dynamic from 'next/dynamic';
+import {useRouter} from 'next/router';
 
 import {Backdrop, CircularProgress} from '@material-ui/core';
-import {useRouter} from 'next/router';
-import {destroyCookie} from 'nookies';
 
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
+
+import {destroyCookie} from 'nookies';
+
 import {useStyles} from './Instance.styles';
 import {InstanceHeader} from './InstanceHeader';
 import {InstanceList} from './InstanceList';

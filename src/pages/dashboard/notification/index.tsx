@@ -1,9 +1,13 @@
-import nookies from 'nookies';
+import {useQuery} from '@tanstack/react-query';
+
+import {ReactNode, useEffect, useState} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
 
 import {CircularProgress, Typography} from '@mui/material';
-import {useQuery} from '@tanstack/react-query';
-import {GetServerSidePropsContext} from 'next';
-import {ReactNode, useEffect, useState} from 'react';
+
+import nookies from 'nookies';
+
 import {getNotifications} from '../../../api/GET_Notifications';
 import {DropdownFilter, ListAllNotifications} from '../../../components/atoms';
 import EmptyState from '../../../components/molecules/EmptyState';

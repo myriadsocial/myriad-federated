@@ -1,13 +1,17 @@
 import React, {useMemo} from 'react';
 
-import {Avatar, Button, Typography} from '@mui/material';
-import {destroyCookie, parseCookies} from 'nookies';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
-import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
+
+import {Avatar, Button, Typography} from '@mui/material';
+
 import {formatAddress} from 'src/helpers/formatAddress';
-import dynamic from 'next/dynamic';
 import {parseCookie} from 'src/helpers/parseCookie';
+
+import {destroyCookie, parseCookies} from 'nookies';
+
+import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,

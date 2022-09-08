@@ -1,6 +1,9 @@
-import nookies from 'nookies';
-import {GetServerSidePropsContext} from 'next';
 import {ReactNode} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+
+import nookies from 'nookies';
+
 import ContentLayout from '../../../layout/ContentLayout';
 
 export default function Help() {

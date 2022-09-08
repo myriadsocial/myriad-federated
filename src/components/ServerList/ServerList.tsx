@@ -1,28 +1,31 @@
-import React, {useMemo} from 'react';
+import {ServerIcon} from '@heroicons/react/outline';
 
+import React, {useMemo} from 'react';
 import CountUp from 'react-countup';
+
+import getConfig from 'next/config';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import getConfig from 'next/config';
+import {useRouter} from 'next/router';
 
 import {Container, SvgIcon} from '@material-ui/core';
-import {ServerIcon} from '@heroicons/react/outline';
+
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
-import {useRouter} from 'next/router';
+
+import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
+import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
+import {ServerListProps} from 'src/interface/ServerListInterface';
+import {numberFormatter} from 'src/utils/numberFormatter';
+
+import {setCookie} from 'nookies';
+import {Illustration, MyriadFullBlack} from 'public/icons';
 
 import Button from '../atoms/Button';
 import CardInstance from '../atoms/CardInstance';
 import EmptyState from '../atoms/EmptyState';
 import ShowIf from '../common/show-if.component';
-
-import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
-import {Illustration, MyriadFullBlack} from 'public/icons';
-import {numberFormatter} from 'src/utils/numberFormatter';
-import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
-import {setCookie} from 'nookies';
-import {ServerListProps} from 'src/interface/ServerListInterface';
 import {ShimerComponent} from './Shimer';
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
 
 const PolkadotAccountList = dynamic(
   () => import('src/components/PolkadotAccountList/PolkadotAccountList'),

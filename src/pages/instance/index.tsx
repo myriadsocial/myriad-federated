@@ -1,11 +1,13 @@
 import React from 'react';
-import nookies from 'nookies';
-import Head from 'next/head';
 
 import {GetServerSidePropsContext} from 'next';
+import Head from 'next/head';
+
 import {Container} from '@mui/material';
 
 import {InstanceComponent} from 'src/components/Instance/InstanceComponent';
+
+import nookies from 'nookies';
 
 type InstanceProps = {
   accountId: string;

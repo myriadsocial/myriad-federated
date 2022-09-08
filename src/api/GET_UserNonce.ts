@@ -1,6 +1,6 @@
-import axios from './axiosInstance';
-
 import {UserNonce} from 'src/interface/UserInterface';
+
+import axios from './axiosInstance';
 
 export async function getUserNonce(api: string, address: string): Promise<UserNonce> {
   try {

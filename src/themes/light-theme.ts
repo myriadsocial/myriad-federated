@@ -1,6 +1,6 @@
 import '@fontsource/mulish';
 
-import {createTheme, alpha} from '@material-ui/core/styles';
+import {alpha, createTheme} from '@material-ui/core/styles';
 import {BreakpointValues} from '@material-ui/core/styles/createBreakpoints';
 
 declare module '@material-ui/core/styles' {

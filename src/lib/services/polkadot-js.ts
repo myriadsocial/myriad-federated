@@ -1,9 +1,10 @@
 import getConfig from 'next/config';
 
 import {ApiPromise, WsProvider} from '@polkadot/api';
-import {ServerListProps} from 'src/interface/ServerListInterface';
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 import {numberToHex} from '@polkadot/util';
+
+import {ServerListProps} from 'src/interface/ServerListInterface';
 
 const {publicRuntimeConfig} = getConfig();
 

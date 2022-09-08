@@ -1,9 +1,12 @@
-import {Typography} from '@mui/material';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
+
+import {Typography} from '@mui/material';
+
 import {ExperianceGray, PostGray, UserGray} from '../../../../public/icons';
 import {colors} from '../../../utils';
 import Button from '../../atoms/Button';
+
 const CardInstanceLeft = () => {
   const router = useRouter();
   return (

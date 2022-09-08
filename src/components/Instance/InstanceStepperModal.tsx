@@ -2,11 +2,12 @@ import React, {useState} from 'react';
 
 import Image from 'next/image';
 
+import {TextField} from '@mui/material';
+
 import Button from 'src/components/atoms/Button';
 import ModalComponent from 'src/components/molecules/Modal';
 
 import {IcOpenUrl} from 'public/icons';
-import {TextField} from '@mui/material';
 
 type InstanceStepperModalProps = {
   onCreateInstance: (apiURL: string, callback?: () => void) => void;

@@ -1,8 +1,11 @@
-import {Avatar, Button, Typography} from '@mui/material';
 import Image from 'next/image';
+import {useRouter} from 'next/router';
+
+import {Avatar, Button, Typography} from '@mui/material';
+
 import {IcCalender, IcCopy, IcOpenUrl} from '../../../../public/icons';
 import {colors} from '../../../utils';
-import {useRouter} from 'next/router';
+
 const CardInstanceRight = () => {
   const router = useRouter();
 

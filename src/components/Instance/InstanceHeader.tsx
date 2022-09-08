@@ -3,11 +3,12 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
+import {Typography} from '@mui/material';
+
 import Button from 'src/components/atoms/Button';
+import {formatAddress} from 'src/helpers/formatAddress';
 
 import {MyriadFullBlack} from 'public/icons';
-import {Typography} from '@mui/material';
-import {formatAddress} from 'src/helpers/formatAddress';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,

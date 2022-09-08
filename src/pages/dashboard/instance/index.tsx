@@ -1,8 +1,13 @@
-import nookies from 'nookies';
-import {Typography} from '@mui/material';
 import {ColumnDef} from '@tanstack/react-table';
-import {GetServerSidePropsContext} from 'next';
+
 import {ReactNode} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+
+import {Typography} from '@mui/material';
+
+import nookies from 'nookies';
+
 import CardInstanceLeft from '../../../components/molecules/CardInstanceLeft';
 import CardInstanceRight from '../../../components/molecules/CardInstanceRight';
 import Table from '../../../components/organisms/Table';

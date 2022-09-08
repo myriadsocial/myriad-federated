@@ -1,10 +1,15 @@
-import {CircularProgress, Typography} from '@mui/material';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {ColumnDef} from '@tanstack/react-table';
-import {GetServerSidePropsContext} from 'next';
-import nookies from 'nookies';
-import Image from 'next/image';
+
 import {ReactNode, useEffect, useState} from 'react';
+
+import {GetServerSidePropsContext} from 'next';
+import Image from 'next/image';
+
+import {CircularProgress, Typography} from '@mui/material';
+
+import nookies from 'nookies';
+
 import {IcOpenUrl} from '../../../../public/icons';
 import {deleteReports} from '../../../api/DELETE_Reports';
 import {getReports} from '../../../api/GET_Reports';

@@ -1,12 +1,17 @@
 import React from 'react';
-import Image from 'next/image';
-import nookies from 'nookies';
+import {useState} from 'react';
 
 import {GetServerSidePropsContext} from 'next';
-import {IcDebio, IcKusama, IcMyriad, IcNear, IcPolkadot} from 'public/icons';
-import {useState} from 'react';
+import Image from 'next/image';
+
+import {useMediaQuery, useTheme} from '@mui/material';
+import {Breakpoint, Theme} from '@mui/material/styles';
+
 import {DropdownFilter} from 'src/components/atoms';
+import CardRecentReported from 'src/components/organisms/CardRecentReported';
+import DashCounter from 'src/components/organisms/DashCounter';
 import {Arrays} from 'src/constans/array';
+
 import {
   ArcElement,
   BarElement,
@@ -17,12 +22,11 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
+import nookies from 'nookies';
+import {IcDebio, IcKusama, IcMyriad, IcNear, IcPolkadot} from 'public/icons';
 import {Bar, Doughnut, Pie} from 'react-chartjs-2';
-import {Breakpoint, Theme} from '@mui/material/styles';
+
 import ContentLayout from '../../layout/ContentLayout';
-import CardRecentReported from 'src/components/organisms/CardRecentReported';
-import DashCounter from 'src/components/organisms/DashCounter';
-import {useMediaQuery, useTheme} from '@mui/material';
 
 const labels = [
   '11/07',

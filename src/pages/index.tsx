@@ -1,10 +1,11 @@
 import React from 'react';
+
+import {GetServerSidePropsContext} from 'next';
 import Head from 'next/head';
 
-import nookies from 'nookies';
-
 import {ServerListComponent} from 'src/components/ServerList/ServerList';
-import {GetServerSidePropsContext} from 'next';
+
+import nookies from 'nookies';
 
 type HomeAppProps = {
   signIn: boolean;

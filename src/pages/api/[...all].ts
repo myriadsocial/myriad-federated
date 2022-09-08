@@ -1,7 +1,7 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
-import {parseCookies} from 'nookies';
-
 import httpProxyMiddleware from 'next-http-proxy-middleware';
+
+import {parseCookies} from 'nookies';
 
 export const config = {
   api: {

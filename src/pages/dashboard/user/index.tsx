@@ -1,19 +1,26 @@
-import {Backdrop, CircularProgress} from '@mui/material';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {ColumnDef} from '@tanstack/react-table';
-import nookies from 'nookies';
-import Image from 'next/image';
+
 import {ReactNode, useEffect, useState} from 'react';
-import {IcOpenUrl} from '../../../../public/icons';
-import {getReports} from '../../../api/GET_Reports';
-import {getReportsDetail} from '../../../api/GET_ReportsDetail';
-import {updateReports} from '../../../api/PATCH_Reports';
-import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
+
+import {GetServerSidePropsContext} from 'next';
+import Image from 'next/image';
+
+import {Backdrop, CircularProgress} from '@mui/material';
+
 import Button from 'src/components/atoms/Button';
 import ListReporter from 'src/components/atoms/ListReporter';
 import Modal from 'src/components/molecules/Modal';
 import Table from 'src/components/organisms/Table';
 import {Arrays} from 'src/constans/array';
+
+import nookies from 'nookies';
+
+import {IcOpenUrl} from '../../../../public/icons';
+import {getReports} from '../../../api/GET_Reports';
+import {getReportsDetail} from '../../../api/GET_ReportsDetail';
+import {updateReports} from '../../../api/PATCH_Reports';
+import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
 import {
   DataResponseUserReportedInterface,
   ReportType,
@@ -21,7 +28,6 @@ import {
 } from '../../../interface/UserInterface';
 import ContentLayout from '../../../layout/ContentLayout';
 import {dateFormatter} from '../../../utils/dateFormatter';
-import {GetServerSidePropsContext} from 'next';
 
 export default function UserReported() {
   const [isShowModalRespond, setIsShowModalRespond] = useState<boolean>(false);
