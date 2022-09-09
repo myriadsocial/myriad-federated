@@ -16,6 +16,7 @@ import {ServerListProps} from 'src/interface/ServerListInterface';
 import {PolkadotJs} from 'src/lib/services/polkadot-js';
 
 import {setCookie} from 'nookies';
+import { useEnqueueSnackbar } from '../molecules/Snackbar/useEnqueueSnackbar.hook';
 
 const PolkadotAccountList = dynamic(
   () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
@@ -31,7 +32,7 @@ type InstanceListProps = {
 
 export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) => {
   const router = useRouter();
-
+  const enqueueSnackbar = useEnqueueSnackbar();
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
   const [apiURL, setApiURL] = React.useState<string | null>(null);
@@ -90,8 +91,11 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
       );
 
       router.push(`/dashboard`);
-    } catch (err) {
-      console.log(err);
+    } catch (err:any) {
+       enqueueSnackbar({
+        message: err.toString(),
+        variant: 'error',
+      });
     } finally {
       closeAccountList();
     }
