@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import useBlockchain from 'src/components/common/Blockchain/useBlockchain.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 
-import {useEnqueueSnackbar} from './../components/molecules/Snackbar/useEnqueueSnackbar.hook';
+import {useEnqueueSnackbar} from '../components/molecules/Snackbar/useEnqueueSnackbar.hook';
 
 export enum InstanceType {
   ALL = 'all',

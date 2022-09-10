@@ -11,12 +11,13 @@ import {getUserNonce} from 'src/api/GET_UserNonce';
 import {loginAdmin} from 'src/api/POST_Admin';
 import CardInstance from 'src/components/atoms/CardInstance';
 import EmptyState from 'src/components/atoms/EmptyState';
-import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
+import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {PolkadotJs} from 'src/lib/services/polkadot-js';
 
 import {setCookie} from 'nookies';
-import { useEnqueueSnackbar } from '../molecules/Snackbar/useEnqueueSnackbar.hook';
+
+import {useEnqueueSnackbar} from '../molecules/Snackbar/useEnqueueSnackbar.hook';
 
 const PolkadotAccountList = dynamic(
   () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
@@ -69,7 +70,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
       const toHex = u8aToHex(decodeAddress(account.address));
       const userNonce = await getUserNonce(apiURL, toHex);
 
-      if (!userNonce.nonce) return console.log('error');
+      if (!userNonce.nonce) throw new Error('Unauthorized (User not exists)');
 
       const signature = await PolkadotJs.signWithWallet(account, userNonce.nonce);
       const token = await loginAdmin(apiURL, {
@@ -91,9 +92,11 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
       );
 
       router.push(`/dashboard`);
-    } catch (err:any) {
-       enqueueSnackbar({
-        message: err.toString(),
+    } catch (err) {
+      const message = err instanceof Error ? err.message : `Unexpected error: ${err}`;
+
+      enqueueSnackbar({
+        message,
         variant: 'error',
       });
     } finally {
