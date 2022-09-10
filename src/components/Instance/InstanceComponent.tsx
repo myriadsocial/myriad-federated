@@ -5,7 +5,7 @@ import {useRouter} from 'next/router';
 
 import {Backdrop, CircularProgress} from '@material-ui/core';
 
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 
 import {destroyCookie} from 'nookies';
 

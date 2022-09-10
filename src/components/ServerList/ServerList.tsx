@@ -13,8 +13,8 @@ import {Container, SvgIcon} from '@material-ui/core';
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
 import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hooks';
-import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hooks';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
+import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {numberFormatter} from 'src/utils/numberFormatter';
 
@@ -61,9 +61,8 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
     });
   };
 
-  const serverList: ServerListProps[] = useMemo(() => search(query), [query, loading]);
+  const serverList: ServerListProps[] = useMemo(() => search(query), [query, loading, search]);
 
-  // TODO: handle search
   const handleSearch = (q?: string) => {
     if (!q) setQuery(null);
     else setQuery(q);
