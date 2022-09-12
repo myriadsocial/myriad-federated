@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -7,9 +7,7 @@ import {useRouter} from 'next/router';
 import {Avatar, Button, Typography} from '@mui/material';
 
 import {formatAddress} from 'src/helpers/formatAddress';
-import {parseCookie} from 'src/helpers/parseCookie';
-
-import {destroyCookie, parseCookies} from 'nookies';
+import {useAuth} from 'src/hooks/use-auth.hook';
 
 import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
 
@@ -19,16 +17,13 @@ const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
 
 const Header = ({title}: {title: string}) => {
   const router = useRouter();
-  const cookies = parseCookies();
-  const accountId = useMemo(() => parseCookie(cookies?.session), [cookies?.session]);
+
+  const {cookie, logout} = useAuth();
+
+  const accountId = cookie?.session?.currentAddress ?? '';
 
   const handleClickNotification = () => {
     router.push('/dashboard/notification');
-  };
-
-  const handleLogout = () => {
-    destroyCookie(null, 'session');
-    router.push('/');
   };
 
   return (
@@ -65,7 +60,7 @@ const Header = ({title}: {title: string}) => {
         </Button>
         <Button
           variant="contained"
-          onClick={handleLogout}
+          onClick={logout}
           style={{
             height: 36,
             background: 'white',

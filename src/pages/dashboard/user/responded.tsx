@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 import {CircularProgress, Typography} from '@mui/material';
 
-import nookies from 'nookies';
+import cookie from 'cookie';
 
 import {IcOpenUrl} from '../../../../public/icons';
 import {deleteReports} from '../../../api/DELETE_Reports';
@@ -226,11 +226,11 @@ export default function UserResponded() {
 }
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = nookies.get(context);
-  const session = cookies?.session ?? '';
+  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
+  const server = cookies?.session ?? '';
 
   try {
-    const data = JSON.parse(session);
+    const data = JSON.parse(server);
     if (!data?.apiURL || !data?.token) throw 'DataNotFound';
   } catch {
     return {

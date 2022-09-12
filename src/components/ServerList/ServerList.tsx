@@ -13,12 +13,12 @@ import {Container, SvgIcon} from '@material-ui/core';
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
 import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
+import {useAuth} from 'src/hooks/use-auth.hook';
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {numberFormatter} from 'src/utils/numberFormatter';
 
-import {setCookie} from 'nookies';
 import {Illustration, MyriadFullBlack} from 'public/icons';
 
 import Button from '../atoms/Button';
@@ -44,6 +44,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
   const router = useRouter();
 
   const {servers, metric, loading} = useInstances(InstanceType.ALL);
+  const {connectWallet} = useAuth();
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
@@ -98,8 +99,10 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
 
   const handleSelectedSubstrateAccount = async (account: InjectedAccountWithMeta) => {
     closeAccountList();
-    setCookie(null, 'session', JSON.stringify({currentAddress: account.address}));
-    router.push('/instance');
+    connectWallet({
+      account,
+      callbackURL: '/instance',
+    });
   };
 
   const handleSignIn = () => {

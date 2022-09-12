@@ -8,7 +8,7 @@ import {Switch, TextField} from '@mui/material';
 
 import Button from 'src/components/atoms/Button';
 
-import nookies from 'nookies';
+import cookie from 'cookie';
 import {IcOpenUrl} from 'public/icons';
 
 import ContentLayout from '../../../layout/ContentLayout';
@@ -99,11 +99,11 @@ export default function Settings() {
 }
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = nookies.get(context);
-  const session = cookies?.session ?? '';
+  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
+  const server = cookies?.session ?? '';
 
   try {
-    const data = JSON.parse(session);
+    const data = JSON.parse(server);
     if (!data?.apiURL || !data?.token) throw 'DataNotFound';
   } catch {
     return {

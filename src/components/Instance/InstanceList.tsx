@@ -1,21 +1,14 @@
 import React from 'react';
 
 import dynamic from 'next/dynamic';
-import {useRouter} from 'next/router';
 
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
-import {decodeAddress} from '@polkadot/keyring';
-import {u8aToHex} from '@polkadot/util';
 
-import {getUserNonce} from 'src/api/GET_UserNonce';
-import {loginAdmin} from 'src/api/POST_Admin';
 import CardInstance from 'src/components/atoms/CardInstance';
 import EmptyState from 'src/components/atoms/EmptyState';
+import {useAuth} from 'src/hooks/use-auth.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
-import {PolkadotJs} from 'src/lib/services/polkadot-js';
-
-import {setCookie} from 'nookies';
 
 import {useEnqueueSnackbar} from '../molecules/Snackbar/useEnqueueSnackbar.hook';
 
@@ -32,11 +25,12 @@ type InstanceListProps = {
 };
 
 export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) => {
-  const router = useRouter();
   const enqueueSnackbar = useEnqueueSnackbar();
+
+  const {loginDashboard} = useAuth();
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
-  const [apiURL, setApiURL] = React.useState<string | null>(null);
+  const [apiURL, setApiURL] = React.useState<string>();
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
@@ -53,7 +47,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
 
   const closeAccountList = () => {
     setShowAccountList(false);
-    setApiURL(null);
+    setApiURL(undefined);
   };
 
   const getAvailableAccounts = async () => {
@@ -64,34 +58,8 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
   };
 
   const handleSelectedSubstrateAccount = async (account: InjectedAccountWithMeta) => {
-    if (!apiURL) return;
-
     try {
-      const toHex = u8aToHex(decodeAddress(account.address));
-      const userNonce = await getUserNonce(apiURL, toHex);
-
-      if (!userNonce.nonce) throw new Error('Unauthorized (User not exists)');
-
-      const signature = await PolkadotJs.signWithWallet(account, userNonce.nonce);
-      const token = await loginAdmin(apiURL, {
-        nonce: userNonce.nonce,
-        signature,
-        publicAddress: toHex,
-        walletType: 'polkadot{.js}',
-        networkType: 'polkadot',
-      });
-
-      setCookie(
-        null,
-        'session',
-        JSON.stringify({
-          currentAddress: account.address,
-          apiURL: apiURL,
-          token: token.accessToken,
-        }),
-      );
-
-      router.push(`/dashboard`);
+      await loginDashboard({account, apiURL, callbackURL: '/dashboard'});
     } catch (err) {
       const message = err instanceof Error ? err.message : `Unexpected error: ${err}`;
 
