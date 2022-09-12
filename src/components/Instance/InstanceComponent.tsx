@@ -1,14 +1,20 @@
 import React, {useState} from 'react';
 
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import {useRouter} from 'next/router';
 
-import {Backdrop, CircularProgress} from '@material-ui/core';
+import {IconButton, Popover} from '@mui/material';
 
+import {Backdrop, CircularProgress, MenuItem} from '@material-ui/core';
+
+import {formatAddress} from 'src/helpers/formatAddress';
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 
 import {destroyCookie} from 'nookies';
+import {IcCopy, IcCopyOutline} from 'public/icons';
 
+import Button from '../atoms/Button';
 import {useStyles} from './Instance.styles';
 import {InstanceHeader} from './InstanceHeader';
 import {InstanceList} from './InstanceList';
@@ -25,12 +31,24 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
   const router = useRouter();
   const style = useStyles();
 
+  const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
+    ssr: false,
+  });
   const {createInstance, servers, loading} = useInstances(InstanceType.OWNED, accountId);
 
   const [open, setOpen] = useState<boolean>(false);
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+  const handleLogout = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   // TODO: Handle logout
-  const handleLogout = () => {
+  const _handleLogout = () => {
     destroyCookie(null, 'session');
     router.push('/');
   };
@@ -47,6 +65,49 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
       <Backdrop className={style.backdrop} open={loading}>
         <CircularProgress />
       </Backdrop>
+      {/* <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}>
+        <div className="w-[360px]">
+          <div>Account</div>
+        </div>
+      </Menu> */}
+      <Popover
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        open={openMenu}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        style={{marginTop: 8}}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}>
+        <div className="rounded-[10px] p-5 w-[360px]">
+          <div className="text-sm font-semibold">Account</div>
+          <div className="mt-4">
+            <div className="text-xs fonts-semibold mb-2">Logged in</div>
+            <div className="bg-[#EBE0FF] h-14 rounded-[4px] flex items-center p-2">
+              <PolkadotIcon value={accountId} size={40} theme="polkadot" style={{marginRight: 8}} />
+              <div className="text-base flex-1"> {formatAddress(accountId)}</div>
+              <IconButton>
+                <Image alt="" src={IcCopyOutline} />
+              </IconButton>
+            </div>
+          </div>
+          <div className="flex mt-4 gap-2">
+            <Button onClick={undefined} label="Switch Account" isFullWidth />
+            <Button onClick={_handleLogout} label="Disconnect" primary isFullWidth />
+          </div>
+        </div>
+      </Popover>
     </React.Fragment>
   );
 };

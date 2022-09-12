@@ -111,7 +111,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
 
   return (
     <>
-      <div className="bg-background-content min-h-screen">
+      <div className="bg-background-content min-h-screen pb-4">
         <Container maxWidth="lg" disableGutters>
           <div className="flex flex-col pt-5 gap-5">
             <div className="mb-[60px] flex justify-between">
