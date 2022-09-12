@@ -2,6 +2,7 @@ import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 
 import {ReactElement, ReactNode} from 'react';
+import {CookiesProvider} from 'react-cookie';
 
 import {NextPage} from 'next';
 import type {AppProps} from 'next/app';
@@ -34,10 +35,12 @@ export default function MyApp({Component, pageProps}: AppPropsWithLayout) {
     <ThemeProvider theme={themeV2}>
       <SnackbarProvider maxSnack={4}>
         <BlockchainProvider>
-          <QueryClientProvider client={queryClient}>
-            <ReactQueryDevtools initialIsOpen={false} />
-            {getLayout(<Component {...pageProps} />)}
-          </QueryClientProvider>
+          <CookiesProvider>
+            <QueryClientProvider client={queryClient}>
+              <ReactQueryDevtools initialIsOpen={false} />
+              {getLayout(<Component {...pageProps} />)}
+            </QueryClientProvider>
+          </CookiesProvider>
         </BlockchainProvider>
       </SnackbarProvider>
     </ThemeProvider>
