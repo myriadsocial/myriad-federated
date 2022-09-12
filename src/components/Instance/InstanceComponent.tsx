@@ -4,15 +4,15 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 
-import {IconButton, Popover} from '@mui/material';
+import {IconButton, ListItemButton, Popover} from '@mui/material';
 
-import {Backdrop, CircularProgress, MenuItem} from '@material-ui/core';
+import {Backdrop, CircularProgress} from '@material-ui/core';
 
 import {formatAddress} from 'src/helpers/formatAddress';
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 
 import {destroyCookie} from 'nookies';
-import {IcCopy, IcCopyOutline} from 'public/icons';
+import {IcCopyOutline} from 'public/icons';
 
 import Button from '../atoms/Button';
 import {useStyles} from './Instance.styles';
@@ -38,11 +38,14 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
+
   const handleLogout = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+    console.log(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -65,18 +68,6 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
       <Backdrop className={style.backdrop} open={loading}>
         <CircularProgress />
       </Backdrop>
-      {/* <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={openMenu}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}>
-        <div className="w-[360px]">
-          <div>Account</div>
-        </div>
-      </Menu> */}
       <Popover
         anchorEl={anchorEl}
         onClose={handleClose}
@@ -94,7 +85,31 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
           <div className="text-sm font-semibold">Account</div>
           <div className="mt-4">
             <div className="text-xs fonts-semibold mb-2">Logged in</div>
-            <div className="bg-[#EBE0FF] h-14 rounded-[4px] flex items-center p-2">
+            <div className="bg-[#EBE0FF] h-14 rounded-[4px] flex items-center w-full">
+              <ListItemButton onClick={() => console.log('list click')}>
+                <PolkadotIcon
+                  value={accountId}
+                  size={40}
+                  theme="polkadot"
+                  style={{marginRight: 8}}
+                />
+                <div className="text-base flex-1"> {formatAddress(accountId)}</div>
+              </ListItemButton>
+              <IconButton onClick={() => console.log('copy click')}>
+                <Image alt="" src={IcCopyOutline} />
+              </IconButton>
+            </div>
+          </div>
+          <div>
+            <div className="text-sm font-semibold my-4">Others</div>
+            <div className="bg-selected-yellow h-14 rounded-[4px] flex items-center p-2">
+              <PolkadotIcon value={accountId} size={40} theme="polkadot" style={{marginRight: 8}} />
+              <div className="text-base flex-1"> {formatAddress(accountId)}</div>
+              <IconButton onClick={() => console.log('copy click')}>
+                <Image alt="" src={IcCopyOutline} />
+              </IconButton>
+            </div>
+            <div className="h-14 rounded-[4px] flex items-center p-2">
               <PolkadotIcon value={accountId} size={40} theme="polkadot" style={{marginRight: 8}} />
               <div className="text-base flex-1"> {formatAddress(accountId)}</div>
               <IconButton>
