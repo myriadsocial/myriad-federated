@@ -33,9 +33,8 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
 
-  const handleLogout = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
-    console.log(event.currentTarget);
   };
 
   const handleClose = () => {
@@ -52,9 +51,17 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
     setOpen(!open);
   };
 
+  const handleSwitchAccount = () => {
+    router.push('/');
+  };
+
   return (
     <React.Fragment>
-      <InstanceHeader accountId={accountId} onLogout={handleLogout} onOpenStepper={toogleOpen} />
+      <InstanceHeader
+        accountId={accountId}
+        onLogout={handleShowSwitchAccount}
+        onOpenStepper={toogleOpen}
+      />
       <InstanceList servers={servers} accountId={accountId} />
       <InstanceStepperModal onCreateInstance={createInstance} open={open} onClose={toogleOpen} />
       <Backdrop className={style.backdrop} open={loading}>
@@ -65,6 +72,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
         anchorEl={anchorEl}
         openMenu={openMenu}
         handleLogout={_handleLogout}
+        handleSwitchAccount={handleSwitchAccount}
       />
     </React.Fragment>
   );

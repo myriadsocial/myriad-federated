@@ -1,6 +1,6 @@
 import {ServerIcon} from '@heroicons/react/outline';
 
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import CountUp from 'react-countup';
 
 import getConfig from 'next/config';
@@ -18,13 +18,14 @@ import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {numberFormatter} from 'src/utils/numberFormatter';
 
-import {setCookie} from 'nookies';
-import {Illustration, MyriadFullBlack} from 'public/icons';
+import {destroyCookie, setCookie} from 'nookies';
+import {IcAccountPolkadot, Illustration, MyriadFullBlack} from 'public/icons';
 
 import Button from '../atoms/Button';
 import CardInstance from '../atoms/CardInstance';
 import EmptyState from '../atoms/EmptyState';
 import ShowIf from '../common/show-if.component';
+import SwitchAccount from '../molecules/SwitchAccount';
 import {ShimerComponent} from './Shimer';
 
 const PolkadotAccountList = dynamic(
@@ -108,7 +109,25 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
   };
 
   const goToMyriadApp = (webUrl: string) => () => window.open(webUrl);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
 
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  // TODO: Handle logout
+  const _handleLogout = () => {
+    destroyCookie(null, 'session');
+    router.push('/');
+  };
+
+  const handleSwitchAccount = () => {
+    router.push('/');
+  };
+  const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
   return (
     <>
       <div className="bg-background-content min-h-screen pb-4">
@@ -123,8 +142,17 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                 </div>
                 <Button
                   primary
-                  onClick={handleSignIn}
-                  label={signIn ? 'My Instances' : 'Create Instance'}
+                  onClick={signIn ? handleShowSwitchAccount : handleSignIn}
+                  label={
+                    signIn ? (
+                      <div className="flex">
+                        <Image src={IcAccountPolkadot} alt="" height={20} width={20} />
+                        <div className="ml-2">My Instance</div>
+                      </div>
+                    ) : (
+                      'Create Instance'
+                    )
+                  }
                 />
               </div>
             </div>
@@ -224,6 +252,13 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
           </div>
         </Container>
       </div>
+      <SwitchAccount
+        handleClose={handleClose}
+        anchorEl={anchorEl}
+        openMenu={openMenu}
+        handleLogout={_handleLogout}
+        handleSwitchAccount={handleSwitchAccount}
+      />
       <PolkadotAccountList
         align="left"
         title="Select account"

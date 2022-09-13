@@ -1,10 +1,6 @@
-import Image from 'next/image';
+import {Popover} from '@mui/material';
 
-import {IconButton, ListItemButton, Popover} from '@mui/material';
-
-import {formatAddress} from 'src/helpers/formatAddress';
-
-import {IcAccountPolkadot, IcCopyOutline} from 'public/icons';
+import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
 
 import Button from '../../atoms/Button';
 
@@ -13,12 +9,10 @@ interface SwitchAccountProps {
   openMenu: boolean;
   handleLogout: () => void;
   handleClose: () => void;
+  handleSwitchAccount: () => void;
 }
 const SwitchAccount = (props: SwitchAccountProps) => {
-  const {anchorEl, openMenu, handleLogout, handleClose} = props;
-
-  // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  // const openMenu = Boolean(anchorEl);
+  const {anchorEl, openMenu, handleLogout, handleClose, handleSwitchAccount} = props;
 
   return (
     <Popover
@@ -38,35 +32,15 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="text-sm font-semibold">Account</div>
         <div className="mt-4">
           <div className="text-xs fonts-semibold mb-2">Logged in</div>
-          <div className="bg-[#EBE0FF] h-14 rounded-[4px] flex items-center w-full">
-            <ListItemButton style={{padding: 8}} onClick={() => console.log('list click')}>
-              <Image src={IcAccountPolkadot} alt="" height={40} width={40} />
-              <div className="text-base flex-1 ml-2"> accountId</div>
-            </ListItemButton>
-            <IconButton onClick={() => console.log('copy click')}>
-              <Image alt="" src={IcCopyOutline} />
-            </IconButton>
-          </div>
+          <ListSwitchAccount type="myAddress" label="accountId" />
         </div>
         <div>
           <div className="text-sm font-semibold my-4">Others</div>
-          <div className="bg-selected-yellow h-14 rounded-[4px] flex items-center p-2">
-            <Image src={IcAccountPolkadot} alt="" height={40} width={40} />
-            <div className="text-base flex-1">accountId</div>
-            <IconButton onClick={() => console.log('copy click')}>
-              <Image alt="" src={IcCopyOutline} />
-            </IconButton>
-          </div>
-          <div className="h-14 rounded-[4px] flex items-center p-2">
-            <Image src={IcAccountPolkadot} alt="" height={40} width={40} />
-            <div className="text-base flex-1"> {formatAddress('accountId')}</div>
-            <IconButton>
-              <Image alt="" src={IcCopyOutline} />
-            </IconButton>
-          </div>
+          <ListSwitchAccount type="selectedAddress" label="accountId" />
+          <ListSwitchAccount label="accountId" />
         </div>
         <div className="flex mt-4 gap-2">
-          <Button onClick={undefined} label="Switch Account" isFullWidth />
+          <Button onClick={handleSwitchAccount} label="Switch Account" isFullWidth />
           <Button onClick={handleLogout} label="Disconnect" primary isFullWidth />
         </div>
       </div>
