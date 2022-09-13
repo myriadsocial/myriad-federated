@@ -1,3 +1,5 @@
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+
 import {Popover} from '@mui/material';
 
 import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
@@ -42,6 +44,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="text-sm font-semibold">Account</div>
         <div className="mt-4">
           <div className="text-xs fonts-semibold mb-2">Logged in</div>
+
           <ListSwitchAccount
             type="myAddress"
             label={accountId}

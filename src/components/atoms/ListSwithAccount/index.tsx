@@ -1,3 +1,5 @@
+import CopyToClipboard from 'react-copy-to-clipboard';
+
 import Image from 'next/image';
 
 import {IconButton, ListItemButton} from '@mui/material';
@@ -30,9 +32,11 @@ export default function ListSwitchAccount(props: ListSwitchAccount) {
         <div className="text-base flex-1 ml-2">{formatAddress(label as string)}</div>
       </ListItemButton>
       {type === 'myAddress' && (
-        <IconButton onClick={clickCopy}>
-          <Image alt="" src={IcCopyOutline} />
-        </IconButton>
+        <CopyToClipboard text={label ?? ''}>
+          <IconButton onClick={clickCopy}>
+            <Image alt="" src={IcCopyOutline} />
+          </IconButton>
+        </CopyToClipboard>
       )}
     </div>
   );
