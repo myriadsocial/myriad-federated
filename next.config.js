@@ -1,14 +1,17 @@
 /** @type {import('next').NextConfig} */
 
 const {
+  APP_SECRET,
   NEXT_PUBLIC_APP_NAME,
-  NEXT_PUBLIC_APP_SECRET,
   NEXT_PUBLIC_APP_AUTH_URL,
 
+  NEXT_PUBLIC_APP_BUILD_ID,
   NEXT_PUBLIC_MYRIAD_RPC_URL,
   NEXT_PUBLIC_MYRIAD_WEBSITE_URL,
   NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL,
 } = process.env;
+
+const {version} = require('./package.json')
 
 const nextConfig = {
   reactStrictMode: false,
@@ -16,7 +19,7 @@ const nextConfig = {
     styledComponent: true,
   },
   serverRuntimeConfig: {
-    appSecret: NEXT_PUBLIC_APP_SECRET ?? 'd98b4af078b46a9984829a72030976e0',
+    appSecret: APP_SECRET ?? 'd98b4af078b46a9984829a72030976e0',
   },
   publicRuntimeConfig: {
     appName: NEXT_PUBLIC_APP_NAME ?? 'Federated Local',
@@ -37,6 +40,13 @@ const nextConfig = {
 
     return config;
   },
+  generateBuildId: async () => {
+    if (NEXT_PUBLIC_APP_BUILD_ID) {
+      return NEXT_PUBLIC_APP_BUILD_ID;
+    }
+      
+    return version;
+  }
 };
 
 module.exports = nextConfig;
