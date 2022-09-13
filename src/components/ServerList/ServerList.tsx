@@ -1,6 +1,6 @@
 import {ServerIcon} from '@heroicons/react/outline';
 
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import CountUp from 'react-countup';
 
 import getConfig from 'next/config';
@@ -13,12 +13,13 @@ import {Container, SvgIcon} from '@material-ui/core';
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
 import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
+import {formatAddress} from 'src/helpers/formatAddress';
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {numberFormatter} from 'src/utils/numberFormatter';
 
-import {destroyCookie, setCookie} from 'nookies';
+import {destroyCookie, parseCookies, setCookie} from 'nookies';
 import {IcAccountPolkadot, Illustration, MyriadFullBlack} from 'public/icons';
 
 import Button from '../atoms/Button';
@@ -43,14 +44,22 @@ type ServerListComponentProps = {
 
 export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}) => {
   const router = useRouter();
-
   const {servers, metric, loading} = useInstances(InstanceType.ALL);
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
-
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
   const [query, setQuery] = React.useState<string | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [currentAddress, setCurrentAddress] = useState<string>('');
+  const cookies = parseCookies();
+  const session = cookies?.session;
+
+  useEffect(() => {
+    if (!session) return;
+    const data = JSON.parse(session);
+    setCurrentAddress(data.currentAddress);
+  }, [session]);
 
   const search = (query: string | null) => {
     if (!query) return servers;
@@ -93,7 +102,6 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
 
   const getAvailableAccounts = async () => {
     const accounts = await getPolkadotAccounts().catch(() => []);
-
     setAccounts(accounts);
   };
 
@@ -104,27 +112,23 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
   };
 
   const handleSignIn = () => {
-    if (signIn) return router.push('/instance');
     checkExtensionInstalled();
   };
 
   const goToMyriadApp = (webUrl: string) => () => window.open(webUrl);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const openMenu = Boolean(anchorEl);
 
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  // TODO: Handle logout
   const _handleLogout = () => {
+    setAnchorEl(null);
     destroyCookie(null, 'session');
     router.push('/');
   };
 
-  const handleSwitchAccount = () => {
-    router.push('/');
-  };
   const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -138,7 +142,13 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
               <div className="flex">
                 <Button label="Visit website" type="text" onClick={handleVisitWeb} />
                 <div className="mx-2">
-                  <Button label="Contact us" type="text" onClick={(e: any) => handleContactUs(e)} />
+                  <Button
+                    label="Contact us"
+                    type="text"
+                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
+                      handleContactUs(e)
+                    }
+                  />
                 </div>
                 <Button
                   primary
@@ -147,7 +157,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                     signIn ? (
                       <div className="flex">
                         <Image src={IcAccountPolkadot} alt="" height={20} width={20} />
-                        <div className="ml-2">My Instance</div>
+                        <div className="ml-2">{formatAddress(currentAddress)}</div>
                       </div>
                     ) : (
                       'Create Instance'
@@ -253,11 +263,12 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
         </Container>
       </div>
       <SwitchAccount
+        accountId={formatAddress(currentAddress)}
         handleClose={handleClose}
         anchorEl={anchorEl}
         openMenu={openMenu}
         handleLogout={_handleLogout}
-        handleSwitchAccount={handleSwitchAccount}
+        handleSwitchAccount={handleSignIn}
       />
       <PolkadotAccountList
         align="left"

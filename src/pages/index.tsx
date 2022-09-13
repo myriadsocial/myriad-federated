@@ -32,6 +32,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
   try {
     const data = JSON.parse(session);
+    console.log('data', data);
     if (data?.currentAddress) signIn = true;
   } catch {
     // ignore

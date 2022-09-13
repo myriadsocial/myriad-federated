@@ -10,9 +10,10 @@ interface SwitchAccountProps {
   handleLogout: () => void;
   handleClose: () => void;
   handleSwitchAccount: () => void;
+  accountId: string | undefined;
 }
 const SwitchAccount = (props: SwitchAccountProps) => {
-  const {anchorEl, openMenu, handleLogout, handleClose, handleSwitchAccount} = props;
+  const {anchorEl, openMenu, handleLogout, handleClose, handleSwitchAccount, accountId} = props;
 
   return (
     <Popover
@@ -32,13 +33,21 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="text-sm font-semibold">Account</div>
         <div className="mt-4">
           <div className="text-xs fonts-semibold mb-2">Logged in</div>
-          <ListSwitchAccount type="myAddress" label="accountId" />
+          <ListSwitchAccount type="myAddress" label={accountId} />
         </div>
-        <div>
+        {/* <div>
           <div className="text-sm font-semibold my-4">Others</div>
-          <ListSwitchAccount type="selectedAddress" label="accountId" />
-          <ListSwitchAccount label="accountId" />
-        </div>
+          {data.map((item, index) => {
+            return (
+              <ListSwitchAccount
+                key={index}
+                onClick={() => handleClick(item)}
+                type={selectedAccount.address === item.address && 'selectedAddress'}
+                label={item.address}
+              />
+            );
+          })}
+        </div> */}
         <div className="flex mt-4 gap-2">
           <Button onClick={handleSwitchAccount} label="Switch Account" isFullWidth />
           <Button onClick={handleLogout} label="Disconnect" primary isFullWidth />

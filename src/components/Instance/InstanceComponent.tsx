@@ -5,11 +5,15 @@ import {useRouter} from 'next/router';
 
 import {Backdrop, CircularProgress} from '@material-ui/core';
 
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
+import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
-import {destroyCookie} from 'nookies';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
+import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
+
+import {destroyCookie, setCookie} from 'nookies';
 
 import SwitchAccount from '../molecules/SwitchAccount';
+import {PolkadotAccountList} from '../PolkadotAccountList';
 import {useStyles} from './Instance.styles';
 import {InstanceHeader} from './InstanceHeader';
 import {InstanceList} from './InstanceList';
@@ -25,13 +29,34 @@ type InstanceComponentProps = {
 export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId}) => {
   const router = useRouter();
   const style = useStyles();
-
+  const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
+  const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
+  const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
+  const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const {createInstance, servers, loading} = useInstances(InstanceType.OWNED, accountId);
 
   const [open, setOpen] = useState<boolean>(false);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
+
+  const checkExtensionInstalled = async () => {
+    const installed = await enablePolkadotExtension();
+
+    setShowAccountList(true);
+    setExtensionInstalled(installed);
+
+    getAvailableAccounts();
+  };
+  const handleSignIn = () => {
+    setAnchorEl(null);
+    checkExtensionInstalled();
+  };
+
+  const getAvailableAccounts = async () => {
+    const accounts = await getPolkadotAccounts().catch(() => []);
+    setAccounts(accounts);
+  };
 
   const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -41,7 +66,6 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
     setAnchorEl(null);
   };
 
-  // TODO: Handle logout
   const _handleLogout = () => {
     destroyCookie(null, 'session');
     router.push('/');
@@ -51,8 +75,14 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
     setOpen(!open);
   };
 
-  const handleSwitchAccount = () => {
-    router.push('/');
+  const closeAccountList = () => {
+    setShowAccountList(false);
+  };
+
+  const handleSelectedSubstrateAccount = async (account: InjectedAccountWithMeta) => {
+    closeAccountList();
+    setCookie(null, 'session', JSON.stringify({currentAddress: account.address}));
+    router.push('/instance');
   };
 
   return (
@@ -68,11 +98,20 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
         <CircularProgress />
       </Backdrop>
       <SwitchAccount
+        accountId={accountId}
         handleClose={handleClose}
         anchorEl={anchorEl}
         openMenu={openMenu}
         handleLogout={_handleLogout}
-        handleSwitchAccount={handleSwitchAccount}
+        handleSwitchAccount={handleSignIn}
+      />
+      <PolkadotAccountList
+        align="left"
+        title="Select account"
+        isOpen={showAccountList && extensionInstalled}
+        accounts={accounts}
+        onSelect={handleSelectedSubstrateAccount}
+        onClose={closeAccountList}
       />
     </React.Fragment>
   );
