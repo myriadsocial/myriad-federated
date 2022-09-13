@@ -42,55 +42,97 @@ jobs:
           release_id: ${{ steps.get_release.outputs.id }}
 
   deploy-release:
-    runs-on: ubuntu-latest
-    needs: [release]
-    environment: mainnet
+    runs-on: ubuntu-20.04
+    needs:
+      - release
     env:
       DEPLOY: ${{ secrets.MAINNET_DEPLOY }}
+    permissions:
+      contents: "read"
+      id-token: "write"
     steps:
       - name: Checkout code
         if: "${{ env.DEPLOY == 'true' }}"
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+      - name: Authenticate to Google Cloud
+        if: "${{ env.DEPLOY == 'true' }}"
+        id: "auth"
+        uses: "google-github-actions/auth@v0"
+        with:
+          workload_identity_provider: ${{ secrets.MAINNET_GOOGLE_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.MAINNET_SERVICE_ACCOUNT_EMAIL }}
+          project_id: ${{ secrets.MAINNET_GCP_PROJECT_ID }}
+      - name: Set up Cloud SDK
+        if: "${{ env.DEPLOY == 'true' }}"
+        uses: google-github-actions/setup-gcloud@v0
+      - name: Get secrets
+        if: "${{ env.DEPLOY == 'true' }}"
+        id: secrets
+        uses: google-github-actions/get-secretmanager-secrets@main
+        with:
+          secrets: |-
+            SSH_HOST:${{ secrets.MAINNET_GCP_PROJECT_ID }}/SSH_HOST
+            SSH_PORT:${{ secrets.MAINNET_GCP_PROJECT_ID }}/SSH_PORT
+            SSH_USERNAME:${{ secrets.MAINNET_GCP_PROJECT_ID }}/SSH_USERNAME
+            SSH_KEY:${{ secrets.MAINNET_GCP_PROJECT_ID }}/SSH_KEY
+            WEB_FEDERATED_ENVIRONMENT:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_ENVIRONMENT
+            WEB_FEDERATED_NAME:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_NAME
+            WEB_FEDERATED_SECRET:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SECRET
+            WEBSITE_URL:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEBSITE_URL
+            SUPPORT_MAIL:${{ secrets.MAINNET_GCP_PROJECT_ID }}/SUPPORT_MAIL
+            RPC_URL:${{ secrets.MAINNET_GCP_PROJECT_ID }}/RPC_URL
+            WEB_FEDERATED_SENTRY_DSN:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SENTRY_DSN
+            WEB_FEDERATED_DNS:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_DNS
       - name: Deploy
         if: "${{ env.DEPLOY == 'true' }}"
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          host: ${{ steps.secrets.outputs.SSH_HOST }}
+          port: ${{ steps.secrets.outputs.SSH_PORT }}
+          username: ${{ steps.secrets.outputs.SSH_USERNAME }}
+          key: ${{ steps.secrets.outputs.SSH_KEY }}
           script: |
             ./connect.sh
-            helm repo add debio https://charts.myriad.social
+            helm repo add myriadsocial https://charts.myriad.social
             helm repo update
-            helm upgrade myriad-federated debio/myriad-federated \
+            helm upgrade myriad-federated myriadsocial/myriad-federated \
               --install \
-              --set-string image.repository=gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }} \
               --set-string image.tag=${{ needs.release.outputs.release_name }} \
-              --set-string imagePullSecrets[0].name=gcr-auth \
+              --set-string config.app.environment=${{ steps.secrets.outputs.WEB_FEDERATED_ENVIRONMENT }} \
+              --set-string config.app.name="${{ steps.secrets.outputs.WEB_FEDERATED_NAME }}" \
+              --set-string config.app.version=${{ needs.compute-build-info.outputs.package_version }} \
+              --set-string config.app.authURL=${{ steps.secrets.outputs.WEB_FEDERATED_URL }} \
+              --set-string config.app.secret=${{ steps.secrets.outputs.WEB_FEDERATED_SECRET }} \
+              --set-string config.websiteURL=${{ steps.secrets.outputs.WEBSITE_URL }} \
+              --set-string config.supportMail=${{ steps.secrets.outputs.SUPPORT_MAIL }} \
+              --set-string config.rpcURL=${{ steps.secrets.outputs.RPC_URL }} \
+              --set-string config.sentry.dsn=${{ steps.secrets.outputs.WEB_FEDERATED_SENTRY_DSN }} \
               --set ingress.enabled=true \
               --set-string ingress.className=nginx \
               --set-string ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt \
-              --set-string ingress.hosts[0].host=${{ secrets.INGRESS_HOST }} \
+              --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/proxy-body-size"="100m" \
+              --set-string ingress.annotations."nginx\.org/client-max-body-size"="100m" \
+              --set-string ingress.hosts[0].host=${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
               --set-string ingress.hosts[0].paths[0].path=/ \
               --set-string ingress.hosts[0].paths[0].pathType=ImplementationSpecific \
               --set-string ingress.tls[0].secretName=myriad-federated-tls \
-              --set-string ingress.tls[0].hosts[0]=${{ secrets.INGRESS_HOST }} \
-              --set-string resources.requests.cpu=100m \
-              --set-string resources.requests.memory=128Mi \
-              --set-string resources.limits.cpu=100m \
-              --set-string resources.limits.memory=128Mi \
-              --set replicaCount=3 \
+              --set-string ingress.tls[0].hosts[0]=${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
+              --set-string resources.requests.cpu=300m \
+              --set-string resources.requests.memory=512Mi \
+              --set-string resources.limits.cpu=500m \
+              --set-string resources.limits.memory=1024Mi \
+              --set replicaCount=1 \
               --set autoscaling.enabled=true \
-              --set autoscaling.minReplicas=3 \
-              --set autoscaling.maxReplicas=11 \
+              --set autoscaling.minReplicas=1 \
+              --set autoscaling.maxReplicas=111 \
               --set-string nodeSelector.pool=general
             kubectl rollout status deployment/myriad-federated
       - name: Sleuth webhook
+        if: "${{ env.DEPLOY == 'true' }}"
         shell: bash
         run: |
           curl -X POST -d api_key=${{ secrets.SLEUTH_API_KEY }} \
           -d environment=${{ secrets.MAINNET_SLEUTH_ENVIRONMENT }} \
-          -d sha=$GITHUB_SHA ${{ secrets.FEDERATED_SLEUTH_WEBHOOK }}
+          -d sha=$GITHUB_SHA ${{ secrets.WEB_SLEUTH_WEBHOOK }}
