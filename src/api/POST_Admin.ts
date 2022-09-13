@@ -1,23 +1,22 @@
 import axios from './axiosInstance';
 
-interface Credential {
+export interface Credential {
   nonce: number;
   publicAddress: string;
   signature: string;
   walletType: string;
   networkType: string;
+  apiURL?: string;
+  address?: string;
 }
 
-interface TokenObject {
-  accessToken: string;
-  tokenType?: string;
-  expiresIn?: string | undefined;
-  refreshToken?: string | undefined;
+interface SuccessProps {
+  status: boolean;
 }
 
-export async function loginAdmin(api: string, credential: Credential): Promise<TokenObject> {
+export async function login(credential: Credential): Promise<SuccessProps> {
   try {
-    const result = await axios(api).post(`/admin/login`, credential);
+    const result = await axios().post(`/api/auth/login`, credential);
     return result.data;
   } catch {
     throw 'Unauthorized';

@@ -1,7 +1,9 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 
-import {parseCookies} from 'nookies';
+import {decryptMessage} from 'src/lib/crypto';
+
+import cookie from 'cookie';
 
 export const config = {
   api: {
@@ -11,9 +13,10 @@ export const config = {
 };
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const cookies = parseCookies({req});
-    const data = JSON.parse(cookies.session);
-    const headers = {Authorization: `Bearer ${data.token}`};
+    const cookies = cookie.parse(req?.headers?.cookie ?? '');
+    const data = JSON.parse(cookies?.session ?? '');
+    const accessToken = decryptMessage(data.token, data.publicAddress);
+    const headers = {Authorization: `Bearer ${accessToken}`};
 
     return httpProxyMiddleware(req, res, {
       target: data.apiURL,
@@ -27,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       headers,
     });
   } catch (e) {
-    console.log(e);
-    return res.status(500).send({error: e});
+    const error = e instanceof Error ? e.message : e;
+    return res.status(500).send({error});
   }
 }

@@ -5,7 +5,7 @@ import Head from 'next/head';
 
 import {ServerListComponent} from 'src/components/ServerList/ServerList';
 
-import nookies from 'nookies';
+import cookie from 'cookie';
 
 type HomeAppProps = {
   signIn: boolean;
@@ -25,14 +25,13 @@ const HomeApp: React.FC<HomeAppProps> = ({signIn}) => {
 };
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = nookies.get(context);
-  const session = cookies?.session;
+  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
+  const server = cookies?.session;
 
   let signIn = false;
 
   try {
-    const data = JSON.parse(session);
-    console.log('data', data);
+    const data = JSON.parse(server);
     if (data?.currentAddress) signIn = true;
   } catch {
     // ignore
