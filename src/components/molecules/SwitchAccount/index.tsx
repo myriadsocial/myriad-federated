@@ -1,5 +1,3 @@
-import {CopyToClipboard} from 'react-copy-to-clipboard';
-
 import {Popover} from '@mui/material';
 
 import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
