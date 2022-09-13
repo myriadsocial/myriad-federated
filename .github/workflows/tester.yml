@@ -11,32 +11,20 @@ concurrency:
 
 jobs:
   test-code:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Use Node.js 16
+      - name: Use Node.js 14
         uses: actions/setup-node@v2
         with:
-          node-version: "16"
+          node-version: "14"
+          cache: "yarn"
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-      - name: Run linter
-        run: yarn lint
-      - name: Run build
-        run: yarn build
-
-  check-link-markdown:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Check link markdown
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
-        with:
-          use-quiet-mode: "yes"
-          config-file: ".github/workflows/mlc_config.json"
+      - name: Check Linter
+        run: yarn lint:check
+      - name: Check Fortmater
+        run: yarn prettier:check

@@ -1,6 +1,6 @@
 {
   "name": "myriad-federated",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "myriad-federated",
   "private": true,
   "license": "AGPL-3.0",
@@ -15,12 +15,12 @@
     "build": "next build",
     "start": "next start",
     "prettier:cli": "prettier",
-    "prettier:check": "yarn run prettier:cli -l .",
-    "prettier:fix": "yarn run prettier:cli --write .",
+    "prettier:check": "yarn prettier:cli -l .",
+    "prettier:fix": "yarn prettier:cli --write .",
     "lint": "next lint",
-    "lint:check": "yarn run lint --report-unused-disable-directives error",
-    "lint:fix": "yarn run lint --fix && yarn run prettier:fix",
-    "clean": "rm -rf .next dist plugins/sv-env.js"
+    "lint:check": "yarn lint --report-unused-disable-directives error",
+    "lint:fix": "yarn lint --fix && yarn prettier:fix",
+    "clean": "rm -rf .next"
   },
   "dependencies": {
     "@emotion/react": "^11.9.3",

@@ -18,7 +18,6 @@ concurrency:
 jobs:
   create-tags:
     runs-on: ubuntu-latest
-    environment: mainnet
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -65,13 +64,6 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/git/refs \
             -d '{"ref":"refs/tags/${{ steps.commit-sha.outputs.release_tags }}","sha":"${{ steps.commit-sha.outputs.commit_sha }}"}'
-      - name: create .env file
-        shell: bash
-        run: |
-          tee -a .env.production <<EOF
-          MYRIAD_WEBSITE_URL=${{ secrets.MYRIAD_WEBSITE_URL }}
-          MYRIAD_RPC_URL=${{ secrets.MYRIAD_RPC_URL }}
-          EOF
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -83,38 +75,18 @@ jobs:
           key: ${{ runner.os }}-buildx-main
           restore-keys: |
             ${{ runner.os }}-buildx-
-      - id: "auth"
-        name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v0"
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
         with:
-          token_format: "access_token"
-          workload_identity_provider: ${{ secrets.GOOGLE_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.SERVICE_ACCOUNT_EMAIL }}
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-      - name: Login to GCR
-        uses: docker/login-action@v2
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Docker image re-tag
+        uses: akhilerm/tag-push-action@v2.0.0
         with:
-          registry: gcr.io
-          username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.access_token }}
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: .maintain/docker/Dockerfile
-          tags: |
-            gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }}:${{ steps.commit-sha.outputs.release_tags }}
-            gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ github.repository }}:${{ steps.commit-sha.outputs.latest_tags }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-      # Temp fix
-      # https://github.com/docker/build-push-action/issues/252
-      # https://github.com/moby/buildkit/issues/1896
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          src: ${{ github.repository }}:${{ steps.commit-sha.outputs.sha_short }}
+          dst: |
+            ${{ github.repository }}:${{ steps.commit-sha.outputs.release_tags }}
+            ${{ github.repository }}:${{ steps.commit-sha.outputs.latest_tags }}
       - name: Build changelog
         id: build_changelog
         uses: mikepenz/release-changelog-builder-action@v2

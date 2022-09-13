@@ -64,10 +64,12 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+# dotenv environment variables file
+.env
+
 # Transpiled JavaScript files from Typescript
 /dist
 /out/
-
 
 # Cache used by TypeScript's incremental build
 *.tsbuildinfo
@@ -81,6 +83,16 @@ prisma
 # misc
 *.pem
 
+# next.js
+.next
+
+# Docs
+/docs/*
+# exception to the rule
+!docs/.gitkeep
+README.md
+DEVELOPING.md
+
 # IDE
 .idea
 .vscode
@@ -92,14 +104,9 @@ prisma
 # Docker
 .dockerignore
 
-# Docs
-/docs
-README.md
-DEVELOPING.md
-
 # Other
 .github
 .maintain
 
-# Next
-.next
+# Sentry
+.sentryclirc
