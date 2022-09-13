@@ -14,6 +14,7 @@ import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
 import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
 import {formatAddress} from 'src/helpers/formatAddress';
+import {useAuth} from 'src/hooks/use-auth.hook';
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';

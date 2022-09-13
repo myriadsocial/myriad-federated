@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 
 import dynamic from 'next/dynamic';
+import {useRouter} from 'next/router';
 
 import {Backdrop, CircularProgress} from '@material-ui/core';
 
@@ -27,6 +28,7 @@ type InstanceComponentProps = {
 
 export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId}) => {
   const style = useStyles();
+  const router = useRouter();
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
