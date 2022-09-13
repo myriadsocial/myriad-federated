@@ -80,11 +80,12 @@ jobs:
             WEB_FEDERATED_ENVIRONMENT:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_ENVIRONMENT
             WEB_FEDERATED_NAME:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_NAME
             WEB_FEDERATED_SECRET:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SECRET
+            WEB_FEDERATED_SENTRY_DSN:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SENTRY_DSN
+            WEB_FEDERATED_DNS:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_DNS
+            WEB_FEDERATED_URL:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_URL
             WEBSITE_URL:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEBSITE_URL
             SUPPORT_MAIL:${{ secrets.TESTNET_GCP_PROJECT_ID }}/SUPPORT_MAIL
             RPC_URL:${{ secrets.TESTNET_GCP_PROJECT_ID }}/RPC_URL
-            WEB_FEDERATED_SENTRY_DSN:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SENTRY_DSN
-            WEB_FEDERATED_DNS:${{ secrets.TESTNET_GCP_PROJECT_ID }}/WEB_FEDERATED_DNS
       - name: Deploy
         if: "${{ env.DEPLOY == 'true' }}"
         uses: appleboy/ssh-action@master
@@ -126,16 +127,9 @@ jobs:
               --set replicaCount=1 \
               --set autoscaling.enabled=true \
               --set autoscaling.minReplicas=1 \
-              --set autoscaling.maxReplicas=111 \
+              --set autoscaling.maxReplicas=11 \
               --set-string nodeSelector.pool=general
             kubectl rollout status deployment/myriad-federated
-      - name: Sleuth webhook
-        if: "${{ env.DEPLOY == 'true' }}"
-        shell: bash
-        run: |
-          curl -X POST -d api_key=${{ secrets.SLEUTH_API_KEY }} \
-          -d environment=${{ secrets.TESTNET_SLEUTH_ENVIRONMENT }} \
-          -d sha=$GITHUB_SHA ${{ secrets.WEB_SLEUTH_WEBHOOK }}
 
   deploy-mainnet:
     if: "startsWith(github.ref, 'refs/tags/') && !github.event.release.prerelease"
@@ -177,11 +171,12 @@ jobs:
             WEB_FEDERATED_ENVIRONMENT:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_ENVIRONMENT
             WEB_FEDERATED_NAME:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_NAME
             WEB_FEDERATED_SECRET:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SECRET
+            WEB_FEDERATED_SENTRY_DSN:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SENTRY_DSN
+            WEB_FEDERATED_DNS:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_DNS
+            WEB_FEDERATED_URL:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_URL
             WEBSITE_URL:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEBSITE_URL
             SUPPORT_MAIL:${{ secrets.MAINNET_GCP_PROJECT_ID }}/SUPPORT_MAIL
             RPC_URL:${{ secrets.MAINNET_GCP_PROJECT_ID }}/RPC_URL
-            WEB_FEDERATED_SENTRY_DSN:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_SENTRY_DSN
-            WEB_FEDERATED_DNS:${{ secrets.MAINNET_GCP_PROJECT_ID }}/WEB_FEDERATED_DNS
       - name: Deploy
         if: "${{ env.DEPLOY == 'true' }}"
         uses: appleboy/ssh-action@master
@@ -223,13 +218,6 @@ jobs:
               --set replicaCount=1 \
               --set autoscaling.enabled=true \
               --set autoscaling.minReplicas=1 \
-              --set autoscaling.maxReplicas=111 \
+              --set autoscaling.maxReplicas=11 \
               --set-string nodeSelector.pool=general
             kubectl rollout status deployment/myriad-federated
-      - name: Sleuth webhook
-        if: "${{ env.DEPLOY == 'true' }}"
-        shell: bash
-        run: |
-          curl -X POST -d api_key=${{ secrets.SLEUTH_API_KEY }} \
-          -d environment=${{ secrets.MAINNET_SLEUTH_ENVIRONMENT }} \
-          -d sha=$GITHUB_SHA ${{ secrets.WEB_SLEUTH_WEBHOOK }}
