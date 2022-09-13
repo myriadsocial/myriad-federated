@@ -7,10 +7,11 @@ import {Backdrop, CircularProgress} from '@material-ui/core';
 
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
+import {useAuth} from 'src/hooks/use-auth.hook';
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 
-import {destroyCookie, setCookie} from 'nookies';
+import {setCookie} from 'nookies';
 
 import SwitchAccount from '../molecules/SwitchAccount';
 import {PolkadotAccountList} from '../PolkadotAccountList';
@@ -36,6 +37,8 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
   const {createInstance, servers, loading} = useInstances(InstanceType.OWNED, accountId);
 
   const [open, setOpen] = useState<boolean>(false);
+
+  const {logout} = useAuth();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -64,11 +67,6 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const _handleLogout = () => {
-    destroyCookie(null, 'session');
-    router.push('/');
   };
 
   const toogleOpen = () => {
@@ -102,7 +100,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
         handleClose={handleClose}
         anchorEl={anchorEl}
         openMenu={openMenu}
-        handleLogout={_handleLogout}
+        handleLogout={logout}
         handleSwitchAccount={handleSignIn}
       />
       <PolkadotAccountList

@@ -20,7 +20,7 @@ import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 import {numberFormatter} from 'src/utils/numberFormatter';
 
-import {destroyCookie, parseCookies} from 'nookies';
+import {parseCookies} from 'nookies';
 import {IcAccountPolkadot, Illustration, MyriadFullBlack} from 'public/icons';
 
 import Button from '../atoms/Button';
@@ -56,6 +56,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
   const [currentAddress, setCurrentAddress] = useState<string>('');
   const cookies = parseCookies();
   const session = cookies?.session;
+  const {logout} = useAuth();
 
   useEffect(() => {
     if (!session) return;
@@ -129,13 +130,13 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
 
   const _handleLogout = () => {
     setAnchorEl(null);
-    destroyCookie(null, 'session');
-    router.push('/');
+    logout();
   };
 
   const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   return (
     <>
       <div className="bg-background-content min-h-screen pb-4">
@@ -273,6 +274,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
         openMenu={openMenu}
         handleLogout={_handleLogout}
         handleSwitchAccount={handleSignIn}
+        handleClickCurrentAddress={() => router.push('/instance')}
       />
       <PolkadotAccountList
         align="left"
