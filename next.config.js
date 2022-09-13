@@ -11,7 +11,7 @@ const {
   NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL,
 } = process.env;
 
-const {version} = require('./package.json')
+const {version} = require('./package.json');
 
 const nextConfig = {
   reactStrictMode: false,
@@ -44,9 +44,9 @@ const nextConfig = {
     if (NEXT_PUBLIC_APP_BUILD_ID) {
       return NEXT_PUBLIC_APP_BUILD_ID;
     }
-      
+
     return version;
-  }
+  },
 };
 
 module.exports = nextConfig;
