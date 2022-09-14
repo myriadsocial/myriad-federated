@@ -23,7 +23,7 @@ const nextConfig = {
   },
   publicRuntimeConfig: {
     appName: NEXT_PUBLIC_APP_NAME ?? 'Federated Local',
-    appAuthURL: NEXT_PUBLIC_APP_AUTH_URL ?? 'http://localhost:3000',
+    appAuthURL: NEXT_PUBLIC_APP_AUTH_URL ?? 'https://localhost:3000',
     myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? 'ws://localhost:9944',
     myriadWebsiteURL: NEXT_PUBLIC_MYRIAD_WEBSITE_URL ?? 'https://myriad.social',
     myriadSupportMail: NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL ?? 'support@myriad.social',

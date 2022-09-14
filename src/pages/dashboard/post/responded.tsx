@@ -3,12 +3,9 @@ import {ColumnDef} from '@tanstack/react-table';
 
 import {ReactNode, useEffect, useState} from 'react';
 
-import {GetServerSidePropsContext} from 'next';
 import Image from 'next/image';
 
 import {CircularProgress} from '@mui/material';
-
-import cookie from 'cookie';
 
 import {IcOpenUrl} from '../../../../public/icons';
 import {deleteReports} from '../../../api/DELETE_Reports';
@@ -264,27 +261,6 @@ export default function PostResponded() {
     </div>
   );
 }
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
-  const server = cookies?.session ?? '';
-
-  try {
-    const data = JSON.parse(server);
-    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
-  } catch {
-    return {
-      redirect: {
-        destination: '/instance',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
 
 PostResponded.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Post">{page}</ContentLayout>;
