@@ -4,10 +4,12 @@ import IcCountTip from './CountTip.svg';
 import IcCountUser from './CountUser.svg';
 import IcDebio from './Debio.svg';
 import ExperianceGray from './ExperianceGray.svg';
+import IcAccountPolkadot from './IcAccountPolkadot.svg';
 import IcCalender from './IcCalender.svg';
 import IcClosePurple from './IcClosePurple.svg';
 import IcCluster from './IcCluster.svg';
 import IcCopy from './IcCopy.svg';
+import IcCopyOutline from './icCopyOutline.svg';
 import IcDasboard from './IcDasboard.svg';
 import IcDropdownPrimary from './IcDropdownPrimary.svg';
 import IcHelp from './IcHelp.svg';
@@ -33,6 +35,8 @@ import PostGray from './PostGray.svg';
 import UserGray from './UserGray.svg';
 
 export {
+  IcAccountPolkadot,
+  IcCopyOutline,
   IcDebio,
   IcKusama,
   IcMyriad,

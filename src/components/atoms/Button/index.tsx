@@ -6,7 +6,7 @@ import {colors} from '../../../utils';
 
 interface ButtonOutlineInterface {
   onClick: any;
-  label?: string;
+  label?: string | ReactNode;
   primary?: boolean;
   isFullWidth?: boolean;
   disable?: boolean;

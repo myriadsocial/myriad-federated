@@ -16,7 +16,7 @@ const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
 
 type InstanceHeaderProps = {
   accountId: string;
-  onLogout: () => void;
+  onLogout: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onOpenStepper: () => void;
 };
 

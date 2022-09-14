@@ -1,5 +1,7 @@
 import React from 'react';
 
+import dynamic from 'next/dynamic';
+
 import {Typography} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
@@ -9,7 +11,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import YouTubeIcon from '@material-ui/icons/YouTube';
 
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
-import Identicon from '@polkadot/react-identicon';
 
 import {Modal} from '../atoms/Modal';
 import {AllignTitle} from '../atoms/Modal/Modal.types';
@@ -35,6 +36,10 @@ export const PolkadotAccountList: React.FC<PolkadotAccountListProps> = ({
   align,
 }) => {
   const styles = useStyles();
+
+  const IdenticonWithoutSSR = dynamic(() => import('@polkadot/react-identicon'), {
+    ssr: false,
+  });
 
   return (
     <Modal
@@ -72,7 +77,7 @@ export const PolkadotAccountList: React.FC<PolkadotAccountListProps> = ({
                   className={styles.list}
                   button>
                   <ListItemAvatar>
-                    <Identicon value={account.address} size={48} theme="polkadot" />
+                    <IdenticonWithoutSSR value={account.address} size={48} theme="polkadot" />
                   </ListItemAvatar>
                   <ListItemText
                     primary={account.meta.name}
