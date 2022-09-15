@@ -1,6 +1,5 @@
 import {ReactNode, useState} from 'react';
 
-import {GetServerSidePropsContext} from 'next';
 import Image from 'next/image';
 
 import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
@@ -8,7 +7,6 @@ import {Switch, TextField} from '@mui/material';
 
 import Button from 'src/components/atoms/Button';
 
-import cookie from 'cookie';
 import {IcOpenUrl} from 'public/icons';
 
 import ContentLayout from '../../../layout/ContentLayout';
@@ -97,27 +95,6 @@ export default function Settings() {
     </div>
   );
 }
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
-  const server = cookies?.session ?? '';
-
-  try {
-    const data = JSON.parse(server);
-    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
-  } catch {
-    return {
-      redirect: {
-        destination: '/instance',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
 
 Settings.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Settings">{page}</ContentLayout>;

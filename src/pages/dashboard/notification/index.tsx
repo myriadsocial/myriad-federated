@@ -2,11 +2,7 @@ import {useQuery} from '@tanstack/react-query';
 
 import {ReactNode, useEffect, useState} from 'react';
 
-import {GetServerSidePropsContext} from 'next';
-
 import {CircularProgress, Typography} from '@mui/material';
-
-import cookie from 'cookie';
 
 import {getNotifications} from '../../../api/GET_Notifications';
 import {DropdownFilter, ListAllNotifications} from '../../../components/atoms';
@@ -119,27 +115,6 @@ export default function Notification() {
     </div>
   );
 }
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
-  const server = cookies?.session ?? '';
-
-  try {
-    const data = JSON.parse(server);
-    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
-  } catch {
-    return {
-      redirect: {
-        destination: '/instance',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
 
 Notification.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Notification">{page}</ContentLayout>;

@@ -51,7 +51,7 @@
     "husky": "^8.0.1",
     "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
-    "next": "12.1.6",
+    "next": "^12.3.0",
     "next-http-proxy-middleware": "^1.2.4",
     "nookies": "^2.5.2",
     "notistack": "^2.0.5",

@@ -2,11 +2,7 @@ import {ColumnDef} from '@tanstack/react-table';
 
 import {ReactNode} from 'react';
 
-import {GetServerSidePropsContext} from 'next';
-
 import {Typography} from '@mui/material';
-
-import cookie from 'cookie';
 
 import CardInstanceLeft from '../../../components/molecules/CardInstanceLeft';
 import CardInstanceRight from '../../../components/molecules/CardInstanceRight';
@@ -109,27 +105,6 @@ export default function Instance() {
     </div>
   );
 }
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
-  const server = cookies?.session ?? '';
-
-  try {
-    const data = JSON.parse(server);
-    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
-  } catch {
-    return {
-      redirect: {
-        destination: '/instance',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
 
 Instance.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="Instance">{page}</ContentLayout>;

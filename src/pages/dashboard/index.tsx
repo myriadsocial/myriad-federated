@@ -1,7 +1,5 @@
-import React from 'react';
-import {useState} from 'react';
+import React, {useState} from 'react';
 
-import {GetServerSidePropsContext} from 'next';
 import Image from 'next/image';
 
 import {useMediaQuery, useTheme} from '@mui/material';
@@ -22,7 +20,6 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import cookie from 'cookie';
 import {IcDebio, IcKusama, IcMyriad, IcNear, IcPolkadot} from 'public/icons';
 import {Bar, Doughnut, Pie} from 'react-chartjs-2';
 
@@ -205,27 +202,6 @@ export default function Dashboard() {
     </div>
   );
 }
-
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
-  const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
-  const server = cookies?.session ?? '';
-
-  try {
-    const data = JSON.parse(server);
-    if (!data?.apiURL || !data?.token) throw 'DataNotFound';
-  } catch {
-    return {
-      redirect: {
-        destination: '/instance',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {},
-  };
-};
 
 Dashboard.getLayout = function getLayout(page: React.ReactNode) {
   return <ContentLayout title="Dashboard">{page}</ContentLayout>;
