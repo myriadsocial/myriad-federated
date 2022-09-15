@@ -103,7 +103,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = props =
       </div>
       <Button
         isFullWidth
-        label={isStepOne ? 'Continue' : 'Get server id'}
+        label={isStepOne ? 'Continue' : 'Publish Instance'}
         primary
         onClick={handleClick}
       />
