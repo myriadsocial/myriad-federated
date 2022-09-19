@@ -89,6 +89,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
         accountId={accountId}
         onLogout={handleShowSwitchAccount}
         onOpenStepper={toogleOpen}
+        onClickBack={() => router.push('/')}
       />
       <InstanceList servers={servers} accountId={accountId} />
       <InstanceStepperModal onCreateInstance={createInstance} open={open} onClose={toogleOpen} />
