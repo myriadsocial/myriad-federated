@@ -108,14 +108,15 @@ const Header = ({title}: {title: string}) => {
         </Button>
       </div>
       <SwitchAccount
+        title="Instance"
         accountId={accountId}
         handleClose={() => setAnchorEl(null)}
         anchorEl={anchorEl}
         openMenu={openMenu}
         handleLogout={logout}
         handleSwitchAccount={handleSignIn}
-        leftButtonLabel={''}
-        rightButtonLabel={''}
+        leftButtonLabel={'Switch Instance'}
+        rightButtonLabel={'Logout Instance'}
       />
     </div>
   );

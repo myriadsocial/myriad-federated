@@ -268,10 +268,14 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
         </Container>
       </div>
       <SwitchAccount
+        title={'Account'}
+        type="switchAccount"
         accountId={formatAddress(currentAddress)}
-        handleClose={handleClose}
+        leftButtonLabel={'Switch Account'}
+        rightButtonLabel={'Disconnect'}
         anchorEl={anchorEl}
         openMenu={openMenu}
+        handleClose={handleClose}
         handleLogout={_handleLogout}
         handleSwitchAccount={handleSignIn}
         handleClickCurrentAddress={() => router.push('/instance')}

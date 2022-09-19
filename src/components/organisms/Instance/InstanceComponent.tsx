@@ -93,15 +93,16 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
         <CircularProgress />
       </Backdrop>
       <SwitchAccount
+        title="Account"
+        type="switchAccount"
+        leftButtonLabel={'Switch Account'}
+        rightButtonLabel={'Disconnect'}
         accountId={accountId}
-        handleClose={() => setAnchorEl(null)}
         anchorEl={anchorEl}
         openMenu={openMenu}
         handleLogout={logout}
+        handleClose={() => setAnchorEl(null)}
         handleSwitchAccount={handleSignIn}
-        leftButtonLabel={'Switch Account'}
-        rightButtonLabel={'Disconnect'}
-        type="switchAccount"
       />
       <PolkadotAccountList
         align="left"

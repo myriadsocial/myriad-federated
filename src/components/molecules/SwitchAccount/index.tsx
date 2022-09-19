@@ -19,6 +19,7 @@ interface SwitchAccountProps {
   leftButtonLabel: string;
   rightButtonLabel: string;
   type?: type;
+  title: string;
 }
 const SwitchAccount = (props: SwitchAccountProps) => {
   const {
@@ -32,6 +33,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
     leftButtonLabel,
     rightButtonLabel,
     type,
+    title,
   } = props;
 
   return (
@@ -49,7 +51,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         horizontal: 'right',
       }}>
       <div className="rounded-[10px] p-5 w-[360px]">
-        <div className="text-sm font-semibold">Account</div>
+        <div className="text-sm font-semibold">{title}</div>
         <div className="mt-4">
           <div className="text-xs fonts-semibold mb-2">Logged in</div>
           <ListSwitchAccount
