@@ -9,6 +9,7 @@ import {Avatar, Button, Typography} from '@mui/material';
 import SwitchAccount from 'src/components/molecules/SwitchAccount';
 import {formatAddress} from 'src/helpers/formatAddress';
 import {useAuth} from 'src/hooks/use-auth.hook';
+import {useInstances, InstanceType} from 'src/hooks/use-instances.hook';
 
 import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
 
@@ -18,12 +19,13 @@ const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
 
 const Header = ({title}: {title: string}) => {
   const router = useRouter();
+  const {cookie, logout} = useAuth();
+  const accountId = cookie?.session?.currentAddress ?? '';
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
 
-  const {cookie, logout} = useAuth();
-
-  const accountId = cookie?.session?.currentAddress ?? '';
+  const {servers, loading} = useInstances(InstanceType.OWNED, accountId);
+  console.log('servers', servers, loading);
 
   const handleClickNotification = () => {
     router.push('/dashboard/notification');

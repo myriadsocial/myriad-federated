@@ -10,6 +10,8 @@ import {useAuth} from 'src/hooks/use-auth.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 
+import {setCookie} from 'nookies';
+
 import {useEnqueueSnackbar} from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 
 const PolkadotAccountList = dynamic(
@@ -26,7 +28,6 @@ type InstanceListProps = {
 
 export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) => {
   const enqueueSnackbar = useEnqueueSnackbar();
-
   const {loginDashboard} = useAuth();
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
@@ -36,6 +37,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
 
   const checkExtensionInstalled = async (url: string) => {
+    console.log('installed');
     const installed = await enablePolkadotExtension();
 
     setShowAccountList(true);
@@ -72,8 +74,10 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
     }
   };
 
-  const handleSignIn = (url: string) => () => {
-    checkExtensionInstalled(url);
+  const handleSignIn = (server: ServerListProps) => () => {
+    checkExtensionInstalled(server.apiUrl);
+    console.log('server', server);
+    setCookie(null, 'selectedInstance', JSON.stringify(server));
   };
 
   if (servers.length === 0) {
@@ -94,7 +98,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
           return (
             <CardInstance
               key={server.id}
-              onClick={handleSignIn(server.apiUrl)}
+              onClick={handleSignIn(server)}
               serverName={server?.detail?.name ?? 'Unknown Instance'}
               serverDetail={`by ${accountId}`}
               serverDescription={`Instance Id: ${server.id}`}
