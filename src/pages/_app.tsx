@@ -16,7 +16,7 @@ import '../../styles/globals.css';
 import themeV2 from '../themes/light-theme';
 
 const BlockchainProvider = dynamic(
-  () => import('src/components/common/Blockchain/Blockchain.provider'),
+  () => import('src/components/molecules/common/Blockchain/Blockchain.provider'),
   {ssr: false},
 );
 

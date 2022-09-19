@@ -5,7 +5,7 @@ import Head from 'next/head';
 
 import {Container} from '@mui/material';
 
-import {InstanceComponent} from 'src/components/Instance/InstanceComponent';
+import {InstanceComponent} from 'src/components/organisms/Instance/InstanceComponent';
 
 import cookie from 'cookie';
 

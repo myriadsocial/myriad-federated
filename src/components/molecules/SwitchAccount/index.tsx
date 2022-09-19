@@ -1,9 +1,13 @@
 import {Popover} from '@mui/material';
 
 import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
+import {formatAddress} from 'src/helpers/formatAddress';
+
+import {IcAccountPolkadot} from 'public/icons';
 
 import Button from '../../atoms/Button';
 
+type type = 'switchAccount' | 'switchInstance';
 interface SwitchAccountProps {
   anchorEl: null | HTMLElement;
   openMenu: boolean;
@@ -12,6 +16,9 @@ interface SwitchAccountProps {
   handleSwitchAccount: () => void;
   accountId: string | undefined;
   handleClickCurrentAddress?: () => void;
+  leftButtonLabel: string;
+  rightButtonLabel: string;
+  type?: type;
 }
 const SwitchAccount = (props: SwitchAccountProps) => {
   const {
@@ -22,6 +29,9 @@ const SwitchAccount = (props: SwitchAccountProps) => {
     handleClose,
     handleSwitchAccount,
     handleClickCurrentAddress,
+    leftButtonLabel,
+    rightButtonLabel,
+    type,
   } = props;
 
   return (
@@ -42,16 +52,16 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="text-sm font-semibold">Account</div>
         <div className="mt-4">
           <div className="text-xs fonts-semibold mb-2">Logged in</div>
-
           <ListSwitchAccount
-            type="myAddress"
-            label={accountId}
+            image={type === 'switchAccount' ? IcAccountPolkadot : ''}
+            type={type}
+            label={formatAddress(accountId as string)}
             onClick={handleClickCurrentAddress}
           />
         </div>
         <div className="flex mt-4 gap-2">
-          <Button onClick={handleSwitchAccount} label="Switch Account" isFullWidth />
-          <Button onClick={handleLogout} label="Disconnect" primary isFullWidth />
+          <Button onClick={handleSwitchAccount} label={leftButtonLabel} isFullWidth />
+          <Button onClick={handleLogout} label={rightButtonLabel} primary isFullWidth />
         </div>
       </div>
     </Popover>

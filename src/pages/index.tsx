@@ -3,7 +3,7 @@ import React from 'react';
 import {GetServerSidePropsContext} from 'next';
 import Head from 'next/head';
 
-import {ServerListComponent} from 'src/components/ServerList/ServerList';
+import {ServerListComponent} from 'src/components/organisms/ServerList/ServerList';
 
 import cookie from 'cookie';
 

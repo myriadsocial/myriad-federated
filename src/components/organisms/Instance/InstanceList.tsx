@@ -10,10 +10,10 @@ import {useAuth} from 'src/hooks/use-auth.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 
-import {useEnqueueSnackbar} from '../molecules/Snackbar/useEnqueueSnackbar.hook';
+import {useEnqueueSnackbar} from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 
 const PolkadotAccountList = dynamic(
-  () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
+  () => import('src/components/molecules/PolkadotAccountList/PolkadotAccountList'),
   {
     ssr: false,
   },

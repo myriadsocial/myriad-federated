@@ -4,34 +4,26 @@ import Image from 'next/image';
 
 import {IconButton, ListItemButton} from '@mui/material';
 
-import {formatAddress} from 'src/helpers/formatAddress';
+import {IcCopyOutline} from 'public/icons';
 
-import {IcAccountPolkadot, IcCopyOutline} from 'public/icons';
-
-type type = 'myAddress' | 'selectedAddress';
+type type = 'switchAccount' | 'switchInstance';
 interface ListSwitchAccount {
   type?: type;
   clickCopy?: () => void;
   onClick?: () => void;
   label: string | undefined;
+  image: string;
 }
 export default function ListSwitchAccount(props: ListSwitchAccount) {
-  const {type, clickCopy, label, onClick} = props;
+  const {type, clickCopy, label, onClick, image} = props;
 
   return (
-    <div
-      className={
-        type === 'myAddress'
-          ? 'bg-[#EBE0FF] h-14 rounded-[4px] flex items-center w-full'
-          : type === 'selectedAddress'
-          ? 'bg-selected-yellow h-14 rounded-[4px] flex items-center w-full'
-          : 'h-14 rounded-[4px] flex items-center w-full'
-      }>
+    <div className={'bg-[#EBE0FF] h-14 rounded-[4px] flex items-center w-full'}>
       <ListItemButton style={{padding: 8}} onClick={onClick}>
-        <Image src={IcAccountPolkadot} alt="" height={40} width={40} />
-        <div className="text-base flex-1 ml-2">{formatAddress(label as string)}</div>
+        <Image src={image} alt="" height={40} width={40} />
+        <div className="text-base flex-1 ml-2">{label}</div>
       </ListItemButton>
-      {type === 'myAddress' && (
+      {type === 'switchAccount' && (
         <CopyToClipboard text={label ?? ''}>
           <IconButton onClick={clickCopy}>
             <Image alt="" src={IcCopyOutline} />

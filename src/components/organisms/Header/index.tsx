@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -6,6 +6,7 @@ import {useRouter} from 'next/router';
 
 import {Avatar, Button, Typography} from '@mui/material';
 
+import SwitchAccount from 'src/components/molecules/SwitchAccount';
 import {formatAddress} from 'src/helpers/formatAddress';
 import {useAuth} from 'src/hooks/use-auth.hook';
 
@@ -17,6 +18,8 @@ const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
 
 const Header = ({title}: {title: string}) => {
   const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
 
   const {cookie, logout} = useAuth();
 
@@ -26,12 +29,21 @@ const Header = ({title}: {title: string}) => {
     router.push('/dashboard/notification');
   };
 
+  const handleSignIn = () => {
+    setAnchorEl(null);
+  };
+
+  const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   return (
     <div className="px-6 py-[27px] flex justify-between text-black">
       <div className="text-[28px] font-semibold">{title}</div>
       <div className="flex items-center">
         <Button
           variant="contained"
+          onClick={handleShowSwitchAccount}
           style={{
             height: 36,
             background: 'white',
@@ -95,6 +107,16 @@ const Header = ({title}: {title: string}) => {
           <Image src={IcNotification} height={24} width={24} alt={'notification'} />
         </Button>
       </div>
+      <SwitchAccount
+        accountId={accountId}
+        handleClose={() => setAnchorEl(null)}
+        anchorEl={anchorEl}
+        openMenu={openMenu}
+        handleLogout={logout}
+        handleSwitchAccount={handleSignIn}
+        leftButtonLabel={''}
+        rightButtonLabel={''}
+      />
     </div>
   );
 };
