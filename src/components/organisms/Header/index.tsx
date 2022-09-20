@@ -1,29 +1,76 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 
-import {Avatar, Button, Typography} from '@mui/material';
+import {Button, Typography} from '@mui/material';
 
+import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
+import ModalComponent from 'src/components/molecules/Modal';
+import SwitchAccount from 'src/components/molecules/SwitchAccount';
 import {formatAddress} from 'src/helpers/formatAddress';
 import {useAuth} from 'src/hooks/use-auth.hook';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
+import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
+import {ServerListProps} from 'src/interface/ServerListInterface';
+
+import {setCookie} from 'nookies';
 
 import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
+import {useEnqueueSnackbar} from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
 });
 
 const Header = ({title}: {title: string}) => {
+  const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
-
-  const {cookie, logout} = useAuth();
-
+  const {cookie, loginDashboard} = useAuth();
   const accountId = cookie?.session?.currentAddress ?? '';
+  const {getPolkadotAccounts} = usePolkadotExtension();
+
+  const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+  const {servers} = useInstances(InstanceType.OWNED, accountId);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorEl);
+  const [instanceSelected, setInstanceSelected] = useState<number>();
+  const [showModalInstance, setShowModalInstance] = useState<boolean>(false);
 
   const handleClickNotification = () => {
     router.push('/dashboard/notification');
+  };
+
+  const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSwitchInstance = async (item: ServerListProps) => {
+    setInstanceSelected(item.id);
+    const accounts = await getPolkadotAccounts().catch(() => []);
+    const selectInstance = accounts.filter(account => account.address === item.owner);
+    try {
+      await loginDashboard({
+        account: selectInstance[0],
+        apiURL: item.apiUrl,
+        callbackURL: '/dashboard',
+      });
+      setCookie(null, 'selectedInstance', JSON.stringify(item));
+      enqueueSnackbar({
+        message: 'Switch account success',
+        variant: 'success',
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : `Unexpected error: ${err}`;
+      enqueueSnackbar({
+        message,
+        variant: 'error',
+      });
+    } finally {
+      setShowModalInstance(false);
+    }
   };
 
   return (
@@ -32,6 +79,7 @@ const Header = ({title}: {title: string}) => {
       <div className="flex items-center">
         <Button
           variant="contained"
+          onClick={handleShowSwitchAccount}
           style={{
             height: 36,
             background: 'white',
@@ -43,16 +91,18 @@ const Header = ({title}: {title: string}) => {
             paddingLeft: 10,
           }}>
           <div className="flex items-center">
-            <div className="flex">
-              <Avatar
-                style={{height: 24, width: 24, marginRight: 6}}
-                src="https://i.pravatar.cc/300"
-                alt="profile"
+            <div className="flex items-center">
+              <Image
+                alt=""
+                src={(selectedInstance.detail?.images.logo_banner as string) ?? ''}
+                className="rounded-full bg-blue-50"
+                height={24}
+                width={24}
               />
-              <div className="w-[122px]">
-                <Typography textAlign={'left'} color={'black'} fontSize={14}>
-                  Cat
-                </Typography>
+              <div className="mx-2">
+                <div className="text-sm text-black capitalize text-left">
+                  {formatAddress(selectedInstance.detail?.name as string) ?? ''}
+                </div>
               </div>
             </div>
             <Image src={IcDropdownPrimary} height={20} width={20} alt="dropdown" />
@@ -60,7 +110,7 @@ const Header = ({title}: {title: string}) => {
         </Button>
         <Button
           variant="contained"
-          onClick={logout}
+          onClick={() => undefined}
           style={{
             height: 36,
             background: 'white',
@@ -95,6 +145,40 @@ const Header = ({title}: {title: string}) => {
           <Image src={IcNotification} height={24} width={24} alt={'notification'} />
         </Button>
       </div>
+      <SwitchAccount
+        title="Instance"
+        accountId={selectedInstance.detail?.name}
+        image={selectedInstance.detail?.images.logo_banner as string}
+        handleClose={() => setAnchorEl(null)}
+        anchorEl={anchorEl}
+        openMenu={openMenu}
+        handleLogout={() => router.push('/instance')}
+        handleSwitchAccount={() => {
+          setAnchorEl(null);
+          setShowModalInstance(true);
+        }}
+        leftButtonLabel={'Switch Instance'}
+        rightButtonLabel={'Logout Instance'}
+      />
+      <ModalComponent
+        open={showModalInstance}
+        onClose={() => setShowModalInstance(false)}
+        title={'Select Instance'}
+        type="small">
+        <div className="mt-4 grid max-h-[400px] p-2 gap-4 overflow-y-auto">
+          {servers.map((item, index) => {
+            return (
+              <ListSwitchAccount
+                key={index}
+                label={item.detail?.name}
+                image={item.detail?.images.logo_banner as string}
+                onClick={() => handleSwitchInstance(item)}
+                type={instanceSelected === item.id ? 'switchInstance' : undefined}
+              />
+            );
+          })}
+        </div>
+      </ModalComponent>
     </div>
   );
 };

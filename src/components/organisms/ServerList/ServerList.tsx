@@ -12,7 +12,7 @@ import {Container, SvgIcon} from '@material-ui/core';
 
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
-import {SearchBoxContainer} from 'src/components/Search/SearchBoxContainer';
+import {SearchBoxContainer} from 'src/components/molecules/Search/SearchBoxContainer';
 import {formatAddress} from 'src/helpers/formatAddress';
 import {useAuth} from 'src/hooks/use-auth.hook';
 import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
@@ -23,15 +23,15 @@ import {numberFormatter} from 'src/utils/numberFormatter';
 import {parseCookies} from 'nookies';
 import {IcAccountPolkadot, Illustration, MyriadFullBlack} from 'public/icons';
 
-import Button from '../atoms/Button';
-import CardInstance from '../atoms/CardInstance';
-import EmptyState from '../atoms/EmptyState';
-import ShowIf from '../common/show-if.component';
-import SwitchAccount from '../molecules/SwitchAccount';
+import Button from '../../atoms/Button';
+import CardInstance from '../../atoms/CardInstance';
+import EmptyState from '../../atoms/EmptyState';
+import ShowIf from '../../molecules/common/show-if.component';
+import SwitchAccount from '../../molecules/SwitchAccount';
 import {ShimerComponent} from './Shimer';
 
 const PolkadotAccountList = dynamic(
-  () => import('src/components/PolkadotAccountList/PolkadotAccountList'),
+  () => import('src/components/molecules/PolkadotAccountList/PolkadotAccountList'),
   {
     ssr: false,
   },
@@ -268,10 +268,14 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
         </Container>
       </div>
       <SwitchAccount
+        title={'Account'}
+        type="switchAccount"
         accountId={formatAddress(currentAddress)}
-        handleClose={handleClose}
+        leftButtonLabel={'Switch Account'}
+        rightButtonLabel={'Disconnect'}
         anchorEl={anchorEl}
         openMenu={openMenu}
+        handleClose={handleClose}
         handleLogout={_handleLogout}
         handleSwitchAccount={handleSignIn}
         handleClickCurrentAddress={() => router.push('/instance')}

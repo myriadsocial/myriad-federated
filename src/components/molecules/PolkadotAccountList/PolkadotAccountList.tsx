@@ -12,8 +12,8 @@ import YouTubeIcon from '@material-ui/icons/YouTube';
 
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
-import {Modal} from '../atoms/Modal';
-import {AllignTitle} from '../atoms/Modal/Modal.types';
+import {Modal} from '../../atoms/Modal';
+import {AllignTitle} from '../../atoms/Modal/Modal.types';
 import {PolkadotLink} from '../common/PolkadotLink.component';
 import ShowIf from '../common/show-if.component';
 import {useStyles} from './PolkadotAccountList.styles';

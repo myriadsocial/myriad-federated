@@ -13,8 +13,8 @@ import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 
 import {setCookie} from 'nookies';
 
-import SwitchAccount from '../molecules/SwitchAccount';
-import {PolkadotAccountList} from '../PolkadotAccountList';
+import {PolkadotAccountList} from '../../molecules/PolkadotAccountList';
+import SwitchAccount from '../../molecules/SwitchAccount';
 import {useStyles} from './Instance.styles';
 import {InstanceHeader} from './InstanceHeader';
 import {InstanceList} from './InstanceList';
@@ -65,10 +65,6 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const toogleOpen = () => {
     setOpen(!open);
   };
@@ -97,11 +93,15 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
         <CircularProgress />
       </Backdrop>
       <SwitchAccount
+        title="Account"
+        type="switchAccount"
+        leftButtonLabel={'Switch Account'}
+        rightButtonLabel={'Disconnect'}
         accountId={accountId}
-        handleClose={handleClose}
         anchorEl={anchorEl}
         openMenu={openMenu}
         handleLogout={logout}
+        handleClose={() => setAnchorEl(null)}
         handleSwitchAccount={handleSignIn}
       />
       <PolkadotAccountList

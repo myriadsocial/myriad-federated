@@ -1,9 +1,13 @@
 import {Popover} from '@mui/material';
 
 import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
+import {formatAddress} from 'src/helpers/formatAddress';
+
+import {IcAccountPolkadot} from 'public/icons';
 
 import Button from '../../atoms/Button';
 
+type type = 'switchAccount' | 'switchInstance';
 interface SwitchAccountProps {
   anchorEl: null | HTMLElement;
   openMenu: boolean;
@@ -12,6 +16,11 @@ interface SwitchAccountProps {
   handleSwitchAccount: () => void;
   accountId: string | undefined;
   handleClickCurrentAddress?: () => void;
+  leftButtonLabel: string;
+  rightButtonLabel: string;
+  type?: type;
+  title: string;
+  image?: string;
 }
 const SwitchAccount = (props: SwitchAccountProps) => {
   const {
@@ -22,6 +31,11 @@ const SwitchAccount = (props: SwitchAccountProps) => {
     handleClose,
     handleSwitchAccount,
     handleClickCurrentAddress,
+    leftButtonLabel,
+    rightButtonLabel,
+    type,
+    title,
+    image,
   } = props;
 
   return (
@@ -39,19 +53,19 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         horizontal: 'right',
       }}>
       <div className="rounded-[10px] p-5 w-[360px]">
-        <div className="text-sm font-semibold">Account</div>
+        <div className="text-sm font-semibold">{title}</div>
         <div className="mt-4">
           <div className="text-xs fonts-semibold mb-2">Logged in</div>
-
           <ListSwitchAccount
-            type="myAddress"
-            label={accountId}
+            image={type === 'switchAccount' ? IcAccountPolkadot : image}
+            type={type}
+            label={type === 'switchAccount' ? formatAddress(accountId as string) : accountId}
             onClick={handleClickCurrentAddress}
           />
         </div>
         <div className="flex mt-4 gap-2">
-          <Button onClick={handleSwitchAccount} label="Switch Account" isFullWidth />
-          <Button onClick={handleLogout} label="Disconnect" primary isFullWidth />
+          <Button onClick={handleSwitchAccount} label={leftButtonLabel} isFullWidth />
+          <Button onClick={handleLogout} label={rightButtonLabel} primary isFullWidth />
         </div>
       </div>
     </Popover>

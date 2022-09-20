@@ -4,36 +4,39 @@ import Image from 'next/image';
 
 import {IconButton, ListItemButton} from '@mui/material';
 
-import {formatAddress} from 'src/helpers/formatAddress';
+import {IcCopyOutline} from 'public/icons';
 
-import {IcAccountPolkadot, IcCopyOutline} from 'public/icons';
-
-type type = 'myAddress' | 'selectedAddress';
+type type = 'switchAccount' | 'switchInstance';
 interface ListSwitchAccount {
   type?: type;
   clickCopy?: () => void;
   onClick?: () => void;
   label: string | undefined;
+  image: string;
 }
 export default function ListSwitchAccount(props: ListSwitchAccount) {
-  const {type, clickCopy, label, onClick} = props;
+  const {type, clickCopy, label, onClick, image} = props;
 
   return (
     <div
-      className={
-        type === 'myAddress'
-          ? 'bg-[#EBE0FF] h-14 rounded-[4px] flex items-center w-full'
-          : type === 'selectedAddress'
-          ? 'bg-selected-yellow h-14 rounded-[4px] flex items-center w-full'
-          : 'h-14 rounded-[4px] flex items-center w-full'
-      }>
-      <ListItemButton style={{padding: 8}} onClick={onClick}>
-        <Image src={IcAccountPolkadot} alt="" height={40} width={40} />
-        <div className="text-base flex-1 ml-2">{formatAddress(label as string)}</div>
+      style={{
+        display: 'flex',
+        backgroundColor:
+          type === 'switchAccount' ? '#EBE0FF' : type === 'switchInstance' ? '#FFC8574D' : 'white',
+        height: 56,
+        borderRadius: 4,
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+      <ListItemButton style={{padding: 8, flex: 1}} onClick={onClick}>
+        <Image src={image} alt="" height={40} width={40} />
+        <div style={{fontSize: 16, marginLeft: 8, flex: 1}}>{label}</div>
       </ListItemButton>
-      {type === 'myAddress' && (
+      {type === 'switchAccount' && (
         <CopyToClipboard text={label ?? ''}>
-          <IconButton onClick={clickCopy}>
+          <IconButton onClick={clickCopy} style={{height: 40, width: 40}}>
             <Image alt="" src={IcCopyOutline} />
           </IconButton>
         </CopyToClipboard>

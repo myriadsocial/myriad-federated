@@ -19,7 +19,7 @@ type SignInProps = {
 export const useAuth = () => {
   const router = useRouter();
 
-  const [cookie, setCookie, removeCookie] = useCookies(['session']);
+  const [cookie, setCookie, removeCookie] = useCookies(['session', 'selectedInstance']);
 
   const connectWallet = (signInProps: SignInProps) => {
     const {account, callbackURL} = signInProps;
@@ -36,6 +36,7 @@ export const useAuth = () => {
 
   const loginDashboard = async (signInProps: SignInProps) => {
     const {apiURL, account, callbackURL} = signInProps;
+    console.log('account', account);
     if (!apiURL) return;
 
     const toHex = u8aToHex(decodeAddress(account.address));
