@@ -37,7 +37,6 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
 
   const checkExtensionInstalled = async (url: string) => {
-    console.log('installed');
     const installed = await enablePolkadotExtension();
 
     setShowAccountList(true);
@@ -76,7 +75,6 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
 
   const handleSignIn = (server: ServerListProps) => () => {
     checkExtensionInstalled(server.apiUrl);
-    console.log('server', server);
     setCookie(null, 'selectedInstance', JSON.stringify(server));
   };
 

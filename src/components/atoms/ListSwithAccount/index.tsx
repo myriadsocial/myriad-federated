@@ -18,14 +18,25 @@ export default function ListSwitchAccount(props: ListSwitchAccount) {
   const {type, clickCopy, label, onClick, image} = props;
 
   return (
-    <div className={'bg-[#EBE0FF] h-14 rounded-[4px] flex items-center w-full'}>
-      <ListItemButton style={{padding: 8}} onClick={onClick}>
+    <div
+      style={{
+        display: 'flex',
+        backgroundColor:
+          type === 'switchAccount' ? '#EBE0FF' : type === 'switchInstance' ? '#FFC8574D' : 'white',
+        height: 56,
+        borderRadius: 4,
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+      <ListItemButton style={{padding: 8, flex: 1}} onClick={onClick}>
         <Image src={image} alt="" height={40} width={40} />
-        <div className="text-base flex-1 ml-2">{label}</div>
+        <div style={{fontSize: 16, marginLeft: 8, flex: 1}}>{label}</div>
       </ListItemButton>
       {type === 'switchAccount' && (
         <CopyToClipboard text={label ?? ''}>
-          <IconButton onClick={clickCopy}>
+          <IconButton onClick={clickCopy} style={{height: 40, width: 40}}>
             <Image alt="" src={IcCopyOutline} />
           </IconButton>
         </CopyToClipboard>

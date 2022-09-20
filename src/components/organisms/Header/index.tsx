@@ -4,12 +4,15 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {useRouter} from 'next/router';
 
-import {Avatar, Button, Typography} from '@mui/material';
+import {Button, Typography} from '@mui/material';
 
+import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
+import ModalComponent from 'src/components/molecules/Modal';
 import SwitchAccount from 'src/components/molecules/SwitchAccount';
 import {formatAddress} from 'src/helpers/formatAddress';
 import {useAuth} from 'src/hooks/use-auth.hook';
-import {useInstances, InstanceType} from 'src/hooks/use-instances.hook';
+import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
+import {ServerListProps} from 'src/interface/ServerListInterface';
 
 import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
 
@@ -21,11 +24,11 @@ const Header = ({title}: {title: string}) => {
   const router = useRouter();
   const {cookie, logout} = useAuth();
   const accountId = cookie?.session?.currentAddress ?? '';
+  const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+  const {servers} = useInstances(InstanceType.OWNED, accountId);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-
-  const {servers, loading} = useInstances(InstanceType.OWNED, accountId);
-  console.log('servers', servers, loading);
+  const [instanceSelected, setInstanceSelected] = useState<number>();
 
   const handleClickNotification = () => {
     router.push('/dashboard/notification');
@@ -37,6 +40,10 @@ const Header = ({title}: {title: string}) => {
 
   const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleSwitchInstance = (index: number) => {
+    setInstanceSelected(index);
   };
 
   return (
@@ -57,16 +64,18 @@ const Header = ({title}: {title: string}) => {
             paddingLeft: 10,
           }}>
           <div className="flex items-center">
-            <div className="flex">
-              <Avatar
-                style={{height: 24, width: 24, marginRight: 6}}
-                src="https://i.pravatar.cc/300"
-                alt="profile"
+            <div className="flex items-center">
+              <Image
+                alt=""
+                src={(selectedInstance.detail?.images.logo_banner as string) ?? ''}
+                className="rounded-full bg-blue-50"
+                height={24}
+                width={24}
               />
-              <div className="w-[122px]">
-                <Typography textAlign={'left'} color={'black'} fontSize={14}>
-                  Cat
-                </Typography>
+              <div className="mx-2">
+                <div className="text-sm text-black capitalize text-left">
+                  {formatAddress(selectedInstance.detail?.name as string) ?? ''}
+                </div>
               </div>
             </div>
             <Image src={IcDropdownPrimary} height={20} width={20} alt="dropdown" />
@@ -111,15 +120,31 @@ const Header = ({title}: {title: string}) => {
       </div>
       <SwitchAccount
         title="Instance"
-        accountId={accountId}
+        accountId={selectedInstance.detail?.name}
+        image={selectedInstance.detail?.images.logo_banner as string}
         handleClose={() => setAnchorEl(null)}
         anchorEl={anchorEl}
         openMenu={openMenu}
-        handleLogout={logout}
+        handleLogout={() => router.push('/instance')}
         handleSwitchAccount={handleSignIn}
         leftButtonLabel={'Switch Instance'}
         rightButtonLabel={'Logout Instance'}
       />
+      <ModalComponent open={true} onClose={() => undefined} title={'Select Instance'} type="small">
+        <div className="mt-4 grid max-h-[400px] p-2 gap-4 overflow-y-auto">
+          {servers.map((item, index) => {
+            return (
+              <ListSwitchAccount
+                key={index}
+                label={item.detail?.name}
+                image={item.detail?.images.logo_banner as string}
+                onClick={() => handleSwitchInstance(index)}
+                type={instanceSelected === index ? 'switchInstance' : undefined}
+              />
+            );
+          })}
+        </div>
+      </ModalComponent>
     </div>
   );
 };

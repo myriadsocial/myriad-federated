@@ -20,6 +20,7 @@ interface SwitchAccountProps {
   rightButtonLabel: string;
   type?: type;
   title: string;
+  image?: string;
 }
 const SwitchAccount = (props: SwitchAccountProps) => {
   const {
@@ -34,6 +35,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
     rightButtonLabel,
     type,
     title,
+    image,
   } = props;
 
   return (
@@ -55,9 +57,9 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="mt-4">
           <div className="text-xs fonts-semibold mb-2">Logged in</div>
           <ListSwitchAccount
-            image={type === 'switchAccount' ? IcAccountPolkadot : ''}
+            image={type === 'switchAccount' ? IcAccountPolkadot : image}
             type={type}
-            label={formatAddress(accountId as string)}
+            label={type === 'switchAccount' ? formatAddress(accountId as string) : accountId}
             onClick={handleClickCurrentAddress}
           />
         </div>
