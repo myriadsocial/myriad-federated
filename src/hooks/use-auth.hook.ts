@@ -36,6 +36,7 @@ export const useAuth = () => {
 
   const loginDashboard = async (signInProps: SignInProps) => {
     const {apiURL, account, callbackURL} = signInProps;
+    console.log('account', account);
     if (!apiURL) return;
 
     const toHex = u8aToHex(decodeAddress(account.address));
