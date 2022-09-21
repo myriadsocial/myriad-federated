@@ -160,7 +160,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                   onClick={signIn ? handleShowSwitchAccount : handleSignIn}
                   label={
                     signIn ? (
-                      <div className="flex">
+                      <div className="flex -mx-2">
                         <Image src={IcAccountPolkadot} alt="" height={20} width={20} />
                         <div className="ml-2">{formatAddress(currentAddress)}</div>
                       </div>
