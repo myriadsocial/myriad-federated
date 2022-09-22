@@ -54,7 +54,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({accountId, servers}) 
   const getAvailableAccounts = async () => {
     const accounts = await getPolkadotAccounts().catch(() => []);
     const currentAccounts = accounts.filter(account => account.address === accountId);
-
+    console.log('currentAccounts instance', currentAccounts);
     setAccounts(currentAccounts);
   };
 
