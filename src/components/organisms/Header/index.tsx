@@ -29,14 +29,14 @@ const Header = ({title}: {title: string}) => {
   const router = useRouter();
   const {cookie, loginDashboard} = useAuth();
   const accountId = cookie?.session?.currentAddress ?? '';
-  const {getPolkadotAccounts} = usePolkadotExtension();
+  const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const {servers} = useInstances(InstanceType.OWNED, accountId);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
-  const [instanceSelected, setInstanceSelected] = useState<number>();
+  const [instanceSelected, setInstanceSelected] = useState<number | null>();
   const [showModalInstance, setShowModalInstance] = useState<boolean>(false);
 
   const handleClickNotification = () => {
@@ -48,28 +48,35 @@ const Header = ({title}: {title: string}) => {
   };
 
   const handleSwitchInstance = async (item: ServerListProps) => {
+    const installed = await enablePolkadotExtension();
     setInstanceSelected(item.id);
-    const accounts = await getPolkadotAccounts().catch(() => []);
-    const selectInstance = accounts.filter(account => account.address === item.owner);
-    try {
-      await loginDashboard({
-        account: selectInstance[0],
-        apiURL: item.apiUrl,
-        callbackURL: '/dashboard',
-      });
-      setCookie(null, 'selectedInstance', JSON.stringify(item));
-      enqueueSnackbar({
-        message: 'Switch account success',
-        variant: 'success',
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : `Unexpected error: ${err}`;
-      enqueueSnackbar({
-        message,
-        variant: 'error',
-      });
-    } finally {
-      setShowModalInstance(false);
+    if (installed) {
+      const accounts = await getPolkadotAccounts().catch(() => []);
+      const currentAccounts = accounts.filter(account => account.address === item.owner);
+      try {
+        await loginDashboard({
+          account: currentAccounts[0],
+          apiURL: item.apiUrl,
+          callbackURL: '/dashboard',
+        });
+        setCookie(null, 'selectedInstance', JSON.stringify(item));
+        enqueueSnackbar({
+          message: 'Switch account success',
+          variant: 'success',
+        });
+        router.reload();
+        setInstanceSelected(null);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : `Unexpected error: ${err}`;
+        enqueueSnackbar({
+          message,
+          variant: 'error',
+        });
+        setInstanceSelected(null);
+      } finally {
+        setShowModalInstance(false);
+        setInstanceSelected(null);
+      }
     }
   };
 
@@ -157,6 +164,7 @@ const Header = ({title}: {title: string}) => {
           setAnchorEl(null);
           setShowModalInstance(true);
         }}
+        type="switchInstance"
         leftButtonLabel={'Switch Instance'}
         rightButtonLabel={'Logout Instance'}
       />
@@ -166,17 +174,23 @@ const Header = ({title}: {title: string}) => {
         title={'Select Instance'}
         type="small">
         <div className="mt-4 grid max-h-[400px] p-2 gap-4 overflow-y-auto">
-          {servers.map((item, index) => {
-            return (
-              <ListSwitchAccount
-                key={index}
-                label={item.detail?.name}
-                image={item.detail?.images.logo_banner as string}
-                onClick={() => handleSwitchInstance(item)}
-                type={instanceSelected === item.id ? 'switchInstance' : undefined}
-              />
-            );
-          })}
+          {servers.length === 1 ? (
+            <div>No instances to show</div>
+          ) : (
+            servers
+              .filter(item => item.id !== selectedInstance.id)
+              .map((item, index) => {
+                return (
+                  <ListSwitchAccount
+                    key={index}
+                    label={item.detail?.name}
+                    image={item.detail?.images.logo_banner as string}
+                    onClick={() => handleSwitchInstance(item)}
+                    type={instanceSelected === item.id ? 'listSwitchInstance' : undefined}
+                  />
+                );
+              })
+          )}
         </div>
       </ModalComponent>
     </div>
