@@ -19,7 +19,11 @@ type SignInProps = {
 export const useAuth = () => {
   const router = useRouter();
 
-  const [cookie, setCookie, removeCookie] = useCookies(['session', 'selectedInstance']);
+  const [cookie, setCookie, removeCookie] = useCookies([
+    'session',
+    'selectedInstance',
+    'listOwnerInstances',
+  ]);
 
   const connectWallet = (signInProps: SignInProps) => {
     const {account, callbackURL} = signInProps;

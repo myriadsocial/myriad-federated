@@ -11,7 +11,6 @@ import ModalComponent from 'src/components/molecules/Modal';
 import SwitchAccount from 'src/components/molecules/SwitchAccount';
 import {formatAddress} from 'src/helpers/formatAddress';
 import {useAuth} from 'src/hooks/use-auth.hook';
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 
@@ -32,7 +31,7 @@ const Header = ({title}: {title: string}) => {
   const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
 
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
-  const {servers} = useInstances(InstanceType.OWNED, accountId);
+  const listOwnerInstances: Array<ServerListProps> = cookie?.listOwnerInstances ?? '';
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -66,6 +65,7 @@ const Header = ({title}: {title: string}) => {
         });
         router.reload();
         setInstanceSelected(null);
+        setShowModalInstance(false);
       } catch (err) {
         const message = err instanceof Error ? err.message : `Unexpected error: ${err}`;
         enqueueSnackbar({
@@ -73,9 +73,7 @@ const Header = ({title}: {title: string}) => {
           variant: 'error',
         });
         setInstanceSelected(null);
-      } finally {
         setShowModalInstance(false);
-        setInstanceSelected(null);
       }
     }
   };
@@ -174,10 +172,10 @@ const Header = ({title}: {title: string}) => {
         title={'Select Instance'}
         type="small">
         <div className="mt-4 grid max-h-[400px] p-2 gap-4 overflow-y-auto">
-          {servers.length === 1 ? (
+          {listOwnerInstances.length === 1 ? (
             <div>No instances to show</div>
           ) : (
-            servers
+            listOwnerInstances
               .filter(item => item.id !== selectedInstance.id)
               .map((item, index) => {
                 return (

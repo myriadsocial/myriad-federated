@@ -3,6 +3,8 @@ import {useEffect, useState} from 'react';
 import useBlockchain from 'src/components/molecules/common/Blockchain/useBlockchain.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';
 
+import {setCookie} from 'nookies';
+
 import {useEnqueueSnackbar} from '../components/molecules/Snackbar/useEnqueueSnackbar.hook';
 
 export enum InstanceType {
@@ -63,6 +65,7 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
         totalInstances,
       });
       setServerList(servers);
+
       setLoading(false);
     } catch {
       setLoading(false);
@@ -93,6 +96,7 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
       );
 
       setServerList(servers);
+      setCookie(null, 'listOwnerInstances', JSON.stringify(servers));
       setLoading(false);
     } catch {
       setLoading(false);
