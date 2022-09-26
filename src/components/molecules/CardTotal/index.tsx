@@ -1,4 +1,5 @@
 import React from 'react';
+import CountUp from 'react-countup';
 
 import Image from 'next/image';
 
@@ -13,7 +14,9 @@ export default function CardTotal(props: CardTotalInterface) {
     <div className="p-5 bg-white shadow-lg rounded-2xl flex">
       <Image src={image} alt="total user" />
       <div className="ml-4">
-        <div className="text-[34px] font-semibold">{count}</div>
+        <div className="text-[34px] font-semibold">
+          <CountUp start={0} end={count} separator="," />
+        </div>
         <div className="text-sm text-[#616161]">{label}</div>
       </div>
     </div>

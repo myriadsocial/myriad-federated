@@ -38,14 +38,19 @@ export default function Dashboard() {
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const pageNumber = 1;
 
-  const filter = JSON.stringify({
+  const filterPost = JSON.stringify({
     where: {status: 'pending', referenceType: {inq: ['post', 'comment']}},
+    order: [`createdAt ${sortingDate}`],
+  });
+
+  const filterUser = JSON.stringify({
+    where: {status: 'pending', referenceType: 'user'},
     order: [`createdAt ${sortingDate}`],
   });
 
   const {refetch: refetchingGetAllPost, data: dataPostReported} = useQuery(
     ['/getAllPost'],
-    () => getReports({pageNumber, filter}),
+    () => getReports({pageNumber, filter: filterPost}),
     {
       enabled: false,
     },
@@ -53,7 +58,7 @@ export default function Dashboard() {
 
   const {refetch: refetchingGetAllUser, data: dataUserReported} = useQuery(
     ['/getAllUser'],
-    () => getReports({pageNumber, filter}),
+    () => getReports({pageNumber, filter: filterUser}),
     {
       enabled: false,
     },
