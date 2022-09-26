@@ -1,5 +1,10 @@
-import React, {useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
 
+import React, {useEffect, useState} from 'react';
+
+import {useRouter} from 'next/router';
+
+import {getReports} from 'src/api/GET_Reports';
 import {DropdownFilter} from 'src/components/atoms';
 import ChartBar from 'src/components/atoms/ChartBar';
 import ChartDoughnat from 'src/components/atoms/ChartDoughnut';
@@ -27,9 +32,37 @@ import ContentLayout from '../../layout/ContentLayout';
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
+  const router = useRouter();
   const [sortingDate, setSortingDate] = useState<string>('DESC');
   const {cookie} = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+  const pageNumber = 1;
+
+  const filter = JSON.stringify({
+    where: {status: 'pending', referenceType: {inq: ['post', 'comment']}},
+    order: [`createdAt ${sortingDate}`],
+  });
+
+  const {refetch: refetchingGetAllPost, data: dataPostReported} = useQuery(
+    ['/getAllPost'],
+    () => getReports({pageNumber, filter}),
+    {
+      enabled: false,
+    },
+  );
+
+  const {refetch: refetchingGetAllUser, data: dataUserReported} = useQuery(
+    ['/getAllUser'],
+    () => getReports({pageNumber, filter}),
+    {
+      enabled: false,
+    },
+  );
+
+  useEffect(() => {
+    refetchingGetAllPost();
+    refetchingGetAllUser();
+  }, [sortingDate, refetchingGetAllPost, refetchingGetAllUser]);
 
   return (
     <div className="bg-background-content">
@@ -55,8 +88,16 @@ export default function Dashboard() {
               <ChartBar />
             </div>
           </div>
-          <CardRecentReported title="Recent reported user" />
-          <CardRecentReported title="Recent reported post" />
+          <CardRecentReported
+            title="Recent reported user"
+            data={dataPostReported}
+            pressButton={() => router.push('dashboard/post')}
+          />
+          <CardRecentReported
+            title="Recent reported post"
+            data={dataUserReported}
+            pressButton={() => router.push('dashboard/user')}
+          />
         </div>
         <div className="grid grid-cols-3 gap-6">
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">

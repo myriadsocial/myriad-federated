@@ -71,7 +71,7 @@ export interface MetaResponseUserReportedInterface {
   totalPageCount: number;
 }
 export interface ResponseUserReported {
-  data: DataResponseUserReportedInterface;
+  data: Array<DataResponseUserReportedInterface>;
   meta: MetaResponseUserReportedInterface;
 }
 
