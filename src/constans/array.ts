@@ -1,4 +1,10 @@
 export const Arrays = {
+  dashboardFilter: [
+    {
+      value: 'alltime',
+      title: 'All time',
+    },
+  ],
   dataFilter: [
     {
       value: 'DESC',
