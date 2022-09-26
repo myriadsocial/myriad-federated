@@ -7,43 +7,6 @@ interface VariantProps {
 }
 
 export const useStyles = makeStyles<Theme, VariantProps>(theme => ({
-  root: {
-    maxWidth: 600,
-    [theme.breakpoints.up('sm')]: {
-      minWidth: '344px !important',
-      // maxWidth: '344px !important',
-    },
-  },
-  card: {
-    backgroundColor: props =>
-      props?.variant === 'success'
-        ? '#47B881'
-        : props?.variant === 'error'
-        ? '#FE3636'
-        : props?.variant === 'warning'
-        ? '#F0A200'
-        : props?.variant === 'info'
-        ? '#1070CA'
-        : '#FFFFFF',
-    width: '100%',
-    height: '60px',
-    paddingLeft: 8,
-    borderRadius: 10,
-  },
-  cardInside: {
-    backgroundColor: '#FFFFFF',
-    width: '100%',
-    height: '100%',
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    display: 'flex',
-    alignItems: 'center',
-    paddingLeft: 15,
-  },
-  typography: {
-    fontWeight: 'normal',
-    lineHeight: '17.57px',
-  },
   icons: {
     marginLeft: 'auto',
   },

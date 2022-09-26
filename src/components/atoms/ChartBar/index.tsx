@@ -54,7 +54,7 @@ export default function ChartBar() {
       options={optionsUserGrowth}
       data={dataUserGrowth}
       height={250}
-      width={widthScreen === 'xl' ? 600 : 500}
+      width={widthScreen === 'xl' ? 700 : widthScreen === 'lg' ? 600 : 500}
     />
   );
 }
