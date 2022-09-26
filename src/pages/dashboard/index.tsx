@@ -2,13 +2,12 @@ import React, {useState} from 'react';
 
 import Image from 'next/image';
 
-import {useMediaQuery, useTheme} from '@mui/material';
-import {Breakpoint, Theme} from '@mui/material/styles';
-
 import {DropdownFilter} from 'src/components/atoms';
 import CardRecentReported from 'src/components/organisms/CardRecentReported';
 import DashCounter from 'src/components/organisms/DashCounter';
-import {Arrays} from 'src/constans/array';
+import {useAuth} from 'src/hooks/use-auth.hook';
+import {ServerListProps} from 'src/interface/ServerListInterface';
+import {useWidth} from 'src/utils/calWidthScreen';
 
 import {
   ArcElement,
@@ -120,22 +119,11 @@ const dataTopCoint = [
   },
 ];
 
-type BreakpointOrNull = Breakpoint | null;
-
 export default function Dashboard() {
   const [sortingDate, setSortingDate] = useState<string>('DESC');
+  const {cookie} = useAuth();
+  const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
 
-  function useWidth() {
-    const theme: Theme = useTheme();
-    const keys: readonly Breakpoint[] = [...theme.breakpoints.keys].reverse();
-    return (
-      keys.reduce((output: BreakpointOrNull, key: Breakpoint) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const matches = useMediaQuery(theme.breakpoints.up(key));
-        return !output && matches ? key : output;
-      }, null) || 'xs'
-    );
-  }
   const widthScreen = useWidth();
 
   return (
@@ -143,13 +131,23 @@ export default function Dashboard() {
       <div className="my-6">
         <DropdownFilter
           label="Period"
-          data={Arrays.dataFilter ?? []}
+          data={[
+            {
+              value: 'alltime',
+              title: 'All time',
+            },
+          ]}
           value={sortingDate}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
             setSortingDate(event.target.value)
           }
         />
-        <DashCounter />
+        <DashCounter
+          totalUser={selectedInstance?.detail?.metric?.totalUsers as number}
+          totalPost={selectedInstance?.detail?.metric?.totalPosts as number}
+          totalExperiances={selectedInstance?.detail?.metric?.totalExperiences as number}
+          totalTips={selectedInstance?.detail?.metric?.totalTransactions as number}
+        />
         <div className="grid grid-cols-4 gap-6 pb-6 h-[340px]">
           <div className="col-span-2 p-5 bg-white shadow-lg rounded-2xl h-[320px] relative">
             <div className="text-lg font-semibold pb-4">User Growth</div>

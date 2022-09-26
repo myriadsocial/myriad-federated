@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 interface CardTotalInterface {
   image: string;
-  count: string;
+  count: number;
   label: string;
 }
 export default function CardTotal(props: CardTotalInterface) {
