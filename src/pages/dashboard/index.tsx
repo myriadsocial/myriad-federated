@@ -96,12 +96,12 @@ export default function Dashboard() {
           <CardRecentReported
             title="Recent reported user"
             data={dataPostReported}
-            pressButton={() => router.push('dashboard/post')}
+            pressButton={() => router.push('dashboard/user')}
           />
           <CardRecentReported
             title="Recent reported post"
             data={dataUserReported}
-            pressButton={() => router.push('dashboard/user')}
+            pressButton={() => router.push('dashboard/post')}
           />
         </div>
         <div className="grid grid-cols-3 gap-6">

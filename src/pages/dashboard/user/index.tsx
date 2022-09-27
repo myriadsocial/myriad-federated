@@ -121,7 +121,7 @@ export default function UserReported() {
     refetch: refetchingGetAllUser,
     isFetching,
     data: dataUserReported,
-  } = useQuery(['/getAllUser'], () => getReports({pageNumber, filter}), {
+  } = useQuery(['/getAllUser', pageNumber], () => getReports({pageNumber, filter}), {
     enabled: false,
   });
 
@@ -129,7 +129,7 @@ export default function UserReported() {
     refetch: refetchingAllReporter,
     isFetching: isFetchingReporter,
     data: dataReporter,
-  } = useQuery(['/getAllReporter'], () => getReportsDetail({id: reportId}), {
+  } = useQuery(['/getAllReporter', reportId], () => getReportsDetail({id: reportId}), {
     enabled: false,
   });
 
