@@ -24,8 +24,8 @@ import {parseCookies} from 'nookies';
 import {IcAccountPolkadot, Illustration, MyriadFullBlack} from 'public/icons';
 
 import Button from '../../atoms/Button';
-import CardInstance from '../../atoms/CardInstance';
 import EmptyState from '../../atoms/EmptyState';
+import CardInstance from '../../molecules/CardInstance';
 import ShowIf from '../../molecules/common/show-if.component';
 import SwitchAccount from '../../molecules/SwitchAccount';
 import {ShimerComponent} from './Shimer';

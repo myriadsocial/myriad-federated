@@ -112,7 +112,7 @@ export default function PostResponded() {
   });
 
   const {refetch: refetchingGetAllResponded, data: dataPostResponded} = useQuery(
-    ['/getAllPostResponded'],
+    ['/getAllPostResponded', pageNumber],
     () => getReports({pageNumber, filter}),
     {
       enabled: false,
@@ -142,7 +142,7 @@ export default function PostResponded() {
     refetch: refetchingAllReporter,
     isFetching: isFetchingReporter,
     data: dataReporter,
-  } = useQuery(['/getAllReporter'], () => getReportsDetail({id: reportId}), {
+  } = useQuery(['/getAllReporter', reportId], () => getReportsDetail({id: reportId}), {
     enabled: false,
   });
 

@@ -63,7 +63,6 @@ const Header = ({title}: {title: string}) => {
           message: 'Switch account success',
           variant: 'success',
         });
-        router.reload();
         setInstanceSelected(null);
         setShowModalInstance(false);
       } catch (err) {

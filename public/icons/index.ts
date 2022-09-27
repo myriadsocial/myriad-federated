@@ -1,6 +1,9 @@
+import CountComments from './CountComments.svg';
 import IcCountExperiance from './CountExperiences.svg';
 import IcCountPost from './CountPost.svg';
+import CountSubscriptions from './CountSubcriptions.svg';
 import IcCountTip from './CountTip.svg';
+import CountTips from './CountTips.svg';
 import IcCountUser from './CountUser.svg';
 import IcDebio from './Debio.svg';
 import ExperianceGray from './ExperianceGray.svg';
@@ -36,6 +39,9 @@ import PostGray from './PostGray.svg';
 import UserGray from './UserGray.svg';
 
 export {
+  CountComments,
+  CountSubscriptions,
+  CountTips,
   IcBackPrimary,
   IcAccountPolkadot,
   IcCopyOutline,

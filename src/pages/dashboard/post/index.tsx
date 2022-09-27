@@ -102,7 +102,7 @@ export default function PostResported() {
     refetch: refetchingGetAllPost,
     isFetching,
     data: dataPostReported,
-  } = useQuery(['/getAllPost'], () => getReports({pageNumber, filter}), {
+  } = useQuery(['/getAllPost', pageNumber], () => getReports({pageNumber, filter}), {
     enabled: false,
   });
 
@@ -144,7 +144,7 @@ export default function PostResported() {
     refetch: refetchingAllReporter,
     isFetching: isFetchingReporter,
     data: dataReporter,
-  } = useQuery(['/getAllReporter'], () => getReportsDetail({id: reportId}), {
+  } = useQuery(['/getAllReporter', reportId], () => getReportsDetail({id: reportId}), {
     enabled: false,
   });
 

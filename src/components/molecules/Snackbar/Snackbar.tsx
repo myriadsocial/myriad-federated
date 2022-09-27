@@ -9,9 +9,8 @@ import {
 
 import React from 'react';
 
-import IconButton from '@material-ui/core/IconButton';
-import SvgIcon from '@material-ui/core/SvgIcon';
-import Typography from '@material-ui/core/Typography';
+import IconButton from '@mui/material/IconButton';
+import SvgIcon from '@mui/material/SvgIcon';
 
 import {SnackbarContent, useSnackbar} from 'notistack';
 
@@ -25,9 +24,20 @@ export const Snackbar = React.forwardRef<HTMLDivElement, SnackbarProps>((props, 
   const dismiss = () => closeSnackbar(props.key);
 
   return (
-    <SnackbarContent ref={ref} className={style.root}>
-      <div className={style.card}>
-        <div className={style.cardInside}>
+    <SnackbarContent ref={ref} className="max-w-[600px]">
+      <div
+        className={
+          props?.variant === 'success'
+            ? 'bg-[#47B881] h-[60px] w-full pl-2 rounded-[10px]'
+            : props?.variant === 'error'
+            ? 'bg-[#FE3636] h-[60px] w-full pl-2 rounded-[10px]'
+            : props?.variant === 'warning'
+            ? 'bg-[#F0A200] h-[60px] w-full pl-2 rounded-[10px]'
+            : props?.variant === 'info'
+            ? 'bg-[#1070CA] h-[60px] w-full pl-2 rounded-[10px]'
+            : 'bg-[#FFFFFF] h-[60px] w-full pl-2 rounded-[10px]'
+        }>
+        <div className="bg-white w-full h-full rounded-r-[10px] rouded-br-[10px] flex items-center pl-4">
           <SvgIcon
             classes={{root: style.iconLeft}}
             component={
@@ -43,9 +53,7 @@ export const Snackbar = React.forwardRef<HTMLDivElement, SnackbarProps>((props, 
             }
             viewBox="0 0 20 20"
           />
-          <Typography variant="body1" className={style.typography} color="textPrimary">
-            {props.message}
-          </Typography>
+          <div className="text-sm">{props.message}</div>
           <div className={style.icons}>
             <IconButton aria-label="close" onClick={dismiss}>
               <SvgIcon

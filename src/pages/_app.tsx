@@ -1,4 +1,10 @@
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {
+  dehydrate,
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+} from '@tanstack/react-query';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 
 import {ReactElement, ReactNode} from 'react';
@@ -30,15 +36,29 @@ type AppPropsWithLayout = AppProps & {
 
 export default function MyApp({Component, pageProps}: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? (page => page);
-  const queryClient = new QueryClient();
+  const queryCache = new QueryCache();
+  const queryClient = new QueryClient({
+    queryCache,
+    defaultOptions: {
+      queries: {
+        retry: 2,
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
+
+  const dehydratedState = dehydrate(queryClient, {});
+
   return (
     <ThemeProvider theme={themeV2}>
       <SnackbarProvider maxSnack={4}>
         <BlockchainProvider>
           <CookiesProvider>
             <QueryClientProvider client={queryClient}>
-              <ReactQueryDevtools initialIsOpen={false} />
-              {getLayout(<Component {...pageProps} />)}
+              <Hydrate state={dehydratedState}>
+                <ReactQueryDevtools initialIsOpen={false} />
+                {getLayout(<Component {...pageProps} />)}
+              </Hydrate>
             </QueryClientProvider>
           </CookiesProvider>
         </BlockchainProvider>
