@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 
 import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
 
-import CardInstance from 'src/components/atoms/CardInstance';
 import EmptyState from 'src/components/atoms/EmptyState';
+import CardInstance from 'src/components/molecules/CardInstance';
 import {useAuth} from 'src/hooks/use-auth.hook';
 import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
 import {ServerListProps} from 'src/interface/ServerListInterface';

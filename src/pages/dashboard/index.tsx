@@ -6,10 +6,11 @@ import {useRouter} from 'next/router';
 
 import {getReports} from 'src/api/GET_Reports';
 import {DropdownFilter} from 'src/components/atoms';
-import ChartBar from 'src/components/atoms/ChartBar';
-import ChartDoughnat from 'src/components/atoms/ChartDoughnut';
-import ChartPie from 'src/components/atoms/ChartPie';
-import ChartTopCoint from 'src/components/atoms/ChartTopCoint';
+import ChartBar from 'src/components/molecules/ChartBar';
+import ChartDoughnat from 'src/components/molecules/ChartDoughnut';
+import ChartPie from 'src/components/molecules/ChartPie';
+import ChartTopCoint from 'src/components/molecules/ChartTopCoint';
+import MedianStatistics from 'src/components/molecules/MedianStatistics';
 import CardRecentReported from 'src/components/organisms/CardRecentReported';
 import DashCounter from 'src/components/organisms/DashCounter';
 import {Arrays} from 'src/constans/array';
@@ -108,7 +109,7 @@ export default function Dashboard() {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Post Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ChartDoughnat />
+              <ChartDoughnat height={175} />
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
@@ -120,6 +121,18 @@ export default function Dashboard() {
             <div className="h-full w-full flex justify-center items-center">
               <ChartPie />
             </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-6 my-6">
+          <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
+            <div className="text-lg font-semibold mb-6">Connected Social Media Account</div>
+            <div className="w-full flex items-center justify-center">
+              <ChartDoughnat height={380} />
+            </div>
+          </div>
+          <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
+            <div className="text-lg font-semibold mb-6">Median Statistics</div>
+            <MedianStatistics />
           </div>
         </div>
       </div>

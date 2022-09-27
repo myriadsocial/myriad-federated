@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Doughnut} from 'react-chartjs-2';
 
-export default function ChartDoughnat() {
+export default function ChartDoughnat({height}: {height: number}) {
   const dataPostPersentage = {
     labels: ['Myriad post', 'Import Twitter post', 'Import Reddit post'],
     datasets: [
@@ -29,5 +29,5 @@ export default function ChartDoughnat() {
       },
     },
   };
-  return <Doughnut data={dataPostPersentage} options={optionsPie} height={175} />;
+  return <Doughnut data={dataPostPersentage} options={optionsPie} height={height} />;
 }
