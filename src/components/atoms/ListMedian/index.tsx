@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 interface ListMedianInterface {
   image: string;
-  count: string;
+  count: number;
   title: string;
 }
 export default function ListMedian(props: ListMedianInterface) {

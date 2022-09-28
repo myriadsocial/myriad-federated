@@ -83,7 +83,7 @@ export default function Dashboard() {
         />
         <DashCounter
           totalUser={selectedInstance?.detail?.metric?.totalUsers as number}
-          totalPost={selectedInstance?.detail?.metric?.totalPosts as number}
+          totalPost={selectedInstance?.detail?.metric?.totalPosts.totalAll as number}
           totalExperiances={selectedInstance?.detail?.metric?.totalExperiences as number}
           totalTips={selectedInstance?.detail?.metric?.totalTransactions as number}
         />
@@ -132,7 +132,7 @@ export default function Dashboard() {
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Median Statistics</div>
-            <MedianStatistics />
+            <MedianStatistics item={selectedInstance?.detail?.mendian} />
           </div>
         </div>
       </div>
