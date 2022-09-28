@@ -43,7 +43,7 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
           let data = null;
 
           try {
-            const response = await fetch(`${server.apiUrl}/server`);
+            const response = await fetch(`${server.apiUrl}/server?median=true`);
             data = await response.json();
           } catch {
             // ignore
@@ -82,7 +82,7 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
           let data = null;
 
           try {
-            const response = await fetch(`${server.apiUrl}/server`);
+            const response = await fetch(`${server.apiUrl}/server?median=true`);
             data = await response.json();
           } catch {
             // ignore
@@ -110,7 +110,7 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
       await provider.createServer(accountId, apiURL, async (server, signerOpened) => {
         if (signerOpened) setLoading(true);
         if (server) {
-          fetch(`${server.apiUrl}/server`)
+          fetch(`${server.apiUrl}/server?median=true`)
             .then(res => res.json())
             .then(data => {
               server.detail = data;
