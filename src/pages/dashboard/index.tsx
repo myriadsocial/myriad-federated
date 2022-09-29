@@ -83,7 +83,7 @@ export default function Dashboard() {
         />
         <DashCounter
           totalUser={selectedInstance?.detail?.metric?.totalUsers as number}
-          totalPost={selectedInstance?.detail?.metric?.totalPosts as number}
+          totalPost={selectedInstance?.detail?.metric?.totalPosts.totalAll as number}
           totalExperiances={selectedInstance?.detail?.metric?.totalExperiences as number}
           totalTips={selectedInstance?.detail?.metric?.totalTransactions as number}
         />
@@ -96,12 +96,12 @@ export default function Dashboard() {
           </div>
           <CardRecentReported
             title="Recent reported user"
-            data={dataPostReported}
+            data={dataUserReported}
             pressButton={() => router.push('dashboard/user')}
           />
           <CardRecentReported
             title="Recent reported post"
-            data={dataUserReported}
+            data={dataPostReported}
             pressButton={() => router.push('dashboard/post')}
           />
         </div>
@@ -109,7 +109,7 @@ export default function Dashboard() {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Post Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ChartDoughnat height={175} />
+              <ChartDoughnat height={175} data={selectedInstance?.detail?.metric.totalPosts} />
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
@@ -119,7 +119,7 @@ export default function Dashboard() {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Wallet Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ChartPie />
+              <ChartPie data={selectedInstance?.detail?.metric.totalPosts} />
             </div>
           </div>
         </div>
@@ -127,12 +127,12 @@ export default function Dashboard() {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Connected Social Media Account</div>
             <div className="w-full flex items-center justify-center">
-              <ChartDoughnat height={380} />
+              <ChartDoughnat height={380} data={selectedInstance?.detail?.metric.totalPosts} />
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Median Statistics</div>
-            <MedianStatistics />
+            <MedianStatistics item={selectedInstance?.detail?.mendian} />
           </div>
         </div>
       </div>

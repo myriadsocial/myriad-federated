@@ -1,14 +1,16 @@
 import React from 'react';
 
+import {MetricInterface} from 'src/interface/ServerListInterface';
+
 import {Pie} from 'react-chartjs-2';
 
-export default function ChartPie() {
+export default function ChartPie({data}: {data: MetricInterface | undefined}) {
   const dataPostPersentage = {
     labels: ['Myriad post', 'Import Twitter post', 'Import Reddit post'],
     datasets: [
       {
         label: '# of Votes',
-        data: [12, 19, 3],
+        data: [data?.totalMyriad, data?.totalTwitter, data?.totalReddit],
         backgroundColor: ['#7342CC', '#FFC857', '#9CCC42'],
         borderWidth: 1,
       },
