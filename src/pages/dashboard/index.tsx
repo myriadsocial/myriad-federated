@@ -96,12 +96,12 @@ export default function Dashboard() {
           </div>
           <CardRecentReported
             title="Recent reported user"
-            data={dataPostReported}
+            data={dataUserReported}
             pressButton={() => router.push('dashboard/user')}
           />
           <CardRecentReported
             title="Recent reported post"
-            data={dataUserReported}
+            data={dataPostReported}
             pressButton={() => router.push('dashboard/post')}
           />
         </div>
