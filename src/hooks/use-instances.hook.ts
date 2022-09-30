@@ -50,7 +50,7 @@ export const useInstances = (instanceType: InstanceType, accountId?: string) => 
           }
 
           totalUsers += data?.metric?.totalUsers ?? 0;
-          totalPosts += data?.metric?.totalPosts ?? 0;
+          totalPosts += data?.metric?.totalPosts?.totalAll ?? 0;
 
           return {
             ...server,
