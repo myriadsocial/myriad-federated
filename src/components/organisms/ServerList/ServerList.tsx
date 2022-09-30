@@ -255,7 +255,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                         image={server.detail.serverImageURL}
                         type="landingPage"
                         experience={numberFormatter(server.detail.metric.totalExperiences)}
-                        post={numberFormatter(server.detail.metric.totalPosts)}
+                        post={numberFormatter(server.detail.metric.totalPosts.totalAll)}
                         users={numberFormatter(server.detail.metric.totalUsers)}
                         onClick={goToMyriadApp('https://app.testnet.myriad.social')} // TODO: change to dynamic url
                       />

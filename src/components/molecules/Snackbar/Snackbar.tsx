@@ -39,7 +39,19 @@ export const Snackbar = React.forwardRef<HTMLDivElement, SnackbarProps>((props, 
         }>
         <div className="bg-white w-full h-full rounded-r-[10px] rouded-br-[10px] flex items-center pl-4">
           <SvgIcon
-            classes={{root: style.iconLeft}}
+            style={{
+              marginRight: 12,
+              color:
+                props?.variant === 'success'
+                  ? '#47B881'
+                  : props?.variant === 'error'
+                  ? '#FE3636'
+                  : props?.variant === 'warning'
+                  ? '#F0A200'
+                  : props?.variant === 'info'
+                  ? '#1070CA'
+                  : '#FFFFFF',
+            }}
             component={
               props?.variant === 'success'
                 ? CheckCircleIcon
