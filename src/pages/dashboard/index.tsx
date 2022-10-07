@@ -6,6 +6,7 @@ import {useRouter} from 'next/router';
 
 import {getReports} from 'src/api/GET_Reports';
 import {getTopCurrencies} from 'src/api/GET_TopCurrencies';
+import {getUsersGrowth} from 'src/api/GET_UsersGrowth';
 import {DropdownFilter} from 'src/components/atoms';
 import ChartBar from 'src/components/molecules/ChartBar';
 import ChartDoughnat from 'src/components/molecules/ChartDoughnut';
@@ -72,14 +73,26 @@ export default function Dashboard() {
       enabled: false,
     },
   );
-
-  console.log('dataTopCurrencies', dataTopCurrencies);
+  const {refetch: refetchingUsersGrowth, data: dataUsersGrowth} = useQuery(
+    ['/getUserGrowth'],
+    () => getUsersGrowth(),
+    {
+      enabled: false,
+    },
+  );
 
   useEffect(() => {
     refetchingGetAllPost();
     refetchingGetAllUser();
     refetchingTopCurrencies();
-  }, [sortingDate, refetchingGetAllPost, refetchingGetAllUser, refetchingTopCurrencies]);
+    refetchingUsersGrowth();
+  }, [
+    sortingDate,
+    refetchingGetAllPost,
+    refetchingGetAllUser,
+    refetchingTopCurrencies,
+    refetchingUsersGrowth,
+  ]);
 
   return (
     <div className="bg-background-content">
@@ -102,7 +115,7 @@ export default function Dashboard() {
           <div className="col-span-2 p-5 bg-white shadow-lg rounded-2xl h-[320px] relative">
             <div className="text-lg font-semibold pb-4">User Growth</div>
             <div className="flex">
-              <ChartBar />
+              <ChartBar data={dataUsersGrowth ?? []} />
             </div>
           </div>
           <CardRecentReported

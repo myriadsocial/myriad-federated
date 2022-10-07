@@ -1,10 +1,13 @@
-import React from 'react';
-
 import {useWidth} from 'src/utils/calWidthScreen';
 
 import {Bar} from 'react-chartjs-2';
 
-export default function ChartBar() {
+interface UserGrowthInterface {
+  date: string;
+  count: number;
+}
+
+export default function ChartBar({data}: {data: Array<UserGrowthInterface>}) {
   const widthScreen = useWidth();
   const optionsUserGrowth = {
     responsive: false,
@@ -24,25 +27,18 @@ export default function ChartBar() {
       },
     },
   };
-  const labels = [
-    '11/07',
-    '12/07',
-    '13/07',
-    '14/07',
-    '15/07',
-    '16/07',
-    '17/07',
-    '18/07',
-    '19/07',
-    '20/07',
-  ];
+  const labels = data.map(item => {
+    return item.date.replace('-', '/').substring(4, 0);
+  });
 
   const dataUserGrowth = {
     labels,
     datasets: [
       {
         label: '',
-        data: [2, 4, 34, 3, 5, 63, 21, 3, 35, 6],
+        data: data.map(item => {
+          return item.count;
+        }),
         backgroundColor: '#9CCC42',
         borderRadius: 20,
         minBarLength: 24,
