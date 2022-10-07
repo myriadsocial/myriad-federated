@@ -5,6 +5,8 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 
 import {getReports} from 'src/api/GET_Reports';
+import {getTopCurrencies} from 'src/api/GET_TopCurrencies';
+import {getUsersGrowth} from 'src/api/GET_UsersGrowth';
 import {DropdownFilter} from 'src/components/atoms';
 import ChartBar from 'src/components/molecules/ChartBar';
 import ChartDoughnat from 'src/components/molecules/ChartDoughnut';
@@ -64,11 +66,33 @@ export default function Dashboard() {
       enabled: false,
     },
   );
+  const {refetch: refetchingTopCurrencies, data: dataTopCurrencies} = useQuery(
+    ['/getTopCurrencies'],
+    () => getTopCurrencies(),
+    {
+      enabled: false,
+    },
+  );
+  const {refetch: refetchingUsersGrowth, data: dataUsersGrowth} = useQuery(
+    ['/getUserGrowth'],
+    () => getUsersGrowth(),
+    {
+      enabled: false,
+    },
+  );
 
   useEffect(() => {
     refetchingGetAllPost();
     refetchingGetAllUser();
-  }, [sortingDate, refetchingGetAllPost, refetchingGetAllUser]);
+    refetchingTopCurrencies();
+    refetchingUsersGrowth();
+  }, [
+    sortingDate,
+    refetchingGetAllPost,
+    refetchingGetAllUser,
+    refetchingTopCurrencies,
+    refetchingUsersGrowth,
+  ]);
 
   return (
     <div className="bg-background-content">
@@ -91,7 +115,7 @@ export default function Dashboard() {
           <div className="col-span-2 p-5 bg-white shadow-lg rounded-2xl h-[320px] relative">
             <div className="text-lg font-semibold pb-4">User Growth</div>
             <div className="flex">
-              <ChartBar />
+              <ChartBar data={dataUsersGrowth ?? []} />
             </div>
           </div>
           <CardRecentReported
@@ -114,12 +138,12 @@ export default function Dashboard() {
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Top 5 Coins</div>
-            <ChartTopCoint />
+            <ChartTopCoint data={dataTopCurrencies ?? []} />
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Wallet Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ChartPie data={selectedInstance?.detail?.metric.totalPosts} />
+              <ChartPie data={selectedInstance?.detail?.metric.totalWallets} />
             </div>
           </div>
         </div>
@@ -127,7 +151,10 @@ export default function Dashboard() {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Connected Social Media Account</div>
             <div className="w-full flex items-center justify-center">
-              <ChartDoughnat height={380} data={selectedInstance?.detail?.metric.totalPosts} />
+              <ChartDoughnat
+                height={380}
+                data={selectedInstance?.detail?.metric.totalConnectedSocials}
+              />
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">

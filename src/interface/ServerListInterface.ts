@@ -5,7 +5,7 @@ export interface ServerListProps {
   detail?: ServerDetail;
 }
 
-export interface MetricInterface {
+export interface MetricPostInterface {
   totalMyriad: number;
   totalTwitter: number;
   totalReddit: number;
@@ -19,6 +19,16 @@ export interface MedianInterface {
   medianTransaction: number;
   medianSubscription: number;
 }
+
+export interface MetricTotalWalletsInterface {
+  totalNearWallet: number;
+  totalSubstrateWallet: number;
+}
+
+export interface MetricTotalConnectedSocialInterface {
+  totalConnectedReddit: number;
+  totalConnectedTwitter: number;
+}
 export interface ServerDetail {
   id: string;
   name: string;
@@ -27,10 +37,12 @@ export interface ServerDetail {
   categories: string[];
   metric: {
     totalExperiences: number;
-    totalPosts: MetricInterface;
     totalTransactions: number;
     totalUsers: number;
     totalVotes: number;
+    totalPosts: MetricPostInterface;
+    totalWallets: MetricTotalWalletsInterface;
+    totalConnectedSocials: MetricTotalConnectedSocialInterface;
   };
   images: {
     logo_banner: string;
