@@ -12,7 +12,7 @@ export default function ChartDoughnat({height, data}: {height: number; data: any
     datasets: [
       {
         label: '# of Votes',
-        data: Object.values(data),
+        data: Object.values(data).filter(item => item !== 'totalAll'),
         backgroundColor: ['#7342CC', '#FFC857', '#9CCC42'],
         borderWidth: 1,
       },
