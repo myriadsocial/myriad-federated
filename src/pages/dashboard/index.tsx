@@ -5,6 +5,7 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
 
 import {getReports} from 'src/api/GET_Reports';
+import {getTopCurrencies} from 'src/api/GET_TopCurrencies';
 import {DropdownFilter} from 'src/components/atoms';
 import ChartBar from 'src/components/molecules/ChartBar';
 import ChartDoughnat from 'src/components/molecules/ChartDoughnut';
@@ -64,11 +65,21 @@ export default function Dashboard() {
       enabled: false,
     },
   );
+  const {refetch: refetchingTopCurrencies, data: dataTopCurrencies} = useQuery(
+    ['/getTopCurrencies'],
+    () => getTopCurrencies(),
+    {
+      enabled: false,
+    },
+  );
+
+  console.log('dataTopCurrencies', dataTopCurrencies);
 
   useEffect(() => {
     refetchingGetAllPost();
     refetchingGetAllUser();
-  }, [sortingDate, refetchingGetAllPost, refetchingGetAllUser]);
+    refetchingTopCurrencies();
+  }, [sortingDate, refetchingGetAllPost, refetchingGetAllUser, refetchingTopCurrencies]);
 
   return (
     <div className="bg-background-content">
@@ -114,7 +125,7 @@ export default function Dashboard() {
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Top 5 Coins</div>
-            <ChartTopCoint />
+            <ChartTopCoint data={dataTopCurrencies ?? []} />
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Wallet Statistics</div>

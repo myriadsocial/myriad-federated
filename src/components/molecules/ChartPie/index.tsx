@@ -3,7 +3,6 @@ import {ConvertCamelCaseTitle} from 'src/utils/convertCamelCaseTitle';
 import {Pie} from 'react-chartjs-2';
 
 export default function ChartPie({data}: {data: any}) {
-  console.log(data);
   const dataPostPersentage = {
     labels: Object.keys(data)
       .filter(item => item !== 'totalAll')
