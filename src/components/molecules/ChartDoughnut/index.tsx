@@ -1,20 +1,18 @@
-import {MetricInterface} from 'src/interface/ServerListInterface';
+import {ConvertCamelCaseTitle} from 'src/utils/convertCamelCaseTitle';
 
 import {Doughnut} from 'react-chartjs-2';
 
-export default function ChartDoughnat({
-  height,
-  data,
-}: {
-  height: number;
-  data: MetricInterface | undefined;
-}) {
+export default function ChartDoughnat({height, data}: {height: number; data: any}) {
   const dataPostPersentage = {
-    labels: ['Myriad post', 'Import Twitter post', 'Import Reddit post'],
+    labels: Object.keys(data)
+      .filter(item => item !== 'totalAll')
+      .map(item => {
+        return ConvertCamelCaseTitle(item);
+      }),
     datasets: [
       {
         label: '# of Votes',
-        data: [data?.totalMyriad, data?.totalTwitter, data?.totalReddit],
+        data: Object.values(data),
         backgroundColor: ['#7342CC', '#FFC857', '#9CCC42'],
         borderWidth: 1,
       },

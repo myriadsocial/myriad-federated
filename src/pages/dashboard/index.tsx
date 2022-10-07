@@ -119,7 +119,7 @@ export default function Dashboard() {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Wallet Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ChartPie data={selectedInstance?.detail?.metric.totalPosts} />
+              <ChartPie data={selectedInstance?.detail?.metric.totalWallets} />
             </div>
           </div>
         </div>
@@ -127,7 +127,10 @@ export default function Dashboard() {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Connected Social Media Account</div>
             <div className="w-full flex items-center justify-center">
-              <ChartDoughnat height={380} data={selectedInstance?.detail?.metric.totalPosts} />
+              <ChartDoughnat
+                height={380}
+                data={selectedInstance?.detail?.metric.totalConnectedSocials}
+              />
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
