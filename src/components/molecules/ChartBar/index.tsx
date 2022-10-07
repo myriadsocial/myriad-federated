@@ -25,6 +25,21 @@ export default function ChartBar({data}: {data: Array<UserGrowthInterface>}) {
           },
         ],
       },
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            let label = context.dataset.label || '';
+
+            if (label) {
+              label += ': ';
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y + ' new users';
+            }
+            return label;
+          },
+        },
+      },
     },
   };
   const labels = data.map(item => {
