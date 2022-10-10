@@ -4,4 +4,10 @@ import ListAllNotifications from './ListAllNotifications';
 import ListSidebar from './ListSidebar';
 import SubListSidebar from './SubListSidebar';
 
-export {ListSidebar, SubListSidebar, DropdownFilter, AvatarWithName, ListAllNotifications};
+export {
+  ListSidebar,
+  SubListSidebar,
+  DropdownFilter,
+  AvatarWithName,
+  ListAllNotifications,
+};

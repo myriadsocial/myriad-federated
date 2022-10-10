@@ -1,37 +1,39 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
-import {Button, Typography} from '@mui/material';
+import { Button, Typography } from '@mui/material';
 
 import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
 import ModalComponent from 'src/components/molecules/Modal';
 import SwitchAccount from 'src/components/molecules/SwitchAccount';
-import {formatAddress} from 'src/helpers/formatAddress';
-import {useAuth} from 'src/hooks/use-auth.hook';
-import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
-import {ServerListProps} from 'src/interface/ServerListInterface';
+import { formatAddress } from 'src/helpers/formatAddress';
+import { useAuth } from 'src/hooks/use-auth.hook';
+import { usePolkadotExtension } from 'src/hooks/use-polkadot-app.hook';
+import { ServerListProps } from 'src/interface/ServerListInterface';
 
-import {setCookie} from 'nookies';
+import { setCookie } from 'nookies';
 
-import {IcDropdownPrimary, IcNotification} from '../../../../public/icons';
-import {useEnqueueSnackbar} from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
+import { IcDropdownPrimary, IcNotification } from '../../../../public/icons';
+import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
 });
 
-const Header = ({title}: {title: string}) => {
+const Header = ({ title }: { title: string }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
-  const {cookie, loginDashboard} = useAuth();
+  const { cookie, loginDashboard } = useAuth();
   const accountId = cookie?.session?.currentAddress ?? '';
-  const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
+  const { enablePolkadotExtension, getPolkadotAccounts } =
+    usePolkadotExtension();
 
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
-  const listOwnerInstances: Array<ServerListProps> = cookie?.listOwnerInstances ?? '';
+  const listOwnerInstances: Array<ServerListProps> =
+    cookie?.listOwnerInstances ?? '';
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -42,7 +44,9 @@ const Header = ({title}: {title: string}) => {
     router.push('/dashboard/notification');
   };
 
-  const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleShowSwitchAccount = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -51,7 +55,9 @@ const Header = ({title}: {title: string}) => {
     setInstanceSelected(item.id);
     if (installed) {
       const accounts = await getPolkadotAccounts().catch(() => []);
-      const currentAccounts = accounts.filter(account => account.address === item.owner);
+      const currentAccounts = accounts.filter(
+        (account) => account.address === item.owner,
+      );
       try {
         await loginDashboard({
           account: currentAccounts[0],
@@ -66,7 +72,8 @@ const Header = ({title}: {title: string}) => {
         setInstanceSelected(null);
         setShowModalInstance(false);
       } catch (err) {
-        const message = err instanceof Error ? err.message : `Unexpected error: ${err}`;
+        const message =
+          err instanceof Error ? err.message : `Unexpected error: ${err}`;
         enqueueSnackbar({
           message,
           variant: 'error',
@@ -93,12 +100,15 @@ const Header = ({title}: {title: string}) => {
             padding: 0,
             paddingRight: 10,
             paddingLeft: 10,
-          }}>
+          }}
+        >
           <div className="flex items-center">
             <div className="flex items-center">
               <Image
                 alt=""
-                src={(selectedInstance.detail?.images.logo_banner as string) ?? ''}
+                src={
+                  (selectedInstance.detail?.images.logo_banner as string) ?? ''
+                }
                 className="rounded-full bg-blue-50"
                 height={24}
                 width={24}
@@ -109,7 +119,12 @@ const Header = ({title}: {title: string}) => {
                 </div>
               </div>
             </div>
-            <Image src={IcDropdownPrimary} height={20} width={20} alt="dropdown" />
+            <Image
+              src={IcDropdownPrimary}
+              height={20}
+              width={20}
+              alt="dropdown"
+            />
           </div>
         </Button>
         <Button
@@ -125,9 +140,15 @@ const Header = ({title}: {title: string}) => {
             padding: 0,
             paddingRight: 10,
             paddingLeft: 10,
-          }}>
+          }}
+        >
           <div className="flex items-center">
-            <PolkadotIcon value={accountId} size={24} theme="polkadot" style={{marginRight: 5}} />
+            <PolkadotIcon
+              value={accountId}
+              size={24}
+              theme="polkadot"
+              style={{ marginRight: 5 }}
+            />
             <Typography color={'black'} fontSize={14}>
               {formatAddress(accountId)}
             </Typography>
@@ -145,8 +166,14 @@ const Header = ({title}: {title: string}) => {
             padding: 0,
             minHeight: 0,
             minWidth: 0,
-          }}>
-          <Image src={IcNotification} height={24} width={24} alt={'notification'} />
+          }}
+        >
+          <Image
+            src={IcNotification}
+            height={24}
+            width={24}
+            alt={'notification'}
+          />
         </Button>
       </div>
       <SwitchAccount
@@ -169,13 +196,14 @@ const Header = ({title}: {title: string}) => {
         open={showModalInstance}
         onClose={() => setShowModalInstance(false)}
         title={'Select Instance'}
-        type="small">
+        type="small"
+      >
         <div className="mt-4 grid max-h-[400px] p-2 gap-4 overflow-y-auto">
           {listOwnerInstances.length === 1 ? (
             <div>No instances to show</div>
           ) : (
             listOwnerInstances
-              .filter(item => item.id !== selectedInstance.id)
+              .filter((item) => item.id !== selectedInstance.id)
               .map((item, index) => {
                 return (
                   <ListSwitchAccount
@@ -183,7 +211,11 @@ const Header = ({title}: {title: string}) => {
                     label={item.detail?.name}
                     image={item.detail?.images.logo_banner as string}
                     onClick={() => handleSwitchInstance(item)}
-                    type={instanceSelected === item.id ? 'listSwitchInstance' : undefined}
+                    type={
+                      instanceSelected === item.id
+                        ? 'listSwitchInstance'
+                        : undefined
+                    }
                   />
                 );
               })

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {SearchBox as SearchBoxComponent} from '.';
+import { SearchBox as SearchBoxComponent } from '.';
 
 type SearchBoxContainerProps = {
   onSubmitSearch?: (args: string) => void;

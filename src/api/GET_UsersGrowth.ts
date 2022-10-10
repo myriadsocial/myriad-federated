@@ -3,10 +3,10 @@ import axios from './axiosInstance';
 export const getUsersGrowth = async () => {
   return axios()
     .get(`/api/user-growth?limit=10`)
-    .then(response => {
+    .then((response) => {
       return response.data;
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e);
     });
 };

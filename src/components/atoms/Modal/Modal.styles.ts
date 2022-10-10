@@ -1,6 +1,6 @@
-import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
-import {AllignTitle, TitleSize} from './Modal.types';
+import { AllignTitle, TitleSize } from './Modal.types';
 
 type StylesProps = {
   align: AllignTitle;
@@ -9,23 +9,23 @@ type StylesProps = {
   fullScreen?: boolean;
 };
 
-export const useStyles = makeStyles<Theme, StylesProps>(theme =>
+export const useStyles = makeStyles<Theme, StylesProps>((theme) =>
   createStyles({
     root: {
       '& .MuiPaper-rounded': {
-        borderRadius: props => (props.fullScreen ? 0 : 10),
+        borderRadius: (props) => (props.fullScreen ? 0 : 10),
       },
     },
     paper: {
       [theme.breakpoints.down('xs')]: {
-        margin: props => (props.fullScreen ? 0 : 20),
+        margin: (props) => (props.fullScreen ? 0 : 20),
       },
     },
     nav: {
       marginBottom: 20,
     },
     title: {
-      textAlign: props => props.align,
+      textAlign: (props) => props.align,
       padding: 30,
 
       [theme.breakpoints.down('xs')]: {
@@ -34,7 +34,7 @@ export const useStyles = makeStyles<Theme, StylesProps>(theme =>
 
       '& .MuiTypography-h4': {
         lineHeight: '30px',
-        fontWeight: props => (props.titleSize === 'small' ? 400 : 700),
+        fontWeight: (props) => (props.titleSize === 'small' ? 400 : 700),
         color: '#000000',
         marginBottom: theme.spacing(1),
       },
@@ -58,7 +58,7 @@ export const useStyles = makeStyles<Theme, StylesProps>(theme =>
       },
     },
     content: {
-      padding: props =>
+      padding: (props) =>
         props.gutter === 'default'
           ? '0 30px 30px 30px'
           : props.gutter === 'none'
@@ -66,7 +66,7 @@ export const useStyles = makeStyles<Theme, StylesProps>(theme =>
           : '0 0 30px 0',
 
       [theme.breakpoints.down('xs')]: {
-        padding: props =>
+        padding: (props) =>
           props.gutter === 'default'
             ? '0 20px 20px 20px'
             : props.gutter === 'none'

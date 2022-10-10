@@ -2,7 +2,7 @@ import React from 'react';
 
 import dynamic from 'next/dynamic';
 
-import {Typography} from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -10,13 +10,13 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import YouTubeIcon from '@material-ui/icons/YouTube';
 
-import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-import {Modal} from '../../atoms/Modal';
-import {AllignTitle} from '../../atoms/Modal/Modal.types';
-import {PolkadotLink} from '../common/PolkadotLink.component';
+import { Modal } from '../../atoms/Modal';
+import { AllignTitle } from '../../atoms/Modal/Modal.types';
+import { PolkadotLink } from '../common/PolkadotLink.component';
 import ShowIf from '../common/show-if.component';
-import {useStyles} from './PolkadotAccountList.styles';
+import { useStyles } from './PolkadotAccountList.styles';
 
 type PolkadotAccountListProps = {
   isOpen: boolean;
@@ -37,22 +37,27 @@ export const PolkadotAccountList: React.FC<PolkadotAccountListProps> = ({
 }) => {
   const styles = useStyles();
 
-  const IdenticonWithoutSSR = dynamic(() => import('@polkadot/react-identicon'), {
-    ssr: false,
-  });
+  const IdenticonWithoutSSR = dynamic(
+    () => import('@polkadot/react-identicon'),
+    {
+      ssr: false,
+    },
+  );
 
   return (
     <Modal
       title={title ?? 'Account List'}
       open={isOpen}
       onClose={onClose}
-      align={align ?? 'center'}>
+      align={align ?? 'center'}
+    >
       <div className={styles.wrapper}>
         <ShowIf condition={accounts.length == 0}>
           <Typography className={styles.help}>
             Please open your&nbsp;
             <PolkadotLink />
-            &nbsp;extension and create new account or import existing.Then reload this page.
+            &nbsp;extension and create new account or import existing.Then
+            reload this page.
           </Typography>
 
           <div className={styles.buttonGroup}>
@@ -61,23 +66,29 @@ export const PolkadotAccountList: React.FC<PolkadotAccountListProps> = ({
               fullWidth
               size="medium"
               href="https://polkadot.js.org/extension"
-              startIcon={<YouTubeIcon />}>
+              startIcon={<YouTubeIcon />}
+            >
               Watch Tutorial Video
             </Button>
           </div>
         </ShowIf>
         <ShowIf condition={accounts.length > 0}>
           <List className={styles.list}>
-            {accounts.map(account => {
+            {accounts.map((account) => {
               return (
                 <ListItem
                   disableGutters
                   onClick={() => onSelect(account)}
                   key={account.address}
                   className={styles.list}
-                  button>
+                  button
+                >
                   <ListItemAvatar>
-                    <IdenticonWithoutSSR value={account.address} size={48} theme="polkadot" />
+                    <IdenticonWithoutSSR
+                      value={account.address}
+                      size={48}
+                      theme="polkadot"
+                    />
                   </ListItemAvatar>
                   <ListItemText
                     primary={account.meta.name}

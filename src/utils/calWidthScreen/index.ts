@@ -1,5 +1,5 @@
-import {useMediaQuery, useTheme} from '@mui/material';
-import {Breakpoint, Theme} from '@mui/material/styles';
+import { useMediaQuery, useTheme } from '@mui/material';
+import { Breakpoint, Theme } from '@mui/material/styles';
 
 type BreakpointOrNull = Breakpoint | null;
 export function useWidth() {

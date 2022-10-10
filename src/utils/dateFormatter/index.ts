@@ -33,7 +33,7 @@ type DateFormatOption = Omit<Parameters<typeof dateFns.format>[2], 'locale'> & {
 export const dateFormatter = (
   date: Date,
   dateFormat?: DateFormatType,
-  {locale = 'id', ...option}: DateFormatOption = {},
+  { locale = 'id', ...option }: DateFormatOption = {},
 ) => {
   return dateFns.format(date, dateFormat || 'dd MMMM yyyy', {
     locale: locale === 'en' ? en : id,
@@ -48,8 +48,10 @@ export const formatDistanceToNow = (date: Date) =>
 
 export const formatTimeWorkHoursMinutes = (date: Date | null) => {
   const timeSplit = date ? dateFormatter(date, 'HH:mm').split(':') : '';
-  const hour = parseInt(timeSplit[0], 10) !== 0 ? parseInt(timeSplit[0], 10) + 'h' : '';
-  const minute = parseInt(timeSplit[1], 10) !== 0 ? parseInt(timeSplit[1], 10) + 'm' : '';
+  const hour =
+    parseInt(timeSplit[0], 10) !== 0 ? parseInt(timeSplit[0], 10) + 'h' : '';
+  const minute =
+    parseInt(timeSplit[1], 10) !== 0 ? parseInt(timeSplit[1], 10) + 'm' : '';
   return date ? hour + minute : '-';
 };
 
@@ -60,7 +62,9 @@ export const formatTimeWorkHours = (date: Date | null) => {
       new Date(0, 0, 0, parseInt(timeSplit[0], 10), parseInt(timeSplit[1], 10)),
       new Date(0, 0, 0, 0, 0),
     ) / 60;
-  return date ? diffMinutes.toFixed(parseInt(timeSplit[1], 10) === 0 ? 0 : 1) + 'h' : '-';
+  return date
+    ? diffMinutes.toFixed(parseInt(timeSplit[1], 10) === 0 ? 0 : 1) + 'h'
+    : '-';
 };
 
 export const getWeekNumberFromDate = (date: Date) => {
@@ -71,29 +75,41 @@ export const getWeekNumberFromDate = (date: Date) => {
   return week > 52 ? 1 : week;
 };
 
-export const isNextAvailable = ({selectionDate, maxDate}: {selectionDate: Date; maxDate: Date}) => {
+export const isNextAvailable = ({
+  selectionDate,
+  maxDate,
+}: {
+  selectionDate: Date;
+  maxDate: Date;
+}) => {
   selectionDate.setDate(selectionDate.getDate() - selectionDate.getDay());
   return selectionDate <= maxDate;
 };
 
-export const isPrevAvailable = ({selectionDate, minDate}: {selectionDate: Date; minDate: Date}) => {
+export const isPrevAvailable = ({
+  selectionDate,
+  minDate,
+}: {
+  selectionDate: Date;
+  minDate: Date;
+}) => {
   selectionDate.setDate(selectionDate.getDate() + (6 - selectionDate.getDay()));
   return selectionDate >= minDate;
 };
 
-export const getNextWeek = ({date}: {date: Date}) => {
+export const getNextWeek = ({ date }: { date: Date }) => {
   const newDays = new Date(date);
   newDays.setDate(date.getDate() + 7);
   return new Date(newDays);
 };
 
-export const getPrevWeek = ({date}: {date: Date}) => {
+export const getPrevWeek = ({ date }: { date: Date }) => {
   const newDays = new Date(date);
   newDays.setDate(date.getDate() - 7);
   return new Date(newDays);
 };
 
-export const timeToDate = ({time}: {time: string}) => {
+export const timeToDate = ({ time }: { time: string }) => {
   const date = new Date();
   if (time) {
     const tokenTime = time.split(':');

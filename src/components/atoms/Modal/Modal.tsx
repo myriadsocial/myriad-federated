@@ -1,16 +1,16 @@
-import {XIcon} from '@heroicons/react/solid';
+import { XIcon } from '@heroicons/react/solid';
 
 import React from 'react';
 
-import {IconButton, SvgIcon, Typography} from '@material-ui/core';
-import Dialog, {DialogProps} from '@material-ui/core/Dialog';
+import { IconButton, SvgIcon, Typography } from '@material-ui/core';
+import Dialog, { DialogProps } from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
 import ShowIf from 'src/components/molecules/common/show-if.component';
 
-import {useStyles} from './Modal.styles';
-import {AllignTitle, TitleSize} from './Modal.types';
+import { useStyles } from './Modal.styles';
+import { AllignTitle, TitleSize } from './Modal.types';
 
 export type ModalProps = DialogProps & {
   title?: string | React.ReactNode;
@@ -22,7 +22,7 @@ export type ModalProps = DialogProps & {
   onClose: () => void;
 };
 
-export const Modal: React.FC<ModalProps> = props => {
+export const Modal: React.FC<ModalProps> = (props) => {
   const {
     title,
     subtitle,
@@ -36,7 +36,7 @@ export const Modal: React.FC<ModalProps> = props => {
     ...otherProps
   } = props;
 
-  const styles = useStyles({align, titleSize, gutter, fullScreen});
+  const styles = useStyles({ align, titleSize, gutter, fullScreen });
 
   const handleClose = () => {
     onClose();
@@ -48,13 +48,24 @@ export const Modal: React.FC<ModalProps> = props => {
       {...otherProps}
       fullScreen={fullScreen}
       className={styles.root}
-      classes={{paper: styles.paper}}
-      disableEnforceFocus>
+      classes={{ paper: styles.paper }}
+      disableEnforceFocus
+    >
       <ShowIf condition={!fullScreen}>
-        <DialogTitle disableTypography className={[styles.title, className].join(' ')}>
-          <Typography variant={titleSize === 'small' ? 'h5' : 'h4'}>{title}</Typography>
-          {subtitle && (typeof subtitle === 'string' || subtitle instanceof String) ? (
-            <Typography variant="subtitle1" display="block" className={styles.subtitle}>
+        <DialogTitle
+          disableTypography
+          className={[styles.title, className].join(' ')}
+        >
+          <Typography variant={titleSize === 'small' ? 'h5' : 'h4'}>
+            {title}
+          </Typography>
+          {subtitle &&
+          (typeof subtitle === 'string' || subtitle instanceof String) ? (
+            <Typography
+              variant="subtitle1"
+              display="block"
+              className={styles.subtitle}
+            >
               {subtitle}
             </Typography>
           ) : (
@@ -65,7 +76,8 @@ export const Modal: React.FC<ModalProps> = props => {
             aria-label="close"
             size="small"
             className={styles.close}
-            onClick={onClose}>
+            onClick={onClose}
+          >
             <SvgIcon component={XIcon} color="primary" fontSize="medium" />
           </IconButton>
         </DialogTitle>

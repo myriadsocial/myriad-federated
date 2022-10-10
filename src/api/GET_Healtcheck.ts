@@ -6,7 +6,7 @@ export const getHealtcheck = async () => {
     .then(() => {
       return true;
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e);
       return false;
     });
