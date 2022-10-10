@@ -9,6 +9,14 @@ export default function ChartDoughnat({
   height: number;
   data: any;
 }) {
+  const dataChart = Object.keys(data)
+    .filter((key) => key !== 'totalAll')
+    .reduce((obj, key) => {
+      return Object.assign(obj, {
+        [key]: data[key],
+      });
+    }, {});
+
   const dataPostPersentage = {
     labels: Object.keys(data)
       .filter((item) => item !== 'totalAll')
@@ -18,7 +26,7 @@ export default function ChartDoughnat({
     datasets: [
       {
         label: '# of Votes',
-        data: Object.values(data),
+        data: Object.values(dataChart),
         backgroundColor: ['#7342CC', '#FFC857', '#9CCC42'],
         borderWidth: 1,
       },

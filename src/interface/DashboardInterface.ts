@@ -9,4 +9,5 @@ export interface ChartTopPointInterface {
   symbol: string;
   updatedAt: string;
   native: boolean;
+  totalTransactions: number;
 }

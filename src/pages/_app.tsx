@@ -38,20 +38,21 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
+const queryCache = new QueryCache();
+const queryClient = new QueryClient({
+  queryCache,
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const dehydratedState = dehydrate(queryClient, {});
+
 function MyriadApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
-  const queryCache = new QueryCache();
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        retry: 2,
-        refetchOnWindowFocus: false,
-      },
-    },
-  });
-
-  const dehydratedState = dehydrate(queryClient, {});
 
   useEffect(() => {
     // Remove the server-side injected CSS.

@@ -1,9 +1,18 @@
+import ContentLayout from '../../layout/ContentLayout';
+import type { NextPageWithLayout } from '../_app';
 import { useQuery } from '@tanstack/react-query';
-
-import { ReactElement, ChangeEvent, useEffect, useState } from 'react';
-
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from 'chart.js';
 import { useRouter } from 'next/router';
-
+import { ReactElement, ChangeEvent, useEffect, useState } from 'react';
 import { getReports } from 'src/api/GET_Reports';
 import { getTopCurrencies } from 'src/api/GET_TopCurrencies';
 import { getUsersGrowth } from 'src/api/GET_UsersGrowth';
@@ -18,21 +27,6 @@ import DashCounter from 'src/components/organisms/DashCounter';
 import { Arrays } from 'src/constans/array';
 import { useAuth } from 'src/hooks/use-auth.hook';
 import { ServerListProps } from 'src/interface/ServerListInterface';
-
-import {
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-} from 'chart.js';
-
-import ContentLayout from '../../layout/ContentLayout';
-
-import type { NextPageWithLayout } from '../_app';
 
 ChartJS.register(
   ArcElement,
@@ -65,7 +59,7 @@ const Dashboard: NextPageWithLayout = () => {
     ['/getAllPost'],
     () => getReports({ pageNumber, filter: filterPost }),
     {
-      enabled: false,
+      enabled: true,
     },
   );
 
@@ -73,18 +67,18 @@ const Dashboard: NextPageWithLayout = () => {
     ['/getAllUser'],
     () => getReports({ pageNumber, filter: filterUser }),
     {
-      enabled: false,
+      enabled: true,
     },
   );
   const { refetch: refetchingTopCurrencies, data: dataTopCurrencies } =
     useQuery(['/getTopCurrencies'], () => getTopCurrencies(), {
-      enabled: false,
+      enabled: true,
     });
   const { refetch: refetchingUsersGrowth, data: dataUsersGrowth } = useQuery(
     ['/getUserGrowth'],
     () => getUsersGrowth(),
     {
-      enabled: false,
+      enabled: true,
     },
   );
 
