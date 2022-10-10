@@ -22,8 +22,8 @@
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint:check": "next lint --report-unused-disable-directives --ignore-path .gitignore .",
-    "lint:fix": "next lint --fix --ignore-path .gitignore .",
+    "lint:check": "next lint --ignore-path .gitignore .",
+    "lint:fix": "next lint --fix --ignore-path .gitignore  .",
     "format:check": "prettier --check --ignore-path .gitignore .",
     "format:fix": "prettier --write --ignore-path .gitignore ."
   },
