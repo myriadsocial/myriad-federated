@@ -29,7 +29,30 @@ const nextConfig = {
         hostname: '**.googleapis.com',
       },
     ],
-    domains: ['i.pravatar.cc', '2dverse.org', 'pbs.twimg.com', 'debio.dev'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '2dverse.org',
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'pbs.twimg.com',
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'debio.dev',
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'i.pravatar.cc',
+      },
+    ],
   },
   reactStrictMode: true,
   swcMinify: false, // crash on chart.js set false until next.js v12.3.2 release
