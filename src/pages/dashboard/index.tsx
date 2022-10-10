@@ -4,10 +4,10 @@ import { ReactElement, ChangeEvent, useEffect, useState } from 'react';
 
 import { useRouter } from 'next/router';
 
-import {getReports} from 'src/api/GET_Reports';
-import {getTopCurrencies} from 'src/api/GET_TopCurrencies';
-import {getUsersGrowth} from 'src/api/GET_UsersGrowth';
-import {DropdownFilter} from 'src/components/atoms';
+import { getReports } from 'src/api/GET_Reports';
+import { getTopCurrencies } from 'src/api/GET_TopCurrencies';
+import { getUsersGrowth } from 'src/api/GET_UsersGrowth';
+import { DropdownFilter } from 'src/components/atoms';
 import ChartBar from 'src/components/molecules/ChartBar';
 import ChartDoughnat from 'src/components/molecules/ChartDoughnut';
 import ChartPie from 'src/components/molecules/ChartPie';
@@ -76,14 +76,11 @@ const Dashboard: NextPageWithLayout = () => {
       enabled: false,
     },
   );
-  const {refetch: refetchingTopCurrencies, data: dataTopCurrencies} = useQuery(
-    ['/getTopCurrencies'],
-    () => getTopCurrencies(),
-    {
+  const { refetch: refetchingTopCurrencies, data: dataTopCurrencies } =
+    useQuery(['/getTopCurrencies'], () => getTopCurrencies(), {
       enabled: false,
-    },
-  );
-  const {refetch: refetchingUsersGrowth, data: dataUsersGrowth} = useQuery(
+    });
+  const { refetch: refetchingUsersGrowth, data: dataUsersGrowth } = useQuery(
     ['/getUserGrowth'],
     () => getUsersGrowth(),
     {

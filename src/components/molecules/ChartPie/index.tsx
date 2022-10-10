@@ -1,12 +1,12 @@
-import {ConvertCamelCaseTitle} from 'src/utils/convertCamelCaseTitle';
+import { ConvertCamelCaseTitle } from 'src/utils/convertCamelCaseTitle';
 
 import { Pie } from 'react-chartjs-2';
 
-export default function ChartPie({data}: {data: any}) {
+export default function ChartPie({ data }: { data: any }) {
   const dataPostPersentage = {
     labels: Object.keys(data)
-      .filter(item => item !== 'totalAll')
-      .map(item => {
+      .filter((item) => item !== 'totalAll')
+      .map((item) => {
         return ConvertCamelCaseTitle(item);
       }),
     datasets: [
