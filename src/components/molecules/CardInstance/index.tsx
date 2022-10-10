@@ -2,7 +2,7 @@ import React from 'react';
 
 import Image from 'next/image';
 
-import {ExperianceGray, PostGray, UserGray} from 'public/icons';
+import { ExperianceGray, PostGray, UserGray } from 'public/icons';
 
 interface CardInstanceInterface {
   onClick?: () => void;
@@ -30,9 +30,16 @@ export default function CardInstance(props: CardInstanceInterface) {
   return (
     <button
       className="bg-white flex py-5 px-9 rounded-[10px] w-full mt-4 shadow-md"
-      onClick={onClick}>
+      onClick={onClick}
+    >
       {image ? (
-        <Image src={image} alt="" height={80} width={80} className="rounded-[5px]" />
+        <Image
+          src={image}
+          alt=""
+          height={80}
+          width={80}
+          className="rounded-[5px]"
+        />
       ) : (
         <div className="h-[80px] w-[80px] rounded-[5px] bg-slate-400"></div>
       )}
@@ -48,19 +55,25 @@ export default function CardInstance(props: CardInstanceInterface) {
             <div className="flex">
               <Image src={UserGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-softGray">{users} users</div>
+                <div className="text-sm font-semibold text-softGray">
+                  {users} users
+                </div>
               </div>
             </div>
             <div className="flex mx-6">
               <Image src={PostGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-softGray">{post} posts</div>
+                <div className="text-sm font-semibold text-softGray">
+                  {post} posts
+                </div>
               </div>
             </div>
             <div className="flex">
               <Image src={ExperianceGray} height={20} width={20} alt="" />
               <div className="mx-2">
-                <div className="text-sm font-semibold text-softGray">{experience} experiences</div>
+                <div className="text-sm font-semibold text-softGray">
+                  {experience} experiences
+                </div>
               </div>
             </div>
           </div>

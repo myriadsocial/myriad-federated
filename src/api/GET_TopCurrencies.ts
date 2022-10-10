@@ -3,10 +3,10 @@ import axios from './axiosInstance';
 export const getTopCurrencies = async () => {
   return axios()
     .get(`/api/currencies?top5currencies=true`)
-    .then(response => {
+    .then((response) => {
       return response.data.data;
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e);
     });
 };

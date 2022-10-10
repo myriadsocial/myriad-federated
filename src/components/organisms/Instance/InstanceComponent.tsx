@@ -1,23 +1,23 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import dynamic from 'next/dynamic';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
-import {Backdrop, CircularProgress} from '@material-ui/core';
+import { Backdrop, CircularProgress } from '@material-ui/core';
 
-import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-import {useAuth} from 'src/hooks/use-auth.hook';
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
-import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
+import { useAuth } from 'src/hooks/use-auth.hook';
+import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
+import { usePolkadotExtension } from 'src/hooks/use-polkadot-app.hook';
 
-import {setCookie} from 'nookies';
+import { setCookie } from 'nookies';
 
-import {PolkadotAccountList} from '../../molecules/PolkadotAccountList';
+import { PolkadotAccountList } from '../../molecules/PolkadotAccountList';
 import SwitchAccount from '../../molecules/SwitchAccount';
-import {useStyles} from './Instance.styles';
-import {InstanceHeader} from './InstanceHeader';
-import {InstanceList} from './InstanceList';
+import { useStyles } from './Instance.styles';
+import { InstanceHeader } from './InstanceHeader';
+import { InstanceList } from './InstanceList';
 
 const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
   ssr: false,
@@ -27,18 +27,24 @@ type InstanceComponentProps = {
   accountId: string;
 };
 
-export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId}) => {
+export const InstanceComponent: React.FC<InstanceComponentProps> = ({
+  accountId,
+}) => {
   const style = useStyles();
   const router = useRouter();
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
-  const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
+  const { enablePolkadotExtension, getPolkadotAccounts } =
+    usePolkadotExtension();
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
-  const {createInstance, servers, loading} = useInstances(InstanceType.OWNED, accountId);
+  const { createInstance, servers, loading } = useInstances(
+    InstanceType.OWNED,
+    accountId,
+  );
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const {logout} = useAuth();
+  const { logout } = useAuth();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openMenu = Boolean(anchorEl);
@@ -61,7 +67,9 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
     setAccounts(accounts);
   };
 
-  const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleShowSwitchAccount = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -73,9 +81,15 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
     setShowAccountList(false);
   };
 
-  const handleSelectedSubstrateAccount = async (account: InjectedAccountWithMeta) => {
+  const handleSelectedSubstrateAccount = async (
+    account: InjectedAccountWithMeta,
+  ) => {
     closeAccountList();
-    setCookie(null, 'session', JSON.stringify({currentAddress: account.address}));
+    setCookie(
+      null,
+      'session',
+      JSON.stringify({ currentAddress: account.address }),
+    );
     router.push('/instance');
   };
 
@@ -88,7 +102,11 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({accountId})
         onClickBack={() => router.push('/')}
       />
       <InstanceList servers={servers} accountId={accountId} />
-      <InstanceStepperModal onCreateInstance={createInstance} open={open} onClose={toogleOpen} />
+      <InstanceStepperModal
+        onCreateInstance={createInstance}
+        open={open}
+        onClose={toogleOpen}
+      />
       <Backdrop className={style.backdrop} open={loading}>
         <CircularProgress />
       </Backdrop>

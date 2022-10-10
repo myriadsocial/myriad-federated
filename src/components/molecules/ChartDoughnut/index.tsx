@@ -1,12 +1,18 @@
-import {ConvertCamelCaseTitle} from 'src/utils/convertCamelCaseTitle';
+import { ConvertCamelCaseTitle } from 'src/utils/convertCamelCaseTitle';
 
-import {Doughnut} from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 
-export default function ChartDoughnat({height, data}: {height: number; data: any}) {
+export default function ChartDoughnat({
+  height,
+  data,
+}: {
+  height: number;
+  data: any;
+}) {
   const dataPostPersentage = {
     labels: Object.keys(data)
-      .filter(item => item !== 'totalAll')
-      .map(item => {
+      .filter((item) => item !== 'totalAll')
+      .map((item) => {
         return ConvertCamelCaseTitle(item);
       }),
     datasets: [
@@ -33,5 +39,7 @@ export default function ChartDoughnat({height, data}: {height: number; data: any
       },
     },
   };
-  return <Doughnut data={dataPostPersentage} options={optionsPie} height={height} />;
+  return (
+    <Doughnut data={dataPostPersentage} options={optionsPie} height={height} />
+  );
 }

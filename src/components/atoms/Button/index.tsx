@@ -1,8 +1,8 @@
-import {ReactNode} from 'react';
+import { ReactNode } from 'react';
 
-import {Button as ButtonMui} from '@mui/material';
+import { Button as ButtonMui } from '@mui/material';
 
-import {colors} from '../../../utils';
+import { colors } from '../../../utils';
 
 interface ButtonOutlineInterface {
   onClick: any;
@@ -39,7 +39,8 @@ const Button = ({
           borderRadius: 20,
           fontFamily: 'mulish',
           color: 'black',
-        }}>
+        }}
+      >
         {label}
       </ButtonMui>
     );
@@ -60,7 +61,8 @@ const Button = ({
           paddingRight: 10,
           paddingLeft: 10,
           fontFamily: 'mulish',
-        }}>
+        }}
+      >
         {children}
       </ButtonMui>
     );
@@ -80,7 +82,8 @@ const Button = ({
           fontFamily: 'mulish',
         }}
         fullWidth={isFullWidth}
-        {...props}>
+        {...props}
+      >
         {label}
       </ButtonMui>
     );
@@ -101,7 +104,8 @@ const Button = ({
         fontFamily: 'mulish',
       }}
       fullWidth={isFullWidth}
-      {...props}>
+      {...props}
+    >
       {label}
     </ButtonMui>
   );

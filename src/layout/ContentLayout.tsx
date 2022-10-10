@@ -5,13 +5,12 @@ import Head from 'next/head';
 import Header from '../components/organisms/Header';
 import Siderbar from '../components/organisms/Siderbar';
 
-export default function ContentLayout({
-  children,
-  title,
-}: {
-  children: React.ReactNode;
+type Props = {
   title: string;
-}) {
+  children: React.ReactNode;
+};
+
+export default function ContentLayout({ title, children }: Props) {
   return (
     <div>
       <Head>

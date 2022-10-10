@@ -1,24 +1,32 @@
-import {useQuery} from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
-import {ReactNode, useEffect, useState} from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 
-import {CircularProgress, Typography} from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 
-import {getNotifications} from '../../../api/GET_Notifications';
-import {DropdownFilter, ListAllNotifications} from '../../../components/atoms';
+import { getNotifications } from '../../../api/GET_Notifications';
+import {
+  DropdownFilter,
+  ListAllNotifications,
+} from '../../../components/atoms';
 import EmptyState from '../../../components/molecules/EmptyState';
-import {Arrays} from '../../../constans/array';
+import { Arrays } from '../../../constans/array';
 import {
   FilterType,
   MetaNotificationInterface,
   NotificationDataInterface,
 } from '../../../interface/NotificationsInterface';
 import ContentLayout from '../../../layout/ContentLayout';
-import {dateFormatter} from '../../../utils/dateFormatter';
+import { dateFormatter } from '../../../utils/dateFormatter';
 
-export default function Notification() {
-  const [dataNotification, setDataNotification] = useState<Array<NotificationDataInterface>>([]);
-  const [metaNotification, setMetaNotification] = useState<MetaNotificationInterface>();
+import type { NextPageWithLayout } from '../../_app';
+
+const Notification: NextPageWithLayout = () => {
+  const [dataNotification, setDataNotification] = useState<
+    Array<NotificationDataInterface>
+  >([]);
+  const [metaNotification, setMetaNotification] =
+    useState<MetaNotificationInterface>();
   const [filterReport, setFilterReport] = useState<FilterType>('all');
   const [pageNumber, setPageNumber] = useState<number>(1);
 
@@ -33,12 +41,12 @@ export default function Notification() {
     },
   };
 
-  const {refetch: refetchingGetNotification, isFetching} = useQuery(
+  const { refetch: refetchingGetNotification, isFetching } = useQuery(
     ['/getNotification'],
-    () => getNotifications({pageNumber, filter}),
+    () => getNotifications({ pageNumber, filter }),
     {
       enabled: false,
-      onSuccess: data => {
+      onSuccess: (data) => {
         setDataNotification(data?.data);
         setMetaNotification(data?.meta);
       },
@@ -53,7 +61,9 @@ export default function Notification() {
     <div className="bg-white mr-6 p-6 rounded-[10px] h-min-[480px]">
       <div className="mb-[5px]">
         <Typography fontWeight={600} fontSize={18} textTransform="capitalize">
-          {filterReport === 'all' ? 'All notifications' : filterReport.replace('_', ' ')}
+          {filterReport === 'all'
+            ? 'All notifications'
+            : filterReport.replace('_', ' ')}
         </Typography>
       </div>
       <Typography fontSize={14} fontWeight={400} color={'#757575'}>
@@ -97,7 +107,10 @@ export default function Notification() {
       {(metaNotification?.currentPage ?? 0) > 0 && (
         <div className="flex items-center gap-2 justify-end mb-[10px] text-sm mt-4">
           {metaNotification?.currentPage !== 1 && (
-            <button onClick={() => setPageNumber(pageNumber - 1)} className="text-slate-600">
+            <button
+              onClick={() => setPageNumber(pageNumber - 1)}
+              className="text-slate-600"
+            >
               {'<'}
             </button>
           )}
@@ -105,8 +118,12 @@ export default function Notification() {
             {metaNotification?.currentPage}
           </div>
           <div>of {metaNotification?.totalPageCount}</div>
-          {metaNotification?.totalPageCount === metaNotification?.currentPage ? null : (
-            <button onClick={() => setPageNumber(pageNumber + 1)} className="text-slate-600">
+          {metaNotification?.totalPageCount ===
+          metaNotification?.currentPage ? null : (
+            <button
+              onClick={() => setPageNumber(pageNumber + 1)}
+              className="text-slate-600"
+            >
               {'>'}
             </button>
           )}
@@ -114,8 +131,10 @@ export default function Notification() {
       )}
     </div>
   );
-}
+};
 
-Notification.getLayout = function getLayout(page: ReactNode) {
+Notification.getLayout = function getLayout(page: ReactElement) {
   return <ContentLayout title="Notification">{page}</ContentLayout>;
 };
+
+export default Notification;

@@ -1,14 +1,14 @@
-import {useCookies} from 'react-cookie';
+import { useCookies } from 'react-cookie';
 
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
-import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
-import {decodeAddress} from '@polkadot/keyring';
-import {u8aToHex} from '@polkadot/util';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { decodeAddress } from '@polkadot/keyring';
+import { u8aToHex } from '@polkadot/util';
 
-import {getUserNonce} from 'src/api/GET_UserNonce';
-import {login} from 'src/api/POST_Admin';
-import {PolkadotJs} from 'src/lib/services/polkadot-js';
+import { getUserNonce } from 'src/api/GET_UserNonce';
+import { login } from 'src/api/POST_Admin';
+import { PolkadotJs } from 'src/lib/services/polkadot-js';
 
 type SignInProps = {
   account: InjectedAccountWithMeta;
@@ -26,8 +26,8 @@ export const useAuth = () => {
   ]);
 
   const connectWallet = (signInProps: SignInProps) => {
-    const {account, callbackURL} = signInProps;
-    const data = {currentAddress: account.address};
+    const { account, callbackURL } = signInProps;
+    const data = { currentAddress: account.address };
 
     setCookie('session', JSON.stringify(data), {
       path: '/',
@@ -39,11 +39,11 @@ export const useAuth = () => {
   };
 
   const loginDashboard = async (signInProps: SignInProps) => {
-    const {apiURL, account, callbackURL} = signInProps;
+    const { apiURL, account, callbackURL } = signInProps;
     if (!apiURL) return;
 
     const toHex = u8aToHex(decodeAddress(account.address));
-    const {nonce} = await getUserNonce(apiURL, toHex);
+    const { nonce } = await getUserNonce(apiURL, toHex);
 
     if (!nonce) throw new Error('Unauthorized (User not exists)');
 

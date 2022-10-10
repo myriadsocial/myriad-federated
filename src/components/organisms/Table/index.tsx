@@ -5,7 +5,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 
-import {CircularProgress} from '@mui/material';
+import { CircularProgress } from '@mui/material';
 
 interface TableInterface {
   data: any;
@@ -36,17 +36,23 @@ export default function Table({
         <table className="w-full">
           <thead className="bg-background-content drop-shadow-sm">
             {table &&
-              table.getHeaderGroups().map(headerGroup => (
+              table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
+                  {headerGroup.headers.map((header) => (
                     <th
-                      style={{width: header.column.columnDef.size ?? '100%'}}
-                      className={'text-sm py-[14px] px-4 text-start font-semibold text-black'}
+                      style={{ width: header.column.columnDef.size ?? '100%' }}
+                      className={
+                        'text-sm py-[14px] px-4 text-start font-semibold text-black'
+                      }
                       key={header.id}
-                      colSpan={header.colSpan}>
+                      colSpan={header.colSpan}
+                    >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </th>
                   ))}
                 </tr>
@@ -58,11 +64,14 @@ export default function Table({
             </div>
           ) : (
             <tbody className="">
-              {table.getRowModel().rows.map(row => (
+              {table.getRowModel().rows.map((row) => (
                 <tr className="" key={row.id}>
-                  {row.getVisibleCells().map(cell => (
+                  {row.getVisibleCells().map((cell) => (
                     <td className="px-4 py-[14px] text-sm" key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
                   ))}
                 </tr>

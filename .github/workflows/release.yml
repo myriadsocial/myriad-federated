@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release:
-        description: "RELEASE"
+        description: 'RELEASE'
         required: true
         type: string
 
@@ -48,8 +48,8 @@ jobs:
     env:
       DEPLOY: ${{ secrets.MAINNET_DEPLOY }}
     permissions:
-      contents: "read"
-      id-token: "write"
+      contents: 'read'
+      id-token: 'write'
     steps:
       - name: Checkout code
         if: "${{ env.DEPLOY == 'true' }}"
@@ -58,8 +58,8 @@ jobs:
           fetch-depth: 0
       - name: Authenticate to Google Cloud
         if: "${{ env.DEPLOY == 'true' }}"
-        id: "auth"
-        uses: "google-github-actions/auth@v0"
+        id: 'auth'
+        uses: 'google-github-actions/auth@v0'
         with:
           workload_identity_provider: ${{ secrets.MAINNET_GOOGLE_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.MAINNET_SERVICE_ACCOUNT_EMAIL }}

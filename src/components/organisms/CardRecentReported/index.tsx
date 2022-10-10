@@ -1,6 +1,6 @@
-import {AvatarWithName} from 'src/components/atoms';
+import { AvatarWithName } from 'src/components/atoms';
 import Button from 'src/components/atoms/Button';
-import {ResponseUserReported} from 'src/interface/UserInterface';
+import { ResponseUserReported } from 'src/interface/UserInterface';
 
 export default function CardRecentReported({
   title,

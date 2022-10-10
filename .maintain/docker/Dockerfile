@@ -11,8 +11,8 @@ WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
 ENV NEXT_PUBLIC_APP_BUILD_ID=${VCS_REF}
-RUN yarn build && \
-  yarn install --production --prefer-offline --network-timeout 100000
+RUN yarn build \
+  && yarn install --production --prefer-offline --network-timeout 100000
 
 # Production image, copy all the files and run
 FROM node:14.17.5-buster-slim AS runner

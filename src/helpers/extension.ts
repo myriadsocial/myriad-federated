@@ -1,9 +1,9 @@
 import getConfig from 'next/config';
 
-const {publicRuntimeConfig} = getConfig();
+const { publicRuntimeConfig } = getConfig();
 
 export const enableExtension = async () => {
-  const {web3Enable, web3Accounts} = await import('@polkadot/extension-dapp');
+  const { web3Enable, web3Accounts } = await import('@polkadot/extension-dapp');
 
   const extensions = await web3Enable(publicRuntimeConfig.appName);
 

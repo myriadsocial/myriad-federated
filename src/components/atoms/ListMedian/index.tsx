@@ -8,7 +8,7 @@ interface ListMedianInterface {
   title: string;
 }
 export default function ListMedian(props: ListMedianInterface) {
-  const {image, count, title} = props;
+  const { image, count, title } = props;
   return (
     <div className="flex items-center">
       <Image alt="" src={image} className="h-6 w-6" />

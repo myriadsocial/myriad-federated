@@ -1,5 +1,12 @@
-import {IcCluster, IcDasboard, IcHelp, IcPost, IcSettings, IcUser} from '../../public/icons';
-import {NavigationInterface} from '../interface/NavigationInterface';
+import {
+  IcCluster,
+  IcDasboard,
+  IcHelp,
+  IcPost,
+  IcSettings,
+  IcUser,
+} from '../../public/icons';
+import { NavigationInterface } from '../interface/NavigationInterface';
 
 export const Navigation: Array<NavigationInterface> = [
   {

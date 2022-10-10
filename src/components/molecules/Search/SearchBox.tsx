@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import Image from 'next/image';
 
@@ -7,10 +7,10 @@ import IconButton from '@material-ui/core/IconButton';
 import InputBase from '@material-ui/core/InputBase';
 import Paper from '@material-ui/core/Paper';
 
-import {debounce} from 'lodash';
-import {Magnifier} from 'public/icons';
+import { debounce } from 'lodash';
+import { Magnifier } from 'public/icons';
 
-import {SearchBoxColor, SearchBoxProps, useStyles} from '.';
+import { SearchBoxColor, SearchBoxProps, useStyles } from '.';
 
 const SearchBox: React.FC<SearchBoxProps> = ({
   color = SearchBoxColor.PRIMARY,
@@ -22,7 +22,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   hidden = false,
   ...props
 }) => {
-  const classes = useStyles({outlined, hidden});
+  const classes = useStyles({ outlined, hidden });
 
   const [input, setInput] = useState('');
 
@@ -51,8 +51,13 @@ const SearchBox: React.FC<SearchBoxProps> = ({
       direction={iconPosition === 'end' ? 'row-reverse' : 'row'}
       className={classes.root}
       component={Paper}
-      elevation={iconPosition === 'end' ? 0 : 1}>
-      <IconButton className={classes.iconButton} aria-label="search" onClick={submitClickSearch}>
+      elevation={iconPosition === 'end' ? 0 : 1}
+    >
+      <IconButton
+        className={classes.iconButton}
+        aria-label="search"
+        onClick={submitClickSearch}
+      >
         <Image src={Magnifier} alt="" height={24} width={24} />
       </IconButton>
       <InputBase
@@ -61,7 +66,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({
         value={input}
         onChange={handleChange}
         placeholder={placeholder}
-        inputProps={{'aria-label': ariaLabel}}
+        inputProps={{ 'aria-label': ariaLabel }}
         {...props}
       />
     </Grid>

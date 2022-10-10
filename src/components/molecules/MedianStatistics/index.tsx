@@ -1,5 +1,5 @@
 import ListMedian from 'src/components/atoms/ListMedian';
-import {MedianInterface} from 'src/interface/ServerListInterface';
+import { MedianInterface } from 'src/interface/ServerListInterface';
 
 import {
   CountComments,
@@ -9,10 +9,18 @@ import {
   IcCountPost,
 } from 'public/icons';
 
-export default function MedianStatistics({item}: {item: MedianInterface | undefined}) {
+export default function MedianStatistics({
+  item,
+}: {
+  item: MedianInterface | undefined;
+}) {
   return (
     <div className="grid gap-4">
-      <ListMedian image={IcCountPost} count={item?.medianPost ?? 0} title={'Post Per User'} />
+      <ListMedian
+        image={IcCountPost}
+        count={item?.medianPost ?? 0}
+        title={'Post Per User'}
+      />
       <ListMedian
         image={IcCountExperiance}
         count={item?.medianExperience ?? 0}

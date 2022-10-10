@@ -1,4 +1,4 @@
-import {Avatar} from '@mui/material';
+import { Avatar } from '@mui/material';
 
 interface AvatarWithButtonInterface {
   image: string;
@@ -6,7 +6,7 @@ interface AvatarWithButtonInterface {
   desc: string;
 }
 const AvatarWithName = (props: AvatarWithButtonInterface) => {
-  const {image, name, desc} = props;
+  const { image, name, desc } = props;
   return (
     <div className="flex">
       <Avatar src={image} />
