@@ -1,40 +1,43 @@
-import {useMutation, useQuery} from '@tanstack/react-query';
-import {ColumnDef} from '@tanstack/react-table';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { ColumnDef } from '@tanstack/react-table';
 
-import {ReactNode, useEffect, useState} from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
-import {Backdrop, CircularProgress} from '@mui/material';
+import { Backdrop, CircularProgress } from '@mui/material';
 
 import Button from 'src/components/atoms/Button';
 import ListReporter from 'src/components/atoms/ListReporter';
 import Modal from 'src/components/molecules/Modal';
 import Table from 'src/components/organisms/Table';
-import {Arrays} from 'src/constans/array';
+import { Arrays } from 'src/constans/array';
 
-import {IcOpenUrl} from '../../../../public/icons';
-import {getReports} from '../../../api/GET_Reports';
-import {getReportsDetail} from '../../../api/GET_ReportsDetail';
-import {updateReports} from '../../../api/PATCH_Reports';
-import {AvatarWithName, DropdownFilter} from '../../../components/atoms';
+import { IcOpenUrl } from '../../../../public/icons';
+import { getReports } from '../../../api/GET_Reports';
+import { getReportsDetail } from '../../../api/GET_ReportsDetail';
+import { updateReports } from '../../../api/PATCH_Reports';
+import { AvatarWithName, DropdownFilter } from '../../../components/atoms';
 import {
   DataResponseUserReportedInterface,
   ReportType,
   ReportTypeCategoryMapper,
 } from '../../../interface/UserInterface';
 import ContentLayout from '../../../layout/ContentLayout';
-import {dateFormatter} from '../../../utils/dateFormatter';
+import { dateFormatter } from '../../../utils/dateFormatter';
 
-export default function UserReported() {
+import type { NextPageWithLayout } from '../../_app';
+
+const UserReported: NextPageWithLayout = () => {
   const [isShowModalRespond, setIsShowModalRespond] = useState<boolean>(false);
-  const [userSelected, setUserSelected] = useState<DataResponseUserReportedInterface>();
+  const [userSelected, setUserSelected] =
+    useState<DataResponseUserReportedInterface>();
   const [sortingDate, setSortingDate] = useState('ASC');
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [reportId, setReportId] = useState<string | undefined>(undefined);
 
   const filter = JSON.stringify({
-    where: {status: 'pending', referenceType: 'user'},
+    where: { status: 'pending', referenceType: 'user' },
     order: [`createdAt ${sortingDate}`],
   });
 
@@ -46,7 +49,7 @@ export default function UserReported() {
     {
       accessorKey: 'reportedDetail',
       header: 'Reported user',
-      cell: value => (
+      cell: (value) => (
         <AvatarWithName
           image={value.row.original.reportedDetail.user.profilePictureURL}
           name={value.row.original.reportedDetail.user.name}
@@ -58,7 +61,7 @@ export default function UserReported() {
       accessorKey: 'createdAt',
       header: 'Report Date',
       size: 120,
-      cell: value => (
+      cell: (value) => (
         <div className="text-sm">
           {dateFormatter(new Date(value.row.original.createdAt), 'dd/MM/yy')}
         </div>
@@ -72,14 +75,21 @@ export default function UserReported() {
     {
       accessorKey: 'type',
       header: 'Description',
-      cell: value => (
-        <div className="text-sm">{translationText(value.row.original.type as ReportType)}</div>
+      cell: (value) => (
+        <div className="text-sm">
+          {translationText(value.row.original.type as ReportType)}
+        </div>
       ),
     },
     {
       accessorKey: 'id',
       header: 'Action',
-      cell: value => <Button onClick={() => handleRespond(value.row.original)} label="Respond" />,
+      cell: (value) => (
+        <Button
+          onClick={() => handleRespond(value.row.original)}
+          label="Respond"
+        />
+      ),
     },
   ];
 
@@ -121,24 +131,33 @@ export default function UserReported() {
     refetch: refetchingGetAllUser,
     isFetching,
     data: dataUserReported,
-  } = useQuery(['/getAllUser', pageNumber], () => getReports({pageNumber, filter}), {
-    enabled: false,
-  });
+  } = useQuery(
+    ['/getAllUser', pageNumber],
+    () => getReports({ pageNumber, filter }),
+    {
+      enabled: false,
+    },
+  );
 
   const {
     refetch: refetchingAllReporter,
     isFetching: isFetchingReporter,
     data: dataReporter,
-  } = useQuery(['/getAllReporter', reportId], () => getReportsDetail({id: reportId}), {
-    enabled: false,
-  });
+  } = useQuery(
+    ['/getAllReporter', reportId],
+    () => getReportsDetail({ id: reportId }),
+    {
+      enabled: false,
+    },
+  );
 
   useEffect(() => {
     if (reportId === undefined) return;
     refetchingAllReporter();
   }, [refetchingAllReporter, reportId]);
 
-  const {mutateAsync: mutateUpdateUserStatus, isLoading} = useMutation(updateReports);
+  const { mutateAsync: mutateUpdateUserStatus, isLoading } =
+    useMutation(updateReports);
 
   useEffect(() => {
     refetchingGetAllUser();
@@ -168,14 +187,19 @@ export default function UserReported() {
           data={dataUserReported?.data ?? []}
           columns={columns}
           meta={dataUserReported?.meta ?? []}
-          onClickNext={() => setPageNumber(dataUserReported?.meta.nextPage ?? 1)}
-          onClickPrevios={() => setPageNumber((dataUserReported?.meta.currentPage ?? 1) - 1)}
+          onClickNext={() =>
+            setPageNumber(dataUserReported?.meta.nextPage ?? 1)
+          }
+          onClickPrevios={() =>
+            setPageNumber((dataUserReported?.meta.currentPage ?? 1) - 1)
+          }
         />
       </div>
       <Modal
         open={isShowModalRespond}
         onClose={() => setIsShowModalRespond(false)}
-        title={'Respond'}>
+        title={'Respond'}
+      >
         <div className="mt-[20px]">
           <div className="text-sm">Reported user</div>
           <div className="mt-[12px]">
@@ -197,14 +221,19 @@ export default function UserReported() {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="w-[120px] text-sm text-gray-500">Total reports</div>
-                <div className="flex-1 text-sm">{userSelected?.totalReported} report</div>
+                <div className="w-[120px] text-sm text-gray-500">
+                  Total reports
+                </div>
+                <div className="flex-1 text-sm">
+                  {userSelected?.totalReported} report
+                </div>
               </div>
             </div>
             <a
               href={`https://app.testnet.myriad.social/profile/${userSelected?.referenceId}`}
               target="_blank"
-              rel="noreferrer">
+              rel="noreferrer"
+            >
               <button className="w-[20px]">
                 <Image src={IcOpenUrl} height={20} width={20} alt="" />
               </button>
@@ -218,9 +247,11 @@ export default function UserReported() {
           {isFetchingReporter ? (
             <CircularProgress />
           ) : (
-            dataReporter?.data?.map((item: DataResponseUserReportedInterface) => {
-              return <ListReporter data={item} key={item.id} />;
-            })
+            dataReporter?.data?.map(
+              (item: DataResponseUserReportedInterface) => {
+                return <ListReporter data={item} key={item.id} />;
+              },
+            )
           )}
         </div>
         <div className="flex mt-[28px]">
@@ -232,13 +263,18 @@ export default function UserReported() {
           </div>
         </div>
       </Modal>
-      <Backdrop sx={{color: '#fff', zIndex: theme => theme.zIndex.drawer + 1}} open={isLoading}>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isLoading}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>
   );
-}
+};
 
 UserReported.getLayout = function getLayout(page: ReactNode) {
   return <ContentLayout title="User">{page}</ContentLayout>;
 };
+
+export default UserReported;

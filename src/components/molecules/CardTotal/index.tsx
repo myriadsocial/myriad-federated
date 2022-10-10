@@ -9,7 +9,7 @@ interface CardTotalInterface {
   label: string;
 }
 export default function CardTotal(props: CardTotalInterface) {
-  const {image, count, label} = props;
+  const { image, count, label } = props;
   return (
     <div className="p-5 bg-white shadow-lg rounded-2xl flex">
       <Image src={image} alt="total user" />

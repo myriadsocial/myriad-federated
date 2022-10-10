@@ -3,12 +3,12 @@ import React from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
-import {Typography} from '@mui/material';
+import { Typography } from '@mui/material';
 
 import Button from 'src/components/atoms/Button';
-import {formatAddress} from 'src/helpers/formatAddress';
+import { formatAddress } from 'src/helpers/formatAddress';
 
-import {IcBackPrimary, MyriadFullBlack} from 'public/icons';
+import { IcBackPrimary, MyriadFullBlack } from 'public/icons';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
@@ -35,7 +35,12 @@ export const InstanceHeader: React.FC<InstanceHeaderProps> = ({
         <div className="w-[144px]">
           <Button onClick={onLogout} type="withChild">
             <div className="flex items-center">
-              <PolkadotIcon value={accountId} size={24} theme="polkadot" style={{marginRight: 5}} />
+              <PolkadotIcon
+                value={accountId}
+                size={24}
+                theme="polkadot"
+                style={{ marginRight: 5 }}
+              />
               <Typography color={'black'} fontSize={14}>
                 {formatAddress(accountId)}
               </Typography>
@@ -54,7 +59,12 @@ export const InstanceHeader: React.FC<InstanceHeaderProps> = ({
       <div className="flex justify-between">
         <div className="text-[28px]">My instances</div>
         <div className="w-[154px]">
-          <Button isFullWidth label="Create Instance" primary onClick={onOpenStepper} />
+          <Button
+            isFullWidth
+            label="Create Instance"
+            primary
+            onClick={onOpenStepper}
+          />
         </div>
       </div>
     </React.Fragment>

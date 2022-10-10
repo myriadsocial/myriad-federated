@@ -1,6 +1,6 @@
 import {ConvertCamelCaseTitle} from 'src/utils/convertCamelCaseTitle';
 
-import {Doughnut} from 'react-chartjs-2';
+import { Doughnut } from 'react-chartjs-2';
 
 export default function ChartDoughnat({height, data}: {height: number; data: any}) {
   const dataPostPersentage = {
@@ -33,5 +33,7 @@ export default function ChartDoughnat({height, data}: {height: number; data: any
       },
     },
   };
-  return <Doughnut data={dataPostPersentage} options={optionsPie} height={height} />;
+  return (
+    <Doughnut data={dataPostPersentage} options={optionsPie} height={height} />
+  );
 }

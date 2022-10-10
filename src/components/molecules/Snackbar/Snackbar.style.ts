@@ -1,18 +1,18 @@
-import {makeStyles, Theme} from '@material-ui/core/styles';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 
-import {VariantType} from 'notistack';
+import { VariantType } from 'notistack';
 
 interface VariantProps {
   variant: VariantType;
 }
 
-export const useStyles = makeStyles<Theme, VariantProps>(theme => ({
+export const useStyles = makeStyles<Theme, VariantProps>((theme) => ({
   icons: {
     marginLeft: 'auto',
   },
   iconLeft: {
     marginRight: '12px',
-    fill: props =>
+    fill: (props) =>
       props?.variant === 'success'
         ? '#47B881'
         : props?.variant === 'error'

@@ -1,10 +1,10 @@
 import getConfig from 'next/config';
 
-const {publicRuntimeConfig} = getConfig();
+const { publicRuntimeConfig } = getConfig();
 
 export const usePolkadotExtension = () => {
   const enablePolkadotExtension = async () => {
-    const {web3Enable} = await import('@polkadot/extension-dapp');
+    const { web3Enable } = await import('@polkadot/extension-dapp');
 
     const extensions = await web3Enable(publicRuntimeConfig.appName);
 
@@ -14,7 +14,7 @@ export const usePolkadotExtension = () => {
   };
 
   const getPolkadotAccounts = async () => {
-    const {web3Accounts} = await import('@polkadot/extension-dapp');
+    const { web3Accounts } = await import('@polkadot/extension-dapp');
 
     const allAccounts = await web3Accounts();
 
@@ -22,15 +22,15 @@ export const usePolkadotExtension = () => {
   };
 
   const unsubscribeFromAccounts = async () => {
-    const {web3AccountsSubscribe} = await import('@polkadot/extension-dapp');
+    const { web3AccountsSubscribe } = await import('@polkadot/extension-dapp');
 
     const extensionEnabled = await enablePolkadotExtension();
 
     if (extensionEnabled) {
       //// we subscribe to any account change and log the new list.
       //// note that `web3AccountsSubscribe` returns the function to unsubscribe
-      const unsubscribe = await web3AccountsSubscribe(injectedAccounts => {
-        injectedAccounts.map(accounts => {
+      const unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
+        injectedAccounts.map((accounts) => {
           console.log('detail about the unsubscribed accounts: ', accounts);
         });
       });

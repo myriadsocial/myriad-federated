@@ -1,6 +1,12 @@
 import axios from './axiosInstance';
 
-export const getNotifications = async ({pageNumber, filter}: {pageNumber: number; filter: any}) => {
+export const getNotifications = async ({
+  pageNumber,
+  filter,
+}: {
+  pageNumber: number;
+  filter: any;
+}) => {
   return axios()
     .get(`/api/notifications`, {
       params: {
@@ -8,10 +14,10 @@ export const getNotifications = async ({pageNumber, filter}: {pageNumber: number
         filter,
       },
     })
-    .then(response => {
+    .then((response) => {
       return response.data;
     })
-    .catch(e => {
+    .catch((e) => {
       console.log(e);
       return false;
     });

@@ -1,7 +1,0 @@
-.github
-.next/
-dist/
-docs/
-node_modules/
-*.tsbuildinfo
-*.json

@@ -1,7 +1,7 @@
 import Image from 'next/image';
 
-import {ExpandLess, ExpandMore} from '@mui/icons-material';
-import {ListItemButton} from '@mui/material';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import { ListItemButton } from '@mui/material';
 
 interface ListSidebar {
   onClick: () => void;
@@ -13,7 +13,8 @@ interface ListSidebar {
 }
 
 const ListSidebar = (props: ListSidebar) => {
-  const {onClick, isSelected, image, isShowSubMenu, title, isHaveSubMenu} = props;
+  const { onClick, isSelected, image, isShowSubMenu, title, isHaveSubMenu } =
+    props;
 
   return (
     <ListItemButton onClick={onClick}>
@@ -22,7 +23,8 @@ const ListSidebar = (props: ListSidebar) => {
           isSelected
             ? 'bg-yellow h-[40px] w-[40px] rounded-lg items-center justify-center flex mr-[20px]'
             : 'flex h-[40px] w-[40px] items-center justify-center mr-[20px]'
-        }>
+        }
+      >
         <Image src={image} height={24} width={24} alt="dasboard" />
       </div>
       <div className="text-lg flex-1">{title}</div>

@@ -1,10 +1,12 @@
-import {ReactNode} from 'react';
+import { ReactElement } from 'react';
 
 import CardEditInstance from '../../../components/molecules/CardEditInstance';
 import CardInstanceRight from '../../../components/molecules/CardInstanceRight';
 import ContentLayout from '../../../layout/ContentLayout';
 
-export default function EditInstance() {
+import type { NextPageWithLayout } from '../../_app';
+
+const EditInstance: NextPageWithLayout = () => {
   return (
     <div className="h-full">
       <div className="flex">
@@ -13,8 +15,10 @@ export default function EditInstance() {
       </div>
     </div>
   );
-}
+};
 
-EditInstance.getLayout = function getLayout(page: ReactNode) {
+EditInstance.getLayout = function getLayout(page: ReactElement) {
   return <ContentLayout title="Instance">{page}</ContentLayout>;
 };
+
+export default EditInstance;

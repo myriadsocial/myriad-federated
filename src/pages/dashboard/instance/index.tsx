@@ -1,13 +1,15 @@
-import {ColumnDef} from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 
-import {ReactNode} from 'react';
+import { ReactElement } from 'react';
 
-import {Typography} from '@mui/material';
+import { Typography } from '@mui/material';
 
 import CardInstanceLeft from '../../../components/molecules/CardInstanceLeft';
 import CardInstanceRight from '../../../components/molecules/CardInstanceRight';
 import Table from '../../../components/organisms/Table';
 import ContentLayout from '../../../layout/ContentLayout';
+
+import type { NextPageWithLayout } from '../../_app';
 
 interface DataArtSpaceInterface {
   displayName: string;
@@ -16,7 +18,7 @@ interface DataArtSpaceInterface {
   walletType: string;
   walletAddress: string;
 }
-export default function Instance() {
+const Instance: NextPageWithLayout = () => {
   const columns: ColumnDef<DataArtSpaceInterface>[] = [
     {
       accessorKey: 'displayName',
@@ -104,8 +106,10 @@ export default function Instance() {
       </div>
     </div>
   );
-}
+};
 
-Instance.getLayout = function getLayout(page: ReactNode) {
+Instance.getLayout = function getLayout(page: ReactElement) {
   return <ContentLayout title="Instance">{page}</ContentLayout>;
 };
+
+export default Instance;

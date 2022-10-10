@@ -1,12 +1,12 @@
 import getConfig from 'next/config';
 
-import {ApiPromise, WsProvider} from '@polkadot/api';
-import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
-import {numberToHex} from '@polkadot/util';
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { numberToHex } from '@polkadot/util';
 
-import {ServerListProps} from 'src/interface/ServerListInterface';
+import { ServerListProps } from 'src/interface/ServerListInterface';
 
-const {publicRuntimeConfig} = getConfig();
+const { publicRuntimeConfig } = getConfig();
 
 export class PolkadotJs implements IProvider {
   private readonly _provider: ApiPromise;
@@ -22,7 +22,7 @@ export class PolkadotJs implements IProvider {
   static async connect() {
     try {
       const provider = new WsProvider(publicRuntimeConfig.myriadRPCURL);
-      const api = new ApiPromise({provider});
+      const api = new ApiPromise({ provider });
 
       await api.isReadyOrError;
 
@@ -38,7 +38,7 @@ export class PolkadotJs implements IProvider {
     callback?: (signerOpened: boolean) => void,
   ): Promise<string> {
     try {
-      const {web3FromSource} = await import('@polkadot/extension-dapp');
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
 
       callback && callback(true);
 
@@ -46,7 +46,7 @@ export class PolkadotJs implements IProvider {
       const signRaw = injector?.signer?.signRaw;
 
       if (signRaw) {
-        const {signature} = await signRaw({
+        const { signature } = await signRaw({
           address: account.address,
           data: numberToHex(nonce),
           type: 'bytes',
@@ -62,14 +62,14 @@ export class PolkadotJs implements IProvider {
   }
 
   async signer(accountId: string): Promise<InjectedAccountWithMeta> {
-    const {enableExtension} = await import('src/helpers/extension');
+    const { enableExtension } = await import('src/helpers/extension');
     const allAccounts = await enableExtension();
 
     if (!allAccounts || allAccounts.length === 0) {
       throw new Error('Please import your account first!');
     }
 
-    const currentAccount = allAccounts.find(account => {
+    const currentAccount = allAccounts.find((account) => {
       // address from session must match address on polkadot extension
       return account.address === accountId;
     });
@@ -87,7 +87,7 @@ export class PolkadotJs implements IProvider {
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ): Promise<string | null> {
     try {
-      const {web3FromSource} = await import('@polkadot/extension-dapp');
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
 
       const signer = await this.signer(owner);
       const injector = await web3FromSource(signer.meta.source);
@@ -104,11 +104,12 @@ export class PolkadotJs implements IProvider {
 
       const txHash: string = await new Promise((resolve, reject) => {
         txInfo
-          .send(({status, isError, dispatchError, events}) => {
-            events.forEach(record => {
-              const {event} = record;
+          .send(({ status, isError, dispatchError, events }) => {
+            events.forEach((record) => {
+              const { event } = record;
 
-              if (event.method === 'Registered') server = event.data[0].toHuman();
+              if (event.method === 'Registered')
+                server = event.data[0].toHuman();
             });
 
             if (status.isInBlock) {
@@ -123,7 +124,9 @@ export class PolkadotJs implements IProvider {
 
             if (dispatchError) {
               if (dispatchError.isModule) {
-                const {name} = this.provider.registry.findMetaError(dispatchError.asModule);
+                const { name } = this.provider.registry.findMetaError(
+                  dispatchError.asModule,
+                );
 
                 reject(new Error(name));
               } else {
@@ -136,7 +139,7 @@ export class PolkadotJs implements IProvider {
               }
             }
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       });
@@ -156,14 +159,17 @@ export class PolkadotJs implements IProvider {
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ): Promise<string | null> {
     try {
-      const {web3FromSource} = await import('@polkadot/extension-dapp');
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
 
       const signer = await this.signer(owner);
       const injector = await web3FromSource(signer.meta.source);
 
       callback && callback(undefined, true);
 
-      const extrinsic = this.provider.tx.server.updateApiURL(serverId, newApiURL);
+      const extrinsic = this.provider.tx.server.updateApiURL(
+        serverId,
+        newApiURL,
+      );
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -171,7 +177,7 @@ export class PolkadotJs implements IProvider {
 
       const txHash: string = await new Promise((resolve, reject) => {
         txInfo
-          .send(({status, isError, dispatchError}) => {
+          .send(({ status, isError, dispatchError }) => {
             if (status.isInBlock) {
               console.log(`\tBlock hash    : ${status.asInBlock.toHex()}`);
             } else if (status.isFinalized) {
@@ -184,7 +190,9 @@ export class PolkadotJs implements IProvider {
 
             if (dispatchError) {
               if (dispatchError.isModule) {
-                const {name} = this.provider.registry.findMetaError(dispatchError.asModule);
+                const { name } = this.provider.registry.findMetaError(
+                  dispatchError.asModule,
+                );
 
                 reject(new Error(name));
               } else {
@@ -197,7 +205,7 @@ export class PolkadotJs implements IProvider {
               }
             }
           })
-          .catch(err => {
+          .catch((err) => {
             reject(err);
           });
       });
@@ -225,7 +233,10 @@ export class PolkadotJs implements IProvider {
     }
   }
 
-  async serverList(startKey?: string, pageSize = 10): Promise<ServerListProps[]> {
+  async serverList(
+    startKey?: string,
+    pageSize = 10,
+  ): Promise<ServerListProps[]> {
     try {
       const result = await this.provider.query.server.serverById.entriesPaged({
         args: [],
@@ -233,13 +244,19 @@ export class PolkadotJs implements IProvider {
         startKey,
       });
 
-      const data = result.map(list => {
-        return list[1].toHuman();
-      });
+      const data = result
+        .map((list) => {
+          return list[1].toHuman();
+        })
+        .filter((list) => {
+          return (list as unknown as ServerListProps).apiUrl?.startsWith(
+            'https',
+          );
+        });
 
       return data as unknown as ServerListProps[];
     } catch (error) {
-      console.log({error});
+      console.log({ error });
       return [];
     }
   }
@@ -250,13 +267,14 @@ export class PolkadotJs implements IProvider {
     pageSize = 10,
   ): Promise<ServerListProps[]> {
     try {
-      const result = await this.provider.query.server.serverByOwner.entriesPaged({
-        args: [accountId],
-        pageSize,
-        startKey,
-      });
+      const result =
+        await this.provider.query.server.serverByOwner.entriesPaged({
+          args: [accountId],
+          pageSize,
+          startKey,
+        });
 
-      const data = result.map(list => {
+      const data = result.map((list) => {
         return list[1].toHuman();
       });
 
@@ -291,7 +309,10 @@ export interface IProvider {
 
   totalServer: () => Promise<number>;
 
-  serverList: (startKey?: string, pageSize?: number) => Promise<ServerListProps[]>;
+  serverList: (
+    startKey?: string,
+    pageSize?: number,
+  ) => Promise<ServerListProps[]>;
 
   serverListByOwner: (
     accountId: string,

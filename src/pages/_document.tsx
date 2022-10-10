@@ -1,8 +1,10 @@
 import React from 'react';
 
-import Document, {Head, Html, Main, NextScript} from 'next/document';
+import Document, { Head, Html, Main, NextScript } from 'next/document';
 
-import {ServerStyleSheets} from '@material-ui/core/styles/';
+import { ServerStyleSheets } from '@material-ui/core/styles/';
+
+import theme from '../themes/light-theme';
 
 export default class MyDocument extends Document {
   render() {
@@ -10,12 +12,11 @@ export default class MyDocument extends Document {
       <Html lang="en">
         <Head>
           {/* PWA primary color */}
-          <meta name="theme-color" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
+          <meta name="theme-color" content={theme.palette.primary.main} />
+          <link rel="icon" href="/favicon.svg" />
           <link
-            href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&display=swap"
             rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700&display=swap"
           />
         </Head>
         <body>
@@ -29,7 +30,7 @@ export default class MyDocument extends Document {
 
 // `getInitialProps` belongs to `_document` (instead of `_app`),
 // it's compatible with server-side generation (SSG).
-MyDocument.getInitialProps = async ctx => {
+MyDocument.getInitialProps = async (ctx) => {
   // Resolution order
   //
   // On the server:
@@ -59,7 +60,7 @@ MyDocument.getInitialProps = async ctx => {
 
   ctx.renderPage = () =>
     originalRenderPage({
-      enhanceApp: App => props => sheets.collect(<App {...props} />),
+      enhanceApp: (App) => (props) => sheets.collect(<App {...props} />),
     });
 
   const initialProps = await Document.getInitialProps(ctx);
@@ -67,6 +68,9 @@ MyDocument.getInitialProps = async ctx => {
   return {
     ...initialProps,
     // Styles fragment is rendered after the app and page rendering finish.
-    styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
+    styles: [
+      ...React.Children.toArray(initialProps.styles),
+      sheets.getStyleElement(),
+    ],
   };
 };

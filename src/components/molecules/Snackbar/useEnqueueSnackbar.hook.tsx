@@ -1,17 +1,19 @@
-import {useMediaQuery, useTheme} from '@material-ui/core';
+import { useMediaQuery, useTheme } from '@material-ui/core';
 
-import {useSnackbar as useDefaultSnackbar} from 'notistack';
+import { useSnackbar as useDefaultSnackbar } from 'notistack';
 
-import {Snackbar} from './Snackbar';
-import {SnackbarProps} from './Snackbar.interface';
+import { Snackbar } from './Snackbar';
+import { SnackbarProps } from './Snackbar.interface';
 
 export const useEnqueueSnackbar = () => {
-  const {enqueueSnackbar} = useDefaultSnackbar();
+  const { enqueueSnackbar } = useDefaultSnackbar();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
-  const pushSnackbar = (payload: Omit<SnackbarProps, 'key'> & {id?: string | number}) => {
-    const {message, variant, id} = payload;
+  const pushSnackbar = (
+    payload: Omit<SnackbarProps, 'key'> & { id?: string | number },
+  ) => {
+    const { message, variant, id } = payload;
 
     enqueueSnackbar(payload.message, {
       variant,
@@ -20,7 +22,7 @@ export const useEnqueueSnackbar = () => {
         vertical: isMobile ? 'bottom' : 'top',
         horizontal: 'right',
       },
-      content: key => {
+      content: (key) => {
         return <Snackbar key={id ?? key} message={message} variant={variant} />;
       },
     });

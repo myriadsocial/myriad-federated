@@ -1,9 +1,9 @@
-import {Popover} from '@mui/material';
+import { Popover } from '@mui/material';
 
 import ListSwitchAccount from 'src/components/atoms/ListSwithAccount';
-import {formatAddress} from 'src/helpers/formatAddress';
+import { formatAddress } from 'src/helpers/formatAddress';
 
-import {IcAccountPolkadot} from 'public/icons';
+import { IcAccountPolkadot } from 'public/icons';
 
 import Button from '../../atoms/Button';
 
@@ -47,11 +47,12 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         vertical: 'bottom',
         horizontal: 'right',
       }}
-      style={{marginTop: 8}}
+      style={{ marginTop: 8 }}
       transformOrigin={{
         vertical: 'top',
         horizontal: 'right',
-      }}>
+      }}
+    >
       <div className="rounded-[10px] p-5 w-[360px]">
         <div className="text-sm font-semibold">{title}</div>
         <div className="mt-4">
@@ -59,13 +60,26 @@ const SwitchAccount = (props: SwitchAccountProps) => {
           <ListSwitchAccount
             image={type === 'switchAccount' ? IcAccountPolkadot : image}
             type={type}
-            label={type === 'switchAccount' ? formatAddress(accountId as string) : accountId}
+            label={
+              type === 'switchAccount'
+                ? formatAddress(accountId as string)
+                : accountId
+            }
             onClick={handleClickCurrentAddress}
           />
         </div>
         <div className="flex mt-4 gap-2">
-          <Button onClick={handleSwitchAccount} label={leftButtonLabel} isFullWidth />
-          <Button onClick={handleLogout} label={rightButtonLabel} primary isFullWidth />
+          <Button
+            onClick={handleSwitchAccount}
+            label={leftButtonLabel}
+            isFullWidth
+          />
+          <Button
+            onClick={handleLogout}
+            label={rightButtonLabel}
+            primary
+            isFullWidth
+          />
         </div>
       </div>
     </Popover>

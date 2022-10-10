@@ -1,9 +1,9 @@
 import React from 'react';
 
-import {GetServerSidePropsContext} from 'next';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
-import {ServerListComponent} from 'src/components/organisms/ServerList/ServerList';
+import { ServerListComponent } from 'src/components/organisms/ServerList/ServerList';
 
 import cookie from 'cookie';
 
@@ -11,7 +11,7 @@ type HomeAppProps = {
   signIn: boolean;
 };
 
-const HomeApp: React.FC<HomeAppProps> = ({signIn}) => {
+const HomeApp: React.FC<HomeAppProps> = ({ signIn }) => {
   return (
     <div>
       <Head>
@@ -24,7 +24,9 @@ const HomeApp: React.FC<HomeAppProps> = ({signIn}) => {
   );
 };
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
   const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
   const server = cookies?.session;
 

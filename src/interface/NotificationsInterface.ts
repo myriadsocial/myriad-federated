@@ -30,4 +30,8 @@ export interface ResponseNotificationsInterface {
   meta: MetaNotificationInterface;
 }
 
-export type FilterType = 'report_post' | 'report_user' | 'report_comment' | 'all';
+export type FilterType =
+  | 'report_post'
+  | 'report_user'
+  | 'report_comment'
+  | 'all';

@@ -1,53 +1,57 @@
-import {ServerIcon} from '@heroicons/react/outline';
+import { ServerIcon } from '@heroicons/react/outline';
 
-import React, {useEffect, useMemo, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import CountUp from 'react-countup';
 
 import getConfig from 'next/config';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import {useRouter} from 'next/router';
+import { useRouter } from 'next/router';
 
-import {Container, SvgIcon} from '@material-ui/core';
+import { Container, SvgIcon } from '@material-ui/core';
 
-import {InjectedAccountWithMeta} from '@polkadot/extension-inject/types';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
-import {SearchBoxContainer} from 'src/components/molecules/Search/SearchBoxContainer';
-import {formatAddress} from 'src/helpers/formatAddress';
-import {useAuth} from 'src/hooks/use-auth.hook';
-import {InstanceType, useInstances} from 'src/hooks/use-instances.hook';
-import {usePolkadotExtension} from 'src/hooks/use-polkadot-app.hook';
-import {ServerListProps} from 'src/interface/ServerListInterface';
-import {numberFormatter} from 'src/utils/numberFormatter';
+import { SearchBoxContainer } from 'src/components/molecules/Search/SearchBoxContainer';
+import { formatAddress } from 'src/helpers/formatAddress';
+import { useAuth } from 'src/hooks/use-auth.hook';
+import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
+import { usePolkadotExtension } from 'src/hooks/use-polkadot-app.hook';
+import { ServerListProps } from 'src/interface/ServerListInterface';
+import { numberFormatter } from 'src/utils/numberFormatter';
 
-import {parseCookies} from 'nookies';
-import {IcAccountPolkadot, Illustration, MyriadFullBlack} from 'public/icons';
+import { parseCookies } from 'nookies';
+import { IcAccountPolkadot, Illustration, MyriadFullBlack } from 'public/icons';
 
 import Button from '../../atoms/Button';
 import EmptyState from '../../atoms/EmptyState';
 import CardInstance from '../../molecules/CardInstance';
 import ShowIf from '../../molecules/common/show-if.component';
 import SwitchAccount from '../../molecules/SwitchAccount';
-import {ShimerComponent} from './Shimer';
+import { ShimerComponent } from './Shimer';
 
 const PolkadotAccountList = dynamic(
-  () => import('src/components/molecules/PolkadotAccountList/PolkadotAccountList'),
+  () =>
+    import('src/components/molecules/PolkadotAccountList/PolkadotAccountList'),
   {
     ssr: false,
   },
 );
 
-const {publicRuntimeConfig} = getConfig();
+const { publicRuntimeConfig } = getConfig();
 
 type ServerListComponentProps = {
   signIn: boolean;
 };
 
-export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}) => {
+export const ServerListComponent: React.FC<ServerListComponentProps> = ({
+  signIn,
+}) => {
   const router = useRouter();
-  const {servers, metric, loading} = useInstances(InstanceType.ALL);
-  const {connectWallet} = useAuth();
-  const {enablePolkadotExtension, getPolkadotAccounts} = usePolkadotExtension();
+  const { servers, metric, loading } = useInstances(InstanceType.ALL);
+  const { connectWallet } = useAuth();
+  const { enablePolkadotExtension, getPolkadotAccounts } =
+    usePolkadotExtension();
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
@@ -56,7 +60,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
   const [currentAddress, setCurrentAddress] = useState<string>('');
   const cookies = parseCookies();
   const session = cookies?.session;
-  const {logout} = useAuth();
+  const { logout } = useAuth();
 
   useEffect(() => {
     if (!session) return;
@@ -68,13 +72,21 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
     if (!query) return servers;
     const regex = new RegExp(`${query.toLowerCase()}`, 'gi');
 
-    return servers.filter(server => {
+    return servers.filter((server) => {
       if (!server?.detail) return false;
       return server.detail.name.toLowerCase().match(regex);
     });
   };
 
-  const serverList: ServerListProps[] = useMemo(() => search(query), [query, loading, search]);
+  const serverList: ServerListProps[] = useMemo(() => {
+    if (!query) return servers;
+    const regex = new RegExp(`${query.toLowerCase()}`, 'gi');
+
+    return servers.filter((server) => {
+      if (!server?.detail) return false;
+      return server.detail.name.toLowerCase().match(regex);
+    });
+  }, [query, servers]);
 
   const handleSearch = (q?: string) => {
     if (!q) setQuery(null);
@@ -82,10 +94,16 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
   };
 
   const handleVisitWeb = () => {
-    window.open(publicRuntimeConfig.myriadWebsiteURL, '_blank', 'noopener,noreferrer');
+    window.open(
+      publicRuntimeConfig.myriadWebsiteURL,
+      '_blank',
+      'noopener,noreferrer',
+    );
   };
 
-  const handleContactUs = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleContactUs = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
     window.location.href = `mailto:${publicRuntimeConfig.myriadSupportMail}`;
     e.preventDefault();
   };
@@ -108,7 +126,9 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
     setAccounts(accounts);
   };
 
-  const handleSelectedSubstrateAccount = async (account: InjectedAccountWithMeta) => {
+  const handleSelectedSubstrateAccount = async (
+    account: InjectedAccountWithMeta,
+  ) => {
     closeAccountList();
     connectWallet({
       account,
@@ -133,7 +153,9 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
     logout();
   };
 
-  const handleShowSwitchAccount = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleShowSwitchAccount = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -145,14 +167,18 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
             <div className="mb-[60px] flex justify-between">
               <Image alt="" src={MyriadFullBlack} objectFit="contain" />
               <div className="flex">
-                <Button label="Visit website" type="text" onClick={handleVisitWeb} />
+                <Button
+                  label="Visit website"
+                  type="text"
+                  onClick={handleVisitWeb}
+                />
                 <div className="mx-2">
                   <Button
                     label="Contact us"
                     type="text"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>
-                      handleContactUs(e)
-                    }
+                    onClick={(
+                      e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+                    ) => handleContactUs(e)}
                   />
                 </div>
                 <Button
@@ -161,8 +187,15 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                   label={
                     signIn ? (
                       <div className="flex -mx-2">
-                        <Image src={IcAccountPolkadot} alt="" height={20} width={20} />
-                        <div className="ml-2">{formatAddress(currentAddress)}</div>
+                        <Image
+                          src={IcAccountPolkadot}
+                          alt=""
+                          height={20}
+                          width={20}
+                        />
+                        <div className="ml-2">
+                          {formatAddress(currentAddress)}
+                        </div>
                       </div>
                     ) : (
                       'Create Instance'
@@ -180,8 +213,8 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                   Join the Myriad Federated Instance now!
                 </div>
                 <div className="content-start items-center mb-3 flex text-sm">
-                  In Myriad Federated Instance, you can create your own instance or join as a member
-                  of an instance.
+                  In Myriad Federated Instance, you can create your own instance
+                  or join as a member of an instance.
                 </div>
               </div>
             </header>
@@ -189,12 +222,19 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
               <div className="bg-primary rounded-[10px] p-[40px]">
                 <div className="flex">
                   <div className="h-[44px] w-[44px] bg-darkPrimary items-center justify-center flex rounded-lg">
-                    <SvgIcon component={ServerIcon} style={{color: 'white'}} />
+                    <SvgIcon
+                      component={ServerIcon}
+                      style={{ color: 'white' }}
+                    />
                   </div>
                   <div className="ml-4">
                     <div className="text-base text-white">Total instances</div>
                     <div className="text-[28px] text-white font-semibold">
-                      <CountUp start={0} end={metric.totalInstances} separator="," />
+                      <CountUp
+                        start={0}
+                        end={metric.totalInstances}
+                        separator=","
+                      />
                     </div>
                   </div>
                 </div>
@@ -202,12 +242,19 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
               <div className="bg-primary rounded-[10px] p-[40px]">
                 <div className="flex">
                   <div className="h-[44px] w-[44px] bg-darkPrimary items-center justify-center flex rounded-lg">
-                    <SvgIcon component={ServerIcon} style={{color: 'white'}} />
+                    <SvgIcon
+                      component={ServerIcon}
+                      style={{ color: 'white' }}
+                    />
                   </div>
                   <div className="ml-4">
                     <div className="text-base text-white">Total users</div>
                     <div className="text-[28px] text-white font-semibold">
-                      <CountUp start={0} end={metric.totalUsers} separator="," />
+                      <CountUp
+                        start={0}
+                        end={metric.totalUsers}
+                        separator=","
+                      />
                     </div>
                   </div>
                 </div>
@@ -215,12 +262,19 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
               <div className="bg-primary rounded-[10px] p-[40px]">
                 <div className="flex">
                   <div className="h-[44px] w-[44px] bg-darkPrimary items-center justify-center flex rounded-lg">
-                    <SvgIcon component={ServerIcon} style={{color: 'white'}} />
+                    <SvgIcon
+                      component={ServerIcon}
+                      style={{ color: 'white' }}
+                    />
                   </div>
                   <div className="ml-4">
                     <div className="text-base text-white">Total posts</div>
                     <div className="text-[28px] text-white font-semibold">
-                      <CountUp start={0} end={metric.totalPosts} separator="," />
+                      <CountUp
+                        start={0}
+                        end={metric.totalPosts}
+                        separator=","
+                      />
                     </div>
                   </div>
                 </div>
@@ -244,8 +298,9 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                   </div>
                 </ShowIf>
                 <ShowIf condition={serverList.length > 0}>
-                  {serverList.map(server => {
-                    if (!server?.detail) return <React.Fragment key={server.id} />;
+                  {serverList.map((server) => {
+                    if (!server?.detail)
+                      return <React.Fragment key={server.id} />;
                     return (
                       <CardInstance
                         key={server.id}
@@ -254,10 +309,16 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({signIn}
                         serverDescription={server.detail.description}
                         image={server.detail.serverImageURL}
                         type="landingPage"
-                        experience={numberFormatter(server.detail.metric.totalExperiences)}
-                        post={numberFormatter(server.detail.metric.totalPosts.totalAll)}
+                        experience={numberFormatter(
+                          server.detail.metric.totalExperiences,
+                        )}
+                        post={numberFormatter(
+                          server.detail.metric.totalPosts.totalAll,
+                        )}
                         users={numberFormatter(server.detail.metric.totalUsers)}
-                        onClick={goToMyriadApp('https://app.testnet.myriad.social')} // TODO: change to dynamic url
+                        onClick={goToMyriadApp(
+                          'https://app.testnet.myriad.social',
+                        )} // TODO: change to dynamic url
                       />
                     );
                   })}

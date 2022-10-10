@@ -1,11 +1,11 @@
 import React from 'react';
 
-import {GetServerSidePropsContext} from 'next';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 
-import {Container} from '@mui/material';
+import { Container } from '@mui/material';
 
-import {InstanceComponent} from 'src/components/organisms/Instance/InstanceComponent';
+import { InstanceComponent } from 'src/components/organisms/Instance/InstanceComponent';
 
 import cookie from 'cookie';
 
@@ -13,7 +13,7 @@ type InstanceProps = {
   accountId: string;
 };
 
-export const Instance: React.FC<InstanceProps> = ({accountId}) => {
+export const Instance: React.FC<InstanceProps> = ({ accountId }) => {
   return (
     <React.Fragment>
       <Head>
@@ -29,7 +29,9 @@ export const Instance: React.FC<InstanceProps> = ({accountId}) => {
   );
 };
 
-export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext,
+) => {
   const cookies = cookie.parse(context?.req?.headers?.cookie ?? '');
   const server = cookies?.session;
 
@@ -38,7 +40,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
 
     if (!data?.currentAddress) throw 'AccountNotFound';
     return {
-      props: {accountId: data.currentAddress},
+      props: { accountId: data.currentAddress },
     };
   } catch {
     return {

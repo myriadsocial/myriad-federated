@@ -1,8 +1,0 @@
-.github
-.next/
-dist/
-docs/
-node_modules/
-.eslintrc.js
-*.tsbuildinfo
-*.json
