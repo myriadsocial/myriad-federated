@@ -1,4 +1,5 @@
 import {useWidth} from 'src/utils/calWidthScreen';
+import {dateFormatter} from 'src/utils/dateFormatter';
 
 import {Bar} from 'react-chartjs-2';
 
@@ -42,9 +43,12 @@ export default function ChartBar({data}: {data: Array<UserGrowthInterface>}) {
       },
     },
   };
-  const labels = data.map(item => {
-    return item.date.replace('-', '/').substring(4, 0);
-  });
+  const labels = data
+    .slice(0)
+    .reverse()
+    .map(item => {
+      return dateFormatter(new Date(item.date), 'dd-MM');
+    });
 
   const dataUserGrowth = {
     labels,

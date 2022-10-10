@@ -33,21 +33,21 @@ export type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
+const queryCache = new QueryCache();
+const queryClient = new QueryClient({
+  queryCache,
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+const dehydratedState = dehydrate(queryClient, {});
 
 export default function MyApp({Component, pageProps}: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? (page => page);
-  const queryCache = new QueryCache();
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        retry: 2,
-        refetchOnWindowFocus: false,
-      },
-    },
-  });
-
-  const dehydratedState = dehydrate(queryClient, {});
 
   return (
     <ThemeProvider theme={themeV2}>

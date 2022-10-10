@@ -29,7 +29,14 @@ const nextConfig = {
     myriadSupportMail: NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL ?? 'support@myriad.social',
   },
   images: {
-    domains: ['i.pravatar.cc', 'firebasestorage.googleapis.com', 'storage.googleapis.com'],
+    domains: [
+      'i.pravatar.cc',
+      'firebasestorage.googleapis.com',
+      'storage.googleapis.com',
+      '2dverse.org',
+      'pbs.twimg.com',
+      'debio.dev',
+    ],
   },
   webpack(config) {
     config.module.rules.push({

@@ -55,7 +55,7 @@ export default function Dashboard() {
     ['/getAllPost'],
     () => getReports({pageNumber, filter: filterPost}),
     {
-      enabled: false,
+      enabled: true,
     },
   );
 
@@ -63,21 +63,21 @@ export default function Dashboard() {
     ['/getAllUser'],
     () => getReports({pageNumber, filter: filterUser}),
     {
-      enabled: false,
+      enabled: true,
     },
   );
   const {refetch: refetchingTopCurrencies, data: dataTopCurrencies} = useQuery(
     ['/getTopCurrencies'],
     () => getTopCurrencies(),
     {
-      enabled: false,
+      enabled: true,
     },
   );
   const {refetch: refetchingUsersGrowth, data: dataUsersGrowth} = useQuery(
     ['/getUserGrowth'],
     () => getUsersGrowth(),
     {
-      enabled: false,
+      enabled: true,
     },
   );
 
