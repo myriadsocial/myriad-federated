@@ -23,6 +23,7 @@ export type DateFormatType =
   | 'EEE'
   | 'dd/MM/yy'
   | 'yyyy-MM-dd HH:mm:ss'
+  | 'dd-MM'
   | 'EEEE,dd LLL';
 
 type DateFormatOption = Omit<Parameters<typeof dateFns.format>[2], 'locale'> & {

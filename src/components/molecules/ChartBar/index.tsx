@@ -1,6 +1,6 @@
-import { useWidth } from 'src/utils/calWidthScreen';
-
 import { Bar } from 'react-chartjs-2';
+import { useWidth } from 'src/utils/calWidthScreen';
+import { dateFormatter } from 'src/utils/dateFormatter';
 
 interface UserGrowthInterface {
   date: string;
@@ -29,11 +29,29 @@ export default function ChartBar({
           },
         ],
       },
+      tooltip: {
+        callbacks: {
+          label: function (context: any) {
+            let label = context.dataset.label || '';
+
+            if (label) {
+              label += ': ';
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y + ' new users';
+            }
+            return label;
+          },
+        },
+      },
     },
   };
-  const labels = data.map((item) => {
-    return item.date.replace('-', '/').substring(4, 0);
-  });
+  const labels = data
+    .slice(0)
+    .reverse()
+    .map((item) => {
+      return dateFormatter(new Date(item.date), 'dd-MM');
+    });
 
   const dataUserGrowth = {
     labels,
