@@ -14,6 +14,7 @@ import {
 import { Navigation } from '../../../navigations';
 import ListSidebar from '../../atoms/ListSidebar';
 import SubListSidebar from '../../atoms/SubListSidebar';
+import { handleContactUs } from 'src/utils/openUrl';
 
 const Siderbar = () => {
   const router = useRouter();
@@ -21,8 +22,12 @@ const Siderbar = () => {
   const [mainMenu, setMainMenu] = useState('');
 
   const handleListItemClick = (item: NavigationInterface) => {
-    router.push(item.link);
-    setOpen(true);
+    if (item.title === 'Help') {
+      handleContactUs();
+    } else {
+      router.push(item.link);
+      setOpen(true);
+    }
   };
 
   const handleSubItemClick = (item: SubmenuItemInterface) => {
