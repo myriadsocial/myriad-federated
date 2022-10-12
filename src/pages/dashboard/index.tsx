@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import { useRouter } from 'next/router';
-import { ChangeEvent, ReactElement, useState } from 'react';
+import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import { getReports } from 'src/api/GET_Reports';
 import { getServersMatric } from 'src/api/GET_serversMatric';
 import { getTopCurrencies } from 'src/api/GET_TopCurrencies';
@@ -57,43 +57,55 @@ const Dashboard: NextPageWithLayout = () => {
     order: [`createdAt ${sortingDate}`],
   });
 
-  const { data: dataPostReported } = useQuery(
+  const { refetch: refecthingPostReported, data: dataPostReported } = useQuery(
     ['/getAllPost'],
     () => getReports({ pageNumber, filter: filterPost }),
     {
-      enabled: true,
+      enabled: false,
     },
   );
 
-  const { data: dataUserReported } = useQuery(
+  const { refetch: refecthingAllUser, data: dataUserReported } = useQuery(
     ['/getAllUser'],
     () => getReports({ pageNumber, filter: filterUser }),
     {
-      enabled: true,
+      enabled: false,
     },
   );
 
-  const { data: dataTopCurrencies } = useQuery(
-    ['/getTopCurrencies'],
-    () => getTopCurrencies(),
-    {
-      enabled: true,
-    },
-  );
-  const { data: dataUsersGrowth } = useQuery(
+  const { refetch: refecthingTopCurrencies, data: dataTopCurrencies } =
+    useQuery(['/getTopCurrencies'], () => getTopCurrencies(), {
+      enabled: false,
+    });
+  const { refetch: refecthingUserGrowth, data: dataUsersGrowth } = useQuery(
     ['/getUserGrowth'],
     () => getUsersGrowth(),
     {
-      enabled: true,
+      enabled: false,
     },
   );
-  const { data: dataServerMatric } = useQuery(
+  const { refetch: refecthingServerMatric, data: dataServerMatric } = useQuery(
     ['/getServerMatric'],
     () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
     {
-      enabled: true,
+      enabled: false,
     },
   );
+
+  useEffect(() => {
+    refecthingAllUser();
+    refecthingPostReported();
+    refecthingServerMatric();
+    refecthingTopCurrencies();
+    refecthingUserGrowth();
+  }, [
+    refecthingAllUser,
+    refecthingPostReported,
+    refecthingServerMatric,
+    refecthingTopCurrencies,
+    refecthingUserGrowth,
+    selectedInstance.id,
+  ]);
 
   return (
     <div className="bg-background-content">
