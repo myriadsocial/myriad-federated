@@ -1,14 +1,17 @@
 import { ColumnDef } from '@tanstack/react-table';
 
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 
 import { Typography } from '@mui/material';
 
 import CardInstanceLeft from '../../../components/molecules/CardInstanceLeft';
-import CardInstanceRight from '../../../components/molecules/CardInstanceRight';
 import Table from '../../../components/organisms/Table';
 import ContentLayout from '../../../layout/ContentLayout';
 
+import { useQuery } from '@tanstack/react-query';
+import { getServersMatric } from 'src/api/GET_serversMatric';
+import { useAuth } from 'src/hooks/use-auth.hook';
+import { ServerListProps } from 'src/interface/ServerListInterface';
 import type { NextPageWithLayout } from '../../_app';
 
 interface DataArtSpaceInterface {
@@ -19,6 +22,8 @@ interface DataArtSpaceInterface {
   walletAddress: string;
 }
 const Instance: NextPageWithLayout = () => {
+  const { cookie } = useAuth();
+  const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const columns: ColumnDef<DataArtSpaceInterface>[] = [
     {
       accessorKey: 'displayName',
@@ -85,11 +90,22 @@ const Instance: NextPageWithLayout = () => {
     },
   ];
 
+  const { refetch: refetchingServerMatric, data: dataServerMatric } = useQuery(
+    ['/getServerMatric'],
+    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
+    {
+      enabled: false,
+    },
+  );
+
+  useEffect(() => {
+    refetchingServerMatric();
+  }, [refetchingServerMatric]);
+
   return (
     <div className="h-full">
       <div className="flex">
-        <CardInstanceLeft />
-        <CardInstanceRight />
+        <CardInstanceLeft data={dataServerMatric} />
       </div>
       <div className="bg-white my-6 p-6 rounded-[10px]">
         <div className="mb-[5px]">

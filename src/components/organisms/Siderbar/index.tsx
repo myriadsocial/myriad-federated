@@ -37,10 +37,15 @@ const Siderbar = () => {
   const getMainMenu = useCallback(() => {
     const url = router.pathname.split('/');
     const dataUrl = '/' + url[1] + '/' + url[2];
-    setMainMenu(dataUrl);
+    if (router.pathname === '/dashboard/instance/edit') {
+      setMainMenu('/dashboard/instance');
+    } else {
+      setMainMenu(dataUrl);
+    }
   }, [router.pathname]);
 
   useEffect(() => {
+    console.log(router.pathname);
     if (router.pathname.split('/').length === 4) getMainMenu();
     else setMainMenu(router.pathname);
   }, [router.pathname, getMainMenu]);

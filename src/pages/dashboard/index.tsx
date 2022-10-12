@@ -77,6 +77,7 @@ const Dashboard: NextPageWithLayout = () => {
     useQuery(['/getTopCurrencies'], () => getTopCurrencies(), {
       enabled: false,
     });
+
   const { refetch: refetchingUserGrowth, data: dataUsersGrowth } = useQuery(
     ['/getUserGrowth'],
     () => getUsersGrowth(),
@@ -84,6 +85,7 @@ const Dashboard: NextPageWithLayout = () => {
       enabled: false,
     },
   );
+
   const { refetch: refetchingServerMatric, data: dataServerMatric } = useQuery(
     ['/getServerMatric'],
     () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),

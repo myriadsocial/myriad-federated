@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
 
 import CardEditInstance from '../../../components/molecules/CardEditInstance';
-import CardInstanceRight from '../../../components/molecules/CardInstanceRight';
 import ContentLayout from '../../../layout/ContentLayout';
 
 import type { NextPageWithLayout } from '../../_app';
@@ -11,7 +10,6 @@ const EditInstance: NextPageWithLayout = () => {
     <div className="h-full">
       <div className="flex">
         <CardEditInstance />
-        <CardInstanceRight />
       </div>
     </div>
   );

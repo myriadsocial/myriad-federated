@@ -60,7 +60,7 @@ export const Navigation: Array<NavigationInterface> = [
     title: 'Instance',
     link: '/dashboard/instance',
     icon: IcCluster,
-    subMenu: false,
+    subMenu: true,
     subMenuItems: [],
   },
   {
