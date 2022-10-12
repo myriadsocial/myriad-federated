@@ -22,32 +22,22 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.pravatar.cc',
       },
-    ],
-    remotePatterns: [
       {
         protocol: 'https',
         hostname: '**.googleapis.com',
       },
-    ],
-    remotePatterns: [
       {
         protocol: 'https',
         hostname: '2dverse.org',
       },
-    ],
-    remotePatterns: [
       {
         protocol: 'https',
         hostname: 'pbs.twimg.com',
       },
-    ],
-    remotePatterns: [
       {
-        protocol: 'https',
+        protocol: 'http',
         hostname: 'debio.dev',
       },
-    ],
-    remotePatterns: [
       {
         protocol: 'https',
         hostname: 'i.pravatar.cc',

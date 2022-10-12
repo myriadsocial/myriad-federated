@@ -26,7 +26,7 @@ const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
 const Header = ({ title }: { title: string }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
-  const { cookie, loginDashboard } = useAuth();
+  const { cookie, switchInstance } = useAuth();
   const accountId = cookie?.session?.currentAddress ?? '';
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
@@ -51,6 +51,7 @@ const Header = ({ title }: { title: string }) => {
   };
 
   const handleSwitchInstance = async (item: ServerListProps) => {
+    console.log(item.id);
     const installed = await enablePolkadotExtension();
     setInstanceSelected(item.id);
     if (installed) {
@@ -59,18 +60,15 @@ const Header = ({ title }: { title: string }) => {
         (account) => account.address === item.owner,
       );
       try {
-        await loginDashboard({
+        setCookie(null, 'selectedInstance', JSON.stringify(item));
+        await switchInstance({
           account: currentAccounts[0],
           apiURL: item.apiUrl,
-          callbackURL: '/dashboard',
         });
-        setCookie(null, 'selectedInstance', JSON.stringify(item));
-        enqueueSnackbar({
-          message: 'Switch account success',
-          variant: 'success',
-        });
+
         setInstanceSelected(null);
         setShowModalInstance(false);
+        router.reload();
       } catch (err) {
         const message =
           err instanceof Error ? err.message : `Unexpected error: ${err}`;
@@ -178,7 +176,7 @@ const Header = ({ title }: { title: string }) => {
       </div>
       <SwitchAccount
         title="Instance"
-        accountId={selectedInstance.detail?.name}
+        accountId={`${selectedInstance.detail?.name}`}
         image={selectedInstance.detail?.images.logo_banner as string}
         handleClose={() => setAnchorEl(null)}
         anchorEl={anchorEl}
@@ -208,7 +206,7 @@ const Header = ({ title }: { title: string }) => {
                 return (
                   <ListSwitchAccount
                     key={index}
-                    label={item.detail?.name}
+                    label={`${item.detail?.name}`}
                     image={item.detail?.images.logo_banner as string}
                     onClick={() => handleSwitchInstance(item)}
                     type={
