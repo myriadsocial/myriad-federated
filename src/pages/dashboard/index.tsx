@@ -57,7 +57,7 @@ const Dashboard: NextPageWithLayout = () => {
     order: [`createdAt ${sortingDate}`],
   });
 
-  const { refetch: refecthingPostReported, data: dataPostReported } = useQuery(
+  const { refetch: refetchingPostReported, data: dataPostReported } = useQuery(
     ['/getAllPost'],
     () => getReports({ pageNumber, filter: filterPost }),
     {
@@ -65,7 +65,7 @@ const Dashboard: NextPageWithLayout = () => {
     },
   );
 
-  const { refetch: refecthingAllUser, data: dataUserReported } = useQuery(
+  const { refetch: refetchingAllUser, data: dataUserReported } = useQuery(
     ['/getAllUser'],
     () => getReports({ pageNumber, filter: filterUser }),
     {
@@ -73,18 +73,18 @@ const Dashboard: NextPageWithLayout = () => {
     },
   );
 
-  const { refetch: refecthingTopCurrencies, data: dataTopCurrencies } =
+  const { refetch: refetchingTopCurrencies, data: dataTopCurrencies } =
     useQuery(['/getTopCurrencies'], () => getTopCurrencies(), {
       enabled: false,
     });
-  const { refetch: refecthingUserGrowth, data: dataUsersGrowth } = useQuery(
+  const { refetch: refetchingUserGrowth, data: dataUsersGrowth } = useQuery(
     ['/getUserGrowth'],
     () => getUsersGrowth(),
     {
       enabled: false,
     },
   );
-  const { refetch: refecthingServerMatric, data: dataServerMatric } = useQuery(
+  const { refetch: refetchingServerMatric, data: dataServerMatric } = useQuery(
     ['/getServerMatric'],
     () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
     {
@@ -93,17 +93,17 @@ const Dashboard: NextPageWithLayout = () => {
   );
 
   useEffect(() => {
-    refecthingAllUser();
-    refecthingPostReported();
-    refecthingServerMatric();
-    refecthingTopCurrencies();
-    refecthingUserGrowth();
+    refetchingAllUser();
+    refetchingPostReported();
+    refetchingServerMatric();
+    refetchingTopCurrencies();
+    refetchingUserGrowth();
   }, [
-    refecthingAllUser,
-    refecthingPostReported,
-    refecthingServerMatric,
-    refecthingTopCurrencies,
-    refecthingUserGrowth,
+    refetchingAllUser,
+    refetchingPostReported,
+    refetchingServerMatric,
+    refetchingTopCurrencies,
+    refetchingUserGrowth,
     selectedInstance.id,
   ]);
 
