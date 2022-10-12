@@ -15,6 +15,11 @@ type SignInProps = {
   callbackURL: string;
   apiURL?: string;
 };
+type SwitchInstanceProps = {
+  account: InjectedAccountWithMeta;
+
+  apiURL?: string;
+};
 
 export const useAuth = () => {
   const router = useRouter();
@@ -62,6 +67,29 @@ export const useAuth = () => {
     router.push(callbackURL);
   };
 
+  const switchInstance = async (SwitchInstanceProps: SwitchInstanceProps) => {
+    const { apiURL, account } = SwitchInstanceProps;
+    if (!apiURL) return;
+
+    const toHex = u8aToHex(decodeAddress(account.address));
+    const { nonce } = await getUserNonce(apiURL, toHex);
+
+    if (!nonce) throw new Error('Unauthorized (User not exists)');
+
+    const signature = await PolkadotJs.signWithWallet(account, nonce);
+    const success = await login({
+      nonce,
+      signature,
+      publicAddress: toHex,
+      walletType: 'polkadot{.js}',
+      networkType: 'polkadot',
+      apiURL,
+      address: account.address,
+    });
+
+    if (!success) throw new Error('Failed to authorize');
+  };
+
   const logout = () => {
     removeCookie('session');
     router.push('/');
@@ -72,5 +100,6 @@ export const useAuth = () => {
     loginDashboard,
     logout,
     cookie,
+    switchInstance,
   };
 };
