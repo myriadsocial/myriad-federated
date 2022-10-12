@@ -1,5 +1,3 @@
-import ContentLayout from '../../layout/ContentLayout';
-import type { NextPageWithLayout } from '../_app';
 import { useQuery } from '@tanstack/react-query';
 import {
   ArcElement,
@@ -12,8 +10,9 @@ import {
   Tooltip,
 } from 'chart.js';
 import { useRouter } from 'next/router';
-import { ReactElement, ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, ReactElement, useState } from 'react';
 import { getReports } from 'src/api/GET_Reports';
+import { getServersMatric } from 'src/api/GET_serversMatric';
 import { getTopCurrencies } from 'src/api/GET_TopCurrencies';
 import { getUsersGrowth } from 'src/api/GET_UsersGrowth';
 import { DropdownFilter } from 'src/components/atoms';
@@ -21,12 +20,15 @@ import ChartBar from 'src/components/molecules/ChartBar';
 import ChartDoughnat from 'src/components/molecules/ChartDoughnut';
 import ChartPie from 'src/components/molecules/ChartPie';
 import ChartTopCoint from 'src/components/molecules/ChartTopCoint';
+import ShowIf from 'src/components/molecules/common/show-if.component';
 import MedianStatistics from 'src/components/molecules/MedianStatistics';
 import CardRecentReported from 'src/components/organisms/CardRecentReported';
 import DashCounter from 'src/components/organisms/DashCounter';
 import { Arrays } from 'src/constans/array';
 import { useAuth } from 'src/hooks/use-auth.hook';
 import { ServerListProps } from 'src/interface/ServerListInterface';
+import ContentLayout from '../../layout/ContentLayout';
+import type { NextPageWithLayout } from '../_app';
 
 ChartJS.register(
   ArcElement,
@@ -40,9 +42,9 @@ ChartJS.register(
 
 const Dashboard: NextPageWithLayout = () => {
   const router = useRouter();
-  const [sortingDate, setSortingDate] = useState<string>('DESC');
   const { cookie } = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+  const [sortingDate, setSortingDate] = useState<string>('DESC');
   const pageNumber = 1;
 
   const filterPost = JSON.stringify({
@@ -55,7 +57,7 @@ const Dashboard: NextPageWithLayout = () => {
     order: [`createdAt ${sortingDate}`],
   });
 
-  const { refetch: refetchingGetAllPost, data: dataPostReported } = useQuery(
+  const { data: dataPostReported } = useQuery(
     ['/getAllPost'],
     () => getReports({ pageNumber, filter: filterPost }),
     {
@@ -63,37 +65,35 @@ const Dashboard: NextPageWithLayout = () => {
     },
   );
 
-  const { refetch: refetchingGetAllUser, data: dataUserReported } = useQuery(
+  const { data: dataUserReported } = useQuery(
     ['/getAllUser'],
     () => getReports({ pageNumber, filter: filterUser }),
     {
       enabled: true,
     },
   );
-  const { refetch: refetchingTopCurrencies, data: dataTopCurrencies } =
-    useQuery(['/getTopCurrencies'], () => getTopCurrencies(), {
+
+  const { data: dataTopCurrencies } = useQuery(
+    ['/getTopCurrencies'],
+    () => getTopCurrencies(),
+    {
       enabled: true,
-    });
-  const { refetch: refetchingUsersGrowth, data: dataUsersGrowth } = useQuery(
+    },
+  );
+  const { data: dataUsersGrowth } = useQuery(
     ['/getUserGrowth'],
     () => getUsersGrowth(),
     {
       enabled: true,
     },
   );
-
-  useEffect(() => {
-    refetchingGetAllPost();
-    refetchingGetAllUser();
-    refetchingTopCurrencies();
-    refetchingUsersGrowth();
-  }, [
-    sortingDate,
-    refetchingGetAllPost,
-    refetchingGetAllUser,
-    refetchingTopCurrencies,
-    refetchingUsersGrowth,
-  ]);
+  const { data: dataServerMatric } = useQuery(
+    ['/getServerMatric'],
+    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
+    {
+      enabled: true,
+    },
+  );
 
   return (
     <div className="bg-background-content">
@@ -107,16 +107,12 @@ const Dashboard: NextPageWithLayout = () => {
           }
         />
         <DashCounter
-          totalUser={selectedInstance?.detail?.metric?.totalUsers as number}
-          totalPost={
-            selectedInstance?.detail?.metric?.totalPosts.totalAll as number
-          }
+          totalUser={dataServerMatric?.metric?.totalUsers as number}
+          totalPost={dataServerMatric?.metric?.totalPosts.totalAll as number}
           totalExperiances={
-            selectedInstance?.detail?.metric?.totalExperiences as number
+            dataServerMatric?.metric?.totalExperiences as number
           }
-          totalTips={
-            selectedInstance?.detail?.metric?.totalTransactions as number
-          }
+          totalTips={dataServerMatric?.metric?.totalTransactions as number}
         />
         <div className="grid grid-cols-4 gap-6 pb-6 h-[340px]">
           <div className="col-span-2 p-5 bg-white shadow-lg rounded-2xl h-[320px] relative">
@@ -140,20 +136,25 @@ const Dashboard: NextPageWithLayout = () => {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Post Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ChartDoughnat
-                height={175}
-                data={selectedInstance?.detail?.metric.totalPosts}
-              />
+              <ShowIf condition={dataServerMatric}>
+                <ChartDoughnat
+                  height={175}
+                  data={dataServerMatric?.metric?.totalPosts}
+                />
+              </ShowIf>
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Top 5 Coins</div>
+
             <ChartTopCoint data={dataTopCurrencies ?? []} />
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Wallet Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ChartPie data={selectedInstance?.detail?.metric.totalWallets} />
+              <ShowIf condition={dataServerMatric}>
+                <ChartPie data={dataServerMatric?.metric?.totalWallets} />
+              </ShowIf>
             </div>
           </div>
         </div>
@@ -163,15 +164,17 @@ const Dashboard: NextPageWithLayout = () => {
               Connected Social Media Account
             </div>
             <div className="w-full flex items-center justify-center">
-              <ChartDoughnat
-                height={380}
-                data={selectedInstance?.detail?.metric.totalConnectedSocials}
-              />
+              <ShowIf condition={dataServerMatric}>
+                <ChartDoughnat
+                  height={380}
+                  data={dataServerMatric?.metric?.totalConnectedSocials}
+                />
+              </ShowIf>
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Median Statistics</div>
-            <MedianStatistics item={selectedInstance?.detail?.mendian} />
+            <MedianStatistics item={dataServerMatric?.mendian} />
           </div>
         </div>
       </div>
