@@ -26,7 +26,7 @@ const EditInstance: NextPageWithLayout = () => {
   return (
     <div className="h-full">
       <div className="flex">
-        <CardEditInstance />
+        <CardEditInstance data={dataServerMatric} />
       </div>
     </div>
   );
