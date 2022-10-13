@@ -10,16 +10,7 @@ const CardEditInstance = () => {
   const router = useRouter();
   return (
     <div className="bg-white flex-1 mr-6 p-6 rounded-[10px]">
-      <Typography
-        style={{
-          fontSize: 18,
-          color: colors.black,
-          fontWeight: 600,
-          marginBottom: 16,
-        }}
-      >
-        Edit instance
-      </Typography>
+      <div className="text-lg text-black font-semibold mb-4">Edit instance</div>
       <Typography
         style={{ fontSize: 14, color: colors.black, marginBottom: 4 }}
       >
@@ -41,7 +32,14 @@ const CardEditInstance = () => {
       <Typography style={{ fontSize: 14, color: colors.primary, marginTop: 8 }}>
         Change picture
       </Typography>
-      <Typography style={{ fontSize: 14, color: colors.black, marginTop: 24 }}>
+      <Typography
+        style={{
+          fontFamily: 'Mulish',
+          fontSize: 14,
+          color: colors.black,
+          marginTop: 24,
+        }}
+      >
         Detail
       </Typography>
       <div className="mt-[24px]">
@@ -53,6 +51,7 @@ const CardEditInstance = () => {
         />
         <div className="my-[24px]">
           <TextField
+            style={{ fontFamily: 'Mulish' }}
             id="outlined-basic"
             label="API URL"
             variant="outlined"
@@ -60,13 +59,20 @@ const CardEditInstance = () => {
           />
         </div>
         <TextField
+          style={{ fontFamily: 'Mulish' }}
           id="outlined-basic"
           label="Wallet Address"
           variant="outlined"
           fullWidth
         />
         <div className="my-[24px]">
-          <TextField label="Description" multiline rows={3} fullWidth />
+          <TextField
+            style={{ fontFamily: 'Mulish' }}
+            label="Description"
+            multiline
+            rows={3}
+            fullWidth
+          />
         </div>
         <div className="flex">
           <div className="mr-[10px]">

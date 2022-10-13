@@ -1,4 +1,8 @@
-import { ReactElement } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { ReactElement, useEffect } from 'react';
+import { getServersMatric } from 'src/api/GET_serversMatric';
+import { useAuth } from 'src/hooks/use-auth.hook';
+import { ServerListProps } from 'src/interface/ServerListInterface';
 
 import CardEditInstance from '../../../components/molecules/CardEditInstance';
 import ContentLayout from '../../../layout/ContentLayout';
@@ -6,6 +10,19 @@ import ContentLayout from '../../../layout/ContentLayout';
 import type { NextPageWithLayout } from '../../_app';
 
 const EditInstance: NextPageWithLayout = () => {
+  const { cookie } = useAuth();
+  const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+  const { refetch: refetchingServerMatric, data: dataServerMatric } = useQuery(
+    ['/getServerMatric'],
+    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
+    {
+      enabled: false,
+    },
+  );
+
+  useEffect(() => {
+    refetchingServerMatric();
+  }, [refetchingServerMatric]);
   return (
     <div className="h-full">
       <div className="flex">
