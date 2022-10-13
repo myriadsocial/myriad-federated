@@ -1,11 +1,6 @@
-import { ColumnDef } from '@tanstack/react-table';
-
 import { ReactElement, useEffect } from 'react';
 
-import { Typography } from '@mui/material';
-
 import CardInstanceLeft from '../../../components/molecules/CardInstanceLeft';
-import Table from '../../../components/organisms/Table';
 import ContentLayout from '../../../layout/ContentLayout';
 
 import { useQuery } from '@tanstack/react-query';

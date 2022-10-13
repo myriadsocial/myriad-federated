@@ -12,6 +12,8 @@ import {
 } from 'src/interface/ServerListInterface';
 import { colors } from '../../../utils';
 import Button from '../../atoms/Button';
+import { useMutation } from '@tanstack/react-query';
+import { patchEditInstance } from 'src/api/PATCH_EditInstance';
 
 interface EditInstanceInterface {
   instanceName: string;
@@ -37,15 +39,33 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
     },
   });
 
+  const _editInstance = async () => {
+    const mutation = await mutateAsync({
+      baseUrl: selectedInstance.apiUrl,
+      data: {
+        name: formik.values.instanceName,
+        serverImageURL: formik.values.imageUrl,
+        description: formik.values.description,
+        categories: data.categories,
+        accountId: {},
+        images: {},
+      },
+    });
+
+    console.log('mutation >>', mutation);
+  };
+
+  const { mutateAsync } = useMutation(patchEditInstance);
+
   useEffect(() => {
     formik.setFieldValue('instanceName', data.name);
     formik.setFieldValue('apiUrl', selectedInstance.apiUrl);
     formik.setFieldValue('walletAddress', selectedInstance.owner);
     formik.setFieldValue('description', data.description);
     formik.setFieldValue('imageUrl', data.serverImageURL);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
     <div className="bg-white flex-1 mr-6 p-6 rounded-[10px]">
       <div className="text-lg text-black font-semibold mb-4">Edit instance</div>
@@ -73,6 +93,7 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
           variant="outlined"
           fullWidth
           value={formik.values.instanceName}
+          onChange={(e) => formik.setFieldValue('instanceName', e.target.value)}
         />
         <div className="my-[24px]">
           <TextField
@@ -82,6 +103,7 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
             variant="outlined"
             fullWidth
             value={formik.values.apiUrl}
+            onChange={(e) => formik.setFieldValue('apiUrl', e.target.value)}
           />
         </div>
         <TextField
@@ -91,6 +113,9 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
           variant="outlined"
           fullWidth
           value={formik.values.walletAddress}
+          onChange={(e) =>
+            formik.setFieldValue('walletAddress', e.target.value)
+          }
         />
         <div className="my-[24px]">
           <TextField
@@ -100,15 +125,14 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
             rows={3}
             fullWidth
             value={formik.values.description}
+            onChange={(e) =>
+              formik.setFieldValue('description', e.target.value)
+            }
           />
         </div>
         <div className="flex">
           <div className="mr-[10px]">
-            <Button
-              primary
-              label="Save changes"
-              onClick={() => router.push('/dashboard/instance')}
-            />
+            <Button primary label="Save changes" onClick={_editInstance} />
           </div>
           <Button
             label="Cancel"
