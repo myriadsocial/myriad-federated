@@ -23,7 +23,7 @@ export async function patchEditInstance({
 }) {
   try {
     const result = await axios(baseUrl).patch(`/server`, data, config);
-    return result.data;
+    return result;
   } catch {
     console.log;
   }

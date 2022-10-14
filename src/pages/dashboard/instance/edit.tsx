@@ -25,6 +25,7 @@ const EditInstance: NextPageWithLayout = () => {
   useEffect(() => {
     refetchingServerMatric();
   }, [refetchingServerMatric]);
+
   return (
     <div className="h-full">
       <div className="flex">

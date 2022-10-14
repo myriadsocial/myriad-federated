@@ -14,6 +14,7 @@ import { colors } from '../../../utils';
 import Button from '../../atoms/Button';
 import { useMutation } from '@tanstack/react-query';
 import { patchEditInstance } from 'src/api/PATCH_EditInstance';
+import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 
 interface EditInstanceInterface {
   instanceName: string;
@@ -23,6 +24,7 @@ interface EditInstanceInterface {
   imageUrl: string;
 }
 const CardEditInstance = ({ data }: { data: ServerDetail }) => {
+  const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
   const { cookie } = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
@@ -52,7 +54,12 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
       },
     });
 
-    console.log('mutation >>', mutation);
+    if (mutation?.status === 204) {
+      enqueueSnackbar({
+        message: 'Edit data instance success',
+        variant: 'success',
+      });
+    }
   };
 
   const { mutateAsync } = useMutation(patchEditInstance);
