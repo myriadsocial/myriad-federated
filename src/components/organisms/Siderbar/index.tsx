@@ -45,7 +45,6 @@ const Siderbar = () => {
   }, [router.pathname]);
 
   useEffect(() => {
-    console.log(router.pathname);
     if (router.pathname.split('/').length === 4) getMainMenu();
     else setMainMenu(router.pathname);
   }, [router.pathname, getMainMenu]);

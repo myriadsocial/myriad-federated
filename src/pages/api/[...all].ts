@@ -19,7 +19,10 @@ export default async function handler(
     const cookies = cookie.parse(req?.headers?.cookie ?? '');
     const data = JSON.parse(cookies?.session ?? '');
     const accessToken = decryptMessage(data.token, data.publicAddress);
-    const headers = { Authorization: `Bearer ${accessToken}` };
+    const token = data.token;
+    const headers = {
+      Authorization: `Bearer ${req.method === 'PATCH' ? token : accessToken}`,
+    };
 
     return httpProxyMiddleware(req, res, {
       target: data.apiURL,

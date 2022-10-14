@@ -14,7 +14,6 @@ type InstanceProps = {
 };
 
 export const Instance: React.FC<InstanceProps> = ({ accountId }) => {
-  console.log('account Id', accountId);
   return (
     <React.Fragment>
       <Head>
