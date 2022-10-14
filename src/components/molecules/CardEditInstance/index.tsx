@@ -15,6 +15,7 @@ import Button from '../../atoms/Button';
 import { useMutation } from '@tanstack/react-query';
 import { patchEditInstance } from 'src/api/PATCH_EditInstance';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
+import { decryptMessage } from 'src/lib/crypto';
 
 interface EditInstanceInterface {
   instanceName: string;
@@ -23,11 +24,18 @@ interface EditInstanceInterface {
   description: string;
   imageUrl: string;
 }
-const CardEditInstance = ({ data }: { data: ServerDetail }) => {
+const CardEditInstance = ({
+  data,
+  accessToken,
+}: {
+  data: ServerDetail;
+  accessToken: string;
+}) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
   const { cookie } = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+
   const formik = useFormik<EditInstanceInterface>({
     initialValues: {
       imageUrl: '',
@@ -44,6 +52,7 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
   const _editInstance = async () => {
     const mutation = await mutateAsync({
       baseUrl: selectedInstance.apiUrl,
+      accessToken: accessToken,
       data: {
         name: formik.values.instanceName,
         serverImageURL: formik.values.imageUrl,
@@ -59,17 +68,22 @@ const CardEditInstance = ({ data }: { data: ServerDetail }) => {
         message: 'Edit data instance success',
         variant: 'success',
       });
+    } else {
+      enqueueSnackbar({
+        message: 'Edit data instance failed',
+        variant: 'error',
+      });
     }
   };
 
   const { mutateAsync } = useMutation(patchEditInstance);
 
   useEffect(() => {
-    formik.setFieldValue('instanceName', data.name);
+    formik.setFieldValue('instanceName', data?.name);
     formik.setFieldValue('apiUrl', selectedInstance.apiUrl);
     formik.setFieldValue('walletAddress', selectedInstance.owner);
-    formik.setFieldValue('description', data.description);
-    formik.setFieldValue('imageUrl', data.serverImageURL);
+    formik.setFieldValue('description', data?.description);
+    formik.setFieldValue('imageUrl', data?.serverImageURL);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

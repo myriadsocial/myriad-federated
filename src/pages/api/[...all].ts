@@ -1,9 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import httpProxyMiddleware from 'next-http-proxy-middleware';
 
-import { decryptMessage } from 'src/lib/crypto';
-
 import cookie from 'cookie';
+import { decryptMessage } from 'src/lib/crypto';
 
 export const config = {
   api: {
@@ -19,9 +18,9 @@ export default async function handler(
     const cookies = cookie.parse(req?.headers?.cookie ?? '');
     const data = JSON.parse(cookies?.session ?? '');
     const accessToken = decryptMessage(data.token, data.publicAddress);
-    const token = data.token;
-    const headers = {
-      Authorization: `Bearer ${req.method === 'PATCH' ? token : accessToken}`,
+
+    let headers = {
+      Authorization: `Bearer ${accessToken}`,
     };
 
     return httpProxyMiddleware(req, res, {

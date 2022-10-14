@@ -16,13 +16,15 @@ let config = {
 };
 export async function patchEditInstance({
   baseUrl,
+  accessToken,
   data,
 }: {
   baseUrl: string;
+  accessToken: string;
   data: BodyInterface;
 }) {
   try {
-    const result = await axios(baseUrl).patch(`/server`, data, config);
+    const result = await axios(baseUrl, accessToken).patch(`/server`, data);
     return result;
   } catch {
     console.log;
