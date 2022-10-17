@@ -51,7 +51,6 @@ const Header = ({ title }: { title: string }) => {
   };
 
   const handleSwitchInstance = async (item: ServerListProps) => {
-    console.log(item.id);
     const installed = await enablePolkadotExtension();
     setInstanceSelected(item.id);
     if (installed) {

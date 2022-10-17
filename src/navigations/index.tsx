@@ -64,14 +64,6 @@ export const Navigation: Array<NavigationInterface> = [
     subMenuItems: [],
   },
   {
-    id: '2',
-    title: 'Settings',
-    link: '/dashboard/settings',
-    icon: IcSettings,
-    subMenu: false,
-    subMenuItems: [],
-  },
-  {
     id: '5',
     title: 'Help',
     link: '/dashboard/help',
