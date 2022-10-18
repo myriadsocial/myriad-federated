@@ -19,6 +19,13 @@ export interface MedianInterface {
   medianTransaction: number;
   medianSubscription: number;
 }
+export interface AverageInterface {
+  averagePost: number;
+  averageComment: number;
+  averageExperience: number;
+  averageTransaction: number;
+  averageSubscription: number;
+}
 
 export interface MetricTotalWalletsInterface {
   totalNearWallet: number;
