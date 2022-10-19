@@ -1,5 +1,5 @@
 import ListMedian from 'src/components/atoms/ListMedian';
-import { MedianInterface } from 'src/interface/ServerListInterface';
+import { AverageInterface } from 'src/interface/ServerListInterface';
 
 import {
   CountComments,
@@ -12,33 +12,39 @@ import {
 export default function MedianStatistics({
   item,
 }: {
-  item: MedianInterface | undefined;
+  item: AverageInterface | undefined;
 }) {
+  const numberFormatter = (number: number) => {
+    const data = new Intl.NumberFormat('en-IN', {
+      maximumSignificantDigits: 3,
+    }).format(number);
+    return Number(data);
+  };
   return (
     <div className="grid gap-4">
       <ListMedian
         image={IcCountPost}
-        count={item?.medianPost ?? 0}
+        count={numberFormatter(item?.averagePost as number) ?? 0}
         title={'Post Per User'}
       />
       <ListMedian
         image={IcCountExperiance}
-        count={item?.medianExperience ?? 0}
+        count={numberFormatter(item?.averageExperience as number) ?? 0}
         title={'Experience Per User'}
       />
       <ListMedian
         image={CountComments}
-        count={item?.medianComment ?? 0}
+        count={numberFormatter(item?.averageComment as number) ?? 0}
         title={'Comments Per User'}
       />
       <ListMedian
         image={CountTips}
-        count={item?.medianTransaction ?? 0}
+        count={numberFormatter(item?.averageTransaction as number) ?? 0}
         title={'Transaction Per User'}
       />
       <ListMedian
         image={CountSubscriptions}
-        count={item?.medianSubscription ?? 0}
+        count={numberFormatter(item?.averageSubscription as number) ?? 0}
         title={'Subscriptions Per User'}
       />
     </div>

@@ -187,8 +187,8 @@ const Dashboard: NextPageWithLayout = () => {
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
-            <div className="text-lg font-semibold mb-6">Median Statistics</div>
-            <MedianStatistics item={dataServerMatric?.mendian} />
+            <div className="text-lg font-semibold mb-6">Average Statistics</div>
+            <MedianStatistics item={dataServerMatric?.average} />
           </div>
         </div>
       </div>
