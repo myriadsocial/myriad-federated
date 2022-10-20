@@ -3,8 +3,10 @@ import { useRouter } from 'next/router';
 
 import { TextField } from '@mui/material';
 
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { patchEditInstance } from 'src/api/PATCH_EditInstance';
 import { useAuth } from 'src/hooks/use-auth.hook';
 import {
   ServerDetail,
@@ -12,10 +14,9 @@ import {
 } from 'src/interface/ServerListInterface';
 import { colors } from '../../../utils';
 import Button from '../../atoms/Button';
-import { useMutation } from '@tanstack/react-query';
-import { patchEditInstance } from 'src/api/PATCH_EditInstance';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
-import { decryptMessage } from 'src/lib/crypto';
+import { UploadImage } from 'src/api/POST_UploadImage';
+import { getServersMatric } from 'src/api/GET_serversMatric';
 
 interface EditInstanceInterface {
   instanceName: string;
@@ -35,6 +36,9 @@ const CardEditInstance = ({
   const router = useRouter();
   const { cookie } = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+  const uploadFieldRef = useRef<HTMLInputElement | null>(null);
+
+  const [imageSelected, setImageSelected] = useState<File | undefined>();
 
   const formik = useFormik<EditInstanceInterface>({
     initialValues: {
@@ -48,6 +52,14 @@ const CardEditInstance = ({
       undefined;
     },
   });
+
+  const { refetch: refetchingServerMatric } = useQuery(
+    ['/getServerMatric'],
+    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
+    {
+      enabled: false,
+    },
+  );
 
   const _editInstance = async () => {
     const mutation = await mutateAsync({
@@ -68,6 +80,10 @@ const CardEditInstance = ({
         message: 'Edit data instance success',
         variant: 'success',
       });
+      refetchingServerMatric();
+      setTimeout(() => {
+        router.push('/dashboard/instance');
+      }, 1500);
     } else {
       enqueueSnackbar({
         message: 'Edit data instance failed',
@@ -78,6 +94,19 @@ const CardEditInstance = ({
 
   const { mutateAsync } = useMutation(patchEditInstance);
 
+  const _uploadImage = async () => {
+    const mutationUploadImage = await mutateUploadImage({
+      file: imageSelected,
+      baseUrl: selectedInstance.apiUrl,
+      accessToken: accessToken,
+    });
+    if (mutationUploadImage?.files) {
+      formik.setFieldValue('imageUrl', mutationUploadImage.files[0].url);
+    }
+  };
+
+  const { mutateAsync: mutateUploadImage } = useMutation(UploadImage);
+
   useEffect(() => {
     formik.setFieldValue('instanceName', data?.name);
     formik.setFieldValue('apiUrl', selectedInstance.apiUrl);
@@ -86,6 +115,30 @@ const CardEditInstance = ({
     formik.setFieldValue('imageUrl', data?.serverImageURL);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const selectFile = (): void => {
+    const uploadField: any = uploadFieldRef?.current;
+
+    if (!uploadField) return;
+
+    uploadField.click();
+  };
+
+  const handleFileChange = (event: any) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setImageSelected(event.target.files[0]);
+
+      if (uploadFieldRef && uploadFieldRef.current) {
+        uploadFieldRef.current.value = '';
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (imageSelected) {
+      _uploadImage();
+    }
+  }, [imageSelected]);
 
   return (
     <div className="bg-white flex-1 mr-6 p-6 rounded-[10px]">
@@ -99,13 +152,30 @@ const CardEditInstance = ({
       </div>
 
       <Image
-        src={formik.values.imageUrl}
+        src={
+          imageSelected
+            ? URL.createObjectURL(imageSelected)
+            : formik.values.imageUrl
+        }
         height={160}
         width={160}
         style={{ borderRadius: 8 }}
+        objectFit="fill"
         alt=""
       />
-      <div className="text-sm text-primary mt-2">Change picture</div>
+      <div>
+        <button onClick={selectFile} className="text-sm text-primary mt-2">
+          Change picture
+          <input hidden accept="image/*" multiple type="file" />
+        </button>
+      </div>
+      <input
+        type="file"
+        ref={uploadFieldRef}
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+        accept="image/*"
+      />
       <div className="text-sm color-black mt-6">Detail</div>
       <div className="mt-[24px]">
         <TextField
