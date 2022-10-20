@@ -1,13 +1,16 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import { TextField } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { useEffect, useRef, useState } from 'react';
+import { getServersMatric } from 'src/api/GET_serversMatric';
 import { patchEditInstance } from 'src/api/PATCH_EditInstance';
+import { UploadImage } from 'src/api/POST_UploadImage';
 import { useAuth } from 'src/hooks/use-auth.hook';
+import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
 import {
   ServerDetail,
   ServerListProps,
@@ -15,8 +18,6 @@ import {
 import { colors } from '../../../utils';
 import Button from '../../atoms/Button';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
-import { UploadImage } from 'src/api/POST_UploadImage';
-import { getServersMatric } from 'src/api/GET_serversMatric';
 
 interface EditInstanceInterface {
   instanceName: string;
@@ -28,16 +29,18 @@ interface EditInstanceInterface {
 const CardEditInstance = ({
   data,
   accessToken,
+  accountId,
 }: {
   data: ServerDetail;
   accessToken: string;
+  accountId: string;
 }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
   const { cookie } = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const uploadFieldRef = useRef<HTMLInputElement | null>(null);
-
+  const { updateInstance } = useInstances(InstanceType.OWNED, accountId);
   const [imageSelected, setImageSelected] = useState<File | undefined>();
 
   const formik = useFormik<EditInstanceInterface>({
@@ -60,6 +63,11 @@ const CardEditInstance = ({
       enabled: false,
     },
   );
+
+  const _handleConfirmApiUrl = async () => {
+    // createInstance(formik.values.apiUrl, () => console.log('ok'));
+    updateInstance(accountId, formik.values.apiUrl, selectedInstance.id);
+  };
 
   const _editInstance = async () => {
     const mutation = await mutateAsync({
@@ -105,7 +113,8 @@ const CardEditInstance = ({
     }
   };
 
-  const { mutateAsync: mutateUploadImage } = useMutation(UploadImage);
+  const { mutateAsync: mutateUploadImage, isLoading } =
+    useMutation(UploadImage);
 
   useEffect(() => {
     formik.setFieldValue('instanceName', data?.name);
@@ -118,26 +127,41 @@ const CardEditInstance = ({
 
   const selectFile = (): void => {
     const uploadField: any = uploadFieldRef?.current;
-
     if (!uploadField) return;
-
     uploadField.click();
   };
 
-  const handleFileChange = (event: any) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setImageSelected(event.target.files[0]);
+  const _handleFileChange = (event: any) => {
+    if (event.target.files[0].size >= 3000000) {
+      enqueueSnackbar({
+        message: 'Image selected to large',
+        variant: 'error',
+      });
+    } else {
+      if (event.target.files && event.target.files.length > 0) {
+        setImageSelected(event.target.files[0]);
 
-      if (uploadFieldRef && uploadFieldRef.current) {
-        uploadFieldRef.current.value = '';
+        if (uploadFieldRef && uploadFieldRef.current) {
+          uploadFieldRef.current.value = '';
+        }
       }
     }
   };
+
+  function isEdit() {
+    return (
+      (data?.serverImageURL !== formik.values.imageUrl ||
+        data?.name !== formik.values.instanceName ||
+        data?.description !== formik.values.description) &&
+      !isLoading
+    );
+  }
 
   useEffect(() => {
     if (imageSelected) {
       _uploadImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageSelected]);
 
   return (
@@ -164,15 +188,24 @@ const CardEditInstance = ({
         alt=""
       />
       <div>
-        <button onClick={selectFile} className="text-sm text-primary mt-2">
-          Change picture
-          <input hidden accept="image/*" multiple type="file" />
-        </button>
+        {isLoading ? (
+          <CircularProgress size={20} />
+        ) : (
+          <button onClick={selectFile} className="text-sm text-primary mt-2">
+            Change picture
+            <input
+              hidden
+              accept="image/jpeg, image/jpg, image/png"
+              multiple
+              type="file"
+            />
+          </button>
+        )}
       </div>
       <input
         type="file"
         ref={uploadFieldRef}
-        onChange={handleFileChange}
+        onChange={_handleFileChange}
         style={{ display: 'none' }}
         accept="image/*"
       />
@@ -186,7 +219,7 @@ const CardEditInstance = ({
           value={formik.values.instanceName}
           onChange={(e) => formik.setFieldValue('instanceName', e.target.value)}
         />
-        <div className="my-[24px]">
+        <div className="my-[24px] flex items-center">
           <TextField
             style={{ fontFamily: 'Mulish' }}
             id="outlined-basic"
@@ -196,6 +229,13 @@ const CardEditInstance = ({
             value={formik.values.apiUrl}
             onChange={(e) => formik.setFieldValue('apiUrl', e.target.value)}
           />
+          <div className="w-[185px] ml-6">
+            <Button
+              primary
+              label="Confirm API URL"
+              onClick={_handleConfirmApiUrl}
+            />
+          </div>
         </div>
         <TextField
           style={{ fontFamily: 'Mulish' }}
@@ -204,6 +244,7 @@ const CardEditInstance = ({
           variant="outlined"
           fullWidth
           value={formik.values.walletAddress}
+          disabled
           onChange={(e) =>
             formik.setFieldValue('walletAddress', e.target.value)
           }
@@ -223,7 +264,12 @@ const CardEditInstance = ({
         </div>
         <div className="flex">
           <div className="mr-[10px]">
-            <Button primary label="Save changes" onClick={_editInstance} />
+            <Button
+              disable={!isEdit()}
+              primary
+              label="Save changes"
+              onClick={_editInstance}
+            />
           </div>
           <Button
             label="Cancel"

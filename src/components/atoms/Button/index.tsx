@@ -75,9 +75,9 @@ const Button = ({
           paddingRight: 20,
           paddingLeft: 20,
           height: 40,
-          backgroundColor: colors.primary,
+          backgroundColor: disable ? colors.backgroundGray : colors.primary,
           borderRadius: 20,
-          color: 'white',
+          color: disable ? colors.textGray : 'white',
           textTransform: 'capitalize',
           fontFamily: 'mulish',
         }}

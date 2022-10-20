@@ -152,7 +152,7 @@ export class PolkadotJs implements IProvider {
     }
   }
 
-  async updateApiURL(
+  async updateApiUrl(
     owner: string,
     serverId: number,
     newApiURL: string,
@@ -166,7 +166,7 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(undefined, true);
 
-      const extrinsic = this.provider.tx.server.updateApiURL(
+      const extrinsic = this.provider.tx.server.updateApiUrl(
         serverId,
         newApiURL,
       );
@@ -300,7 +300,7 @@ export interface IProvider {
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ) => Promise<string | null>;
 
-  updateApiURL: (
+  updateApiUrl: (
     owner: string,
     serverId: number,
     newApiURL: string,

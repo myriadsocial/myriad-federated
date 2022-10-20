@@ -8,14 +8,24 @@ import ContentLayout from '../../../layout/ContentLayout';
 
 import { decryptMessage } from 'src/lib/crypto';
 
-export default function EditInstance({ accessToken }: { accessToken: string }) {
+export default function EditInstance({
+  accessToken,
+  accountId,
+}: {
+  accessToken: string;
+  accountId: string;
+}) {
   const queryClient = useQueryClient();
   const dataMatric = queryClient.getQueryData<any>(['/getServerMatric']);
 
   return (
     <div className="h-full">
       <div className="flex">
-        <CardEditInstance data={dataMatric} accessToken={accessToken} />
+        <CardEditInstance
+          data={dataMatric}
+          accessToken={accessToken}
+          accountId={accountId}
+        />
       </div>
     </div>
   );
@@ -29,6 +39,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       accessToken,
+      accountId: session.currentAddress,
     },
   };
 }
