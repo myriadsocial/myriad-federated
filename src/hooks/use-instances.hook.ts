@@ -13,10 +13,11 @@ export enum InstanceType {
 }
 
 export const useInstances = (
-  instanceType: InstanceType,
+  instanceType?: InstanceType,
   accountId?: string,
 ) => {
   const { provider, loading: loadingBlockchain, error } = useBlockchain();
+
   const enqueueSnackbar = useEnqueueSnackbar();
   const [serverList, setServerList] = useState<ServerListProps[]>([]);
   const [metric, setMetric] = useState({
@@ -146,16 +147,16 @@ export const useInstances = (
   };
 
   const updateInstance = async (
-    server: ServerListProps,
+    accountId: string,
     newApiURL: string,
-    callback?: () => void,
+    serverId: number,
   ) => {
     try {
       if (!provider || !accountId) return;
 
-      await provider.updateApiURL(
+      await provider.updateApiUrl(
         accountId,
-        server.id,
+        serverId,
         newApiURL,
         async (newServer, signerOpened) => {
           if (signerOpened) setLoading(true);
@@ -168,7 +169,7 @@ export const useInstances = (
               .catch(console.log)
               .finally(() => {
                 const newServerList = serverList.map((e) => {
-                  if (e.id === server.id) return newServer;
+                  if (e.id === serverId) return newServer;
                   return e;
                 });
 
@@ -180,7 +181,6 @@ export const useInstances = (
     } catch (err) {
       console.log(err);
     } finally {
-      callback && callback();
       setLoading(false);
     }
   };

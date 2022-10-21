@@ -1,35 +1,31 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import cookie from 'cookie';
 import { GetServerSidePropsContext } from 'next';
-import { ReactElement, useEffect } from 'react';
-import { getServersMatric } from 'src/api/GET_serversMatric';
-import { useAuth } from 'src/hooks/use-auth.hook';
-import { ServerListProps } from 'src/interface/ServerListInterface';
+import { ReactElement } from 'react';
 
 import CardEditInstance from '../../../components/molecules/CardEditInstance';
 import ContentLayout from '../../../layout/ContentLayout';
 
 import { decryptMessage } from 'src/lib/crypto';
 
-export default function EditInstance({ accessToken }: { accessToken: string }) {
-  const { cookie } = useAuth();
-  const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
-  const { refetch: refetchingServerMatric, data: dataServerMatric } = useQuery(
-    ['/getServerMatric'],
-    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
-    {
-      enabled: false,
-    },
-  );
-
-  useEffect(() => {
-    refetchingServerMatric();
-  }, [refetchingServerMatric]);
+export default function EditInstance({
+  accessToken,
+  accountId,
+}: {
+  accessToken: string;
+  accountId: string;
+}) {
+  const queryClient = useQueryClient();
+  const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
 
   return (
     <div className="h-full">
       <div className="flex">
-        <CardEditInstance data={dataServerMatric} accessToken={accessToken} />
+        <CardEditInstance
+          data={dataMetric}
+          accessToken={accessToken}
+          accountId={accountId}
+        />
       </div>
     </div>
   );
@@ -43,11 +39,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return {
     props: {
       accessToken,
+      accountId: session.currentAddress,
     },
   };
 }
 EditInstance.getLayout = function getLayout(page: ReactElement) {
   return <ContentLayout title="Instance">{page}</ContentLayout>;
 };
-
-// export default EditInstance;

@@ -1,21 +1,23 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import { TextField } from '@mui/material';
+import { CircularProgress, TextField } from '@mui/material';
 
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getServersMetric } from 'src/api/GET_serversMetric';
+import { patchEditInstance } from 'src/api/PATCH_EditInstance';
+import { UploadImage } from 'src/api/POST_UploadImage';
 import { useAuth } from 'src/hooks/use-auth.hook';
+import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
 import {
   ServerDetail,
   ServerListProps,
 } from 'src/interface/ServerListInterface';
 import { colors } from '../../../utils';
 import Button from '../../atoms/Button';
-import { useMutation } from '@tanstack/react-query';
-import { patchEditInstance } from 'src/api/PATCH_EditInstance';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
-import { decryptMessage } from 'src/lib/crypto';
 
 interface EditInstanceInterface {
   instanceName: string;
@@ -27,14 +29,19 @@ interface EditInstanceInterface {
 const CardEditInstance = ({
   data,
   accessToken,
+  accountId,
 }: {
   data: ServerDetail;
   accessToken: string;
+  accountId: string;
 }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
   const { cookie } = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
+  const uploadFieldRef = useRef<HTMLInputElement | null>(null);
+  const { updateInstance } = useInstances(InstanceType.OWNED, accountId);
+  const [imageSelected, setImageSelected] = useState<File | undefined>();
 
   const formik = useFormik<EditInstanceInterface>({
     initialValues: {
@@ -48,6 +55,18 @@ const CardEditInstance = ({
       undefined;
     },
   });
+
+  const { refetch: refetchingServerMetric } = useQuery(
+    ['/getServerMetric'],
+    () => getServersMetric({ baseUrl: selectedInstance.apiUrl }),
+    {
+      enabled: false,
+    },
+  );
+
+  const _handleConfirmApiUrl = async () => {
+    updateInstance(accountId, formik.values.apiUrl, selectedInstance.id);
+  };
 
   const _editInstance = async () => {
     const mutation = await mutateAsync({
@@ -68,6 +87,10 @@ const CardEditInstance = ({
         message: 'Edit data instance success',
         variant: 'success',
       });
+      refetchingServerMetric();
+      setTimeout(() => {
+        router.push('/dashboard/instance');
+      }, 1500);
     } else {
       enqueueSnackbar({
         message: 'Edit data instance failed',
@@ -78,6 +101,20 @@ const CardEditInstance = ({
 
   const { mutateAsync } = useMutation(patchEditInstance);
 
+  const _uploadImage = async () => {
+    const mutationUploadImage = await mutateUploadImage({
+      file: imageSelected,
+      baseUrl: selectedInstance.apiUrl,
+      accessToken: accessToken,
+    });
+    if (mutationUploadImage?.files) {
+      formik.setFieldValue('imageUrl', mutationUploadImage.files[0].url);
+    }
+  };
+
+  const { mutateAsync: mutateUploadImage, isLoading } =
+    useMutation(UploadImage);
+
   useEffect(() => {
     formik.setFieldValue('instanceName', data?.name);
     formik.setFieldValue('apiUrl', selectedInstance.apiUrl);
@@ -86,6 +123,45 @@ const CardEditInstance = ({
     formik.setFieldValue('imageUrl', data?.serverImageURL);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const selectFile = (): void => {
+    const uploadField: any = uploadFieldRef?.current;
+    if (!uploadField) return;
+    uploadField.click();
+  };
+
+  const _handleFileChange = (event: any) => {
+    if (event.target.files[0].size >= 3000000) {
+      enqueueSnackbar({
+        message: 'Image selected to large',
+        variant: 'error',
+      });
+    } else {
+      if (event.target.files && event.target.files.length > 0) {
+        setImageSelected(event.target.files[0]);
+
+        if (uploadFieldRef && uploadFieldRef.current) {
+          uploadFieldRef.current.value = '';
+        }
+      }
+    }
+  };
+
+  function isEdit() {
+    return (
+      (data?.serverImageURL !== formik.values.imageUrl ||
+        data?.name !== formik.values.instanceName ||
+        data?.description !== formik.values.description) &&
+      !isLoading
+    );
+  }
+
+  useEffect(() => {
+    if (imageSelected) {
+      _uploadImage();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageSelected]);
 
   return (
     <div className="bg-white flex-1 mr-6 p-6 rounded-[10px]">
@@ -99,13 +175,39 @@ const CardEditInstance = ({
       </div>
 
       <Image
-        src={formik.values.imageUrl}
+        src={
+          imageSelected
+            ? URL.createObjectURL(imageSelected)
+            : formik.values.imageUrl
+        }
         height={160}
         width={160}
         style={{ borderRadius: 8 }}
+        objectFit="fill"
         alt=""
       />
-      <div className="text-sm text-primary mt-2">Change picture</div>
+      <div>
+        {isLoading ? (
+          <CircularProgress size={20} />
+        ) : (
+          <button onClick={selectFile} className="text-sm text-primary mt-2">
+            Change picture
+            <input
+              hidden
+              accept="image/jpeg, image/jpg, image/png"
+              multiple
+              type="file"
+            />
+          </button>
+        )}
+      </div>
+      <input
+        type="file"
+        ref={uploadFieldRef}
+        onChange={_handleFileChange}
+        style={{ display: 'none' }}
+        accept="image/*"
+      />
       <div className="text-sm color-black mt-6">Detail</div>
       <div className="mt-[24px]">
         <TextField
@@ -116,7 +218,7 @@ const CardEditInstance = ({
           value={formik.values.instanceName}
           onChange={(e) => formik.setFieldValue('instanceName', e.target.value)}
         />
-        <div className="my-[24px]">
+        <div className="my-[24px] flex items-center">
           <TextField
             style={{ fontFamily: 'Mulish' }}
             id="outlined-basic"
@@ -126,6 +228,13 @@ const CardEditInstance = ({
             value={formik.values.apiUrl}
             onChange={(e) => formik.setFieldValue('apiUrl', e.target.value)}
           />
+          <div className="w-[185px] ml-6">
+            <Button
+              primary
+              label="Confirm API URL"
+              onClick={_handleConfirmApiUrl}
+            />
+          </div>
         </div>
         <TextField
           style={{ fontFamily: 'Mulish' }}
@@ -134,6 +243,7 @@ const CardEditInstance = ({
           variant="outlined"
           fullWidth
           value={formik.values.walletAddress}
+          disabled
           onChange={(e) =>
             formik.setFieldValue('walletAddress', e.target.value)
           }
@@ -153,7 +263,12 @@ const CardEditInstance = ({
         </div>
         <div className="flex">
           <div className="mr-[10px]">
-            <Button primary label="Save changes" onClick={_editInstance} />
+            <Button
+              disable={!isEdit()}
+              primary
+              label="Save changes"
+              onClick={_editInstance}
+            />
           </div>
           <Button
             label="Cancel"

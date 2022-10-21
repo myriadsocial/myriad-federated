@@ -32,11 +32,11 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
 }) => {
   const style = useStyles();
   const router = useRouter();
-  const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
+  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
-  const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
-  const [extensionInstalled, setExtensionInstalled] = React.useState(false);
+  const [showAccountList, setShowAccountList] = useState<boolean>(false);
+  const [extensionInstalled, setExtensionInstalled] = useState(false);
   const { createInstance, servers, loading } = useInstances(
     InstanceType.OWNED,
     accountId,
@@ -73,18 +73,10 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
     setAnchorEl(event.currentTarget);
   };
 
-  const toogleOpen = () => {
-    setOpen(!open);
-  };
-
-  const closeAccountList = () => {
-    setShowAccountList(false);
-  };
-
   const handleSelectedSubstrateAccount = async (
     account: InjectedAccountWithMeta,
   ) => {
-    closeAccountList();
+    setShowAccountList(false);
     setCookie(
       null,
       'session',
@@ -98,14 +90,14 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
       <InstanceHeader
         accountId={accountId}
         onLogout={handleShowSwitchAccount}
-        onOpenStepper={toogleOpen}
+        onOpenStepper={() => setOpen(!open)}
         onClickBack={() => router.push('/')}
       />
       <InstanceList servers={servers} accountId={accountId} />
       <InstanceStepperModal
         onCreateInstance={createInstance}
         open={open}
-        onClose={toogleOpen}
+        onClose={() => setOpen(!open)}
       />
       <Backdrop className={style.backdrop} open={loading}>
         <CircularProgress />
@@ -128,7 +120,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         isOpen={showAccountList && extensionInstalled}
         accounts={accounts}
         onSelect={handleSelectedSubstrateAccount}
-        onClose={closeAccountList}
+        onClose={() => setShowAccountList(false)}
       />
     </React.Fragment>
   );

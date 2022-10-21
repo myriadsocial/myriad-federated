@@ -16,6 +16,7 @@ import { ServerListProps } from 'src/interface/ServerListInterface';
 
 import { setCookie } from 'nookies';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { IcDropdownPrimary, IcNotification } from '../../../../public/icons';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 
@@ -30,6 +31,7 @@ const Header = ({ title }: { title: string }) => {
   const accountId = cookie?.session?.currentAddress ?? '';
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
+  const queryClient = useQueryClient();
 
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const listOwnerInstances: Array<ServerListProps> =
@@ -49,6 +51,8 @@ const Header = ({ title }: { title: string }) => {
   ) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
 
   const handleSwitchInstance = async (item: ServerListProps) => {
     const installed = await enablePolkadotExtension();
@@ -103,16 +107,14 @@ const Header = ({ title }: { title: string }) => {
             <div className="flex items-center">
               <Image
                 alt=""
-                src={
-                  (selectedInstance.detail?.images.logo_banner as string) ?? ''
-                }
+                src={(dataMetric?.serverImageURL as string) ?? ''}
                 className="rounded-full bg-blue-50"
                 height={24}
                 width={24}
               />
               <div className="mx-2">
                 <div className="text-sm text-black capitalize text-left">
-                  {formatAddress(selectedInstance.detail?.name as string) ?? ''}
+                  {formatAddress(dataMetric?.name as string) ?? ''}
                 </div>
               </div>
             </div>

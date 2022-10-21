@@ -21,7 +21,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { SnackbarProvider } from 'notistack';
 
-import '../../styles/globals.css';
+import '../styles/globals.css';
 import theme from '../themes/light-theme';
 
 const BlockchainProvider = dynamic(

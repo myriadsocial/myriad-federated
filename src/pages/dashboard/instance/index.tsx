@@ -4,7 +4,7 @@ import CardInstanceLeft from '../../../components/molecules/CardInstanceLeft';
 import ContentLayout from '../../../layout/ContentLayout';
 
 import { useQuery } from '@tanstack/react-query';
-import { getServersMatric } from 'src/api/GET_serversMatric';
+import { getServersMetric } from 'src/api/GET_serversMetric';
 import { useAuth } from 'src/hooks/use-auth.hook';
 import { ServerListProps } from 'src/interface/ServerListInterface';
 import type { NextPageWithLayout } from '../../_app';
@@ -20,22 +20,22 @@ const Instance: NextPageWithLayout = () => {
   const { cookie } = useAuth();
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
 
-  const { refetch: refetchingServerMatric, data: dataServerMatric } = useQuery(
-    ['/getServerMatric'],
-    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
+  const { refetch: refetchingServerMetric, data: dataServerMetric } = useQuery(
+    ['/getServerMetric'],
+    () => getServersMetric({ baseUrl: selectedInstance.apiUrl }),
     {
       enabled: false,
     },
   );
 
   useEffect(() => {
-    refetchingServerMatric();
-  }, [refetchingServerMatric]);
+    refetchingServerMetric();
+  }, [refetchingServerMetric]);
 
   return (
     <div className="h-full">
       <div className="flex">
-        <CardInstanceLeft data={dataServerMatric} />
+        <CardInstanceLeft data={dataServerMetric} />
       </div>
     </div>
   );
