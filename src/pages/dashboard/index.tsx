@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/router';
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
 import { getReports } from 'src/api/GET_Reports';
-import { getServersMatric } from 'src/api/GET_serversMatric';
+import { getServersMetric } from 'src/api/GET_serversMetric';
 import { getTopCurrencies } from 'src/api/GET_TopCurrencies';
 import { getUsersGrowth } from 'src/api/GET_UsersGrowth';
 import { DropdownFilter } from 'src/components/atoms';
@@ -86,9 +86,9 @@ const Dashboard: NextPageWithLayout = () => {
     },
   );
 
-  const { refetch: refetchingServerMatric, data: dataServerMatric } = useQuery(
-    ['/getServerMatric'],
-    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
+  const { refetch: refetchingServerMetric, data: dataServerMetric } = useQuery(
+    ['/getServerMetric'],
+    () => getServersMetric({ baseUrl: selectedInstance.apiUrl }),
     {
       enabled: false,
     },
@@ -97,13 +97,13 @@ const Dashboard: NextPageWithLayout = () => {
   useEffect(() => {
     refetchingAllUser();
     refetchingPostReported();
-    refetchingServerMatric();
+    refetchingServerMetric();
     refetchingTopCurrencies();
     refetchingUserGrowth();
   }, [
     refetchingAllUser,
     refetchingPostReported,
-    refetchingServerMatric,
+    refetchingServerMetric,
     refetchingTopCurrencies,
     refetchingUserGrowth,
     selectedInstance.id,
@@ -121,12 +121,12 @@ const Dashboard: NextPageWithLayout = () => {
           }
         />
         <DashCounter
-          totalUser={dataServerMatric?.metric?.totalUsers as number}
-          totalPost={dataServerMatric?.metric?.totalPosts.totalAll as number}
+          totalUser={dataServerMetric?.metric?.totalUsers as number}
+          totalPost={dataServerMetric?.metric?.totalPosts.totalAll as number}
           totalExperiances={
-            dataServerMatric?.metric?.totalExperiences as number
+            dataServerMetric?.metric?.totalExperiences as number
           }
-          totalTips={dataServerMatric?.metric?.totalTransactions as number}
+          totalTips={dataServerMetric?.metric?.totalTransactions as number}
         />
         <div className="grid grid-cols-4 gap-6 pb-6 h-[340px]">
           <div className="col-span-2 p-5 bg-white shadow-lg rounded-2xl h-[320px] relative">
@@ -150,10 +150,10 @@ const Dashboard: NextPageWithLayout = () => {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Post Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ShowIf condition={dataServerMatric}>
+              <ShowIf condition={dataServerMetric}>
                 <ChartDoughnat
                   height={175}
-                  data={dataServerMatric?.metric?.totalPosts}
+                  data={dataServerMetric?.metric?.totalPosts}
                 />
               </ShowIf>
             </div>
@@ -166,8 +166,8 @@ const Dashboard: NextPageWithLayout = () => {
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl">
             <div className="text-lg font-semibold">Wallet Statistics</div>
             <div className="h-full w-full flex justify-center items-center">
-              <ShowIf condition={dataServerMatric}>
-                <ChartPie data={dataServerMatric?.metric?.totalWallets} />
+              <ShowIf condition={dataServerMetric}>
+                <ChartPie data={dataServerMetric?.metric?.totalWallets} />
               </ShowIf>
             </div>
           </div>
@@ -178,17 +178,17 @@ const Dashboard: NextPageWithLayout = () => {
               Connected Social Media Account
             </div>
             <div className="w-full flex items-center justify-center">
-              <ShowIf condition={dataServerMatric}>
+              <ShowIf condition={dataServerMetric}>
                 <ChartDoughnat
                   height={380}
-                  data={dataServerMatric?.metric?.totalConnectedSocials}
+                  data={dataServerMetric?.metric?.totalConnectedSocials}
                 />
               </ShowIf>
             </div>
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Median Statistics</div>
-            <MedianStatistics item={dataServerMatric?.mendian} />
+            <MedianStatistics item={dataServerMetric?.mendian} />
           </div>
         </div>
       </div>

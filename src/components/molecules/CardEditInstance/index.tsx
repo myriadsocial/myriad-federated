@@ -6,7 +6,7 @@ import { CircularProgress, TextField } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useFormik } from 'formik';
 import { useEffect, useRef, useState } from 'react';
-import { getServersMatric } from 'src/api/GET_serversMatric';
+import { getServersMetric } from 'src/api/GET_serversMetric';
 import { patchEditInstance } from 'src/api/PATCH_EditInstance';
 import { UploadImage } from 'src/api/POST_UploadImage';
 import { useAuth } from 'src/hooks/use-auth.hook';
@@ -56,9 +56,9 @@ const CardEditInstance = ({
     },
   });
 
-  const { refetch: refetchingServerMatric } = useQuery(
-    ['/getServerMatric'],
-    () => getServersMatric({ baseUrl: selectedInstance.apiUrl }),
+  const { refetch: refetchingServerMetric } = useQuery(
+    ['/getServerMetric'],
+    () => getServersMetric({ baseUrl: selectedInstance.apiUrl }),
     {
       enabled: false,
     },
@@ -88,7 +88,7 @@ const CardEditInstance = ({
         message: 'Edit data instance success',
         variant: 'success',
       });
-      refetchingServerMatric();
+      refetchingServerMetric();
       setTimeout(() => {
         router.push('/dashboard/instance');
       }, 1500);

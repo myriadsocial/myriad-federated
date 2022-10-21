@@ -16,13 +16,13 @@ export default function EditInstance({
   accountId: string;
 }) {
   const queryClient = useQueryClient();
-  const dataMatric = queryClient.getQueryData<any>(['/getServerMatric']);
+  const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
 
   return (
     <div className="h-full">
       <div className="flex">
         <CardEditInstance
-          data={dataMatric}
+          data={dataMetric}
           accessToken={accessToken}
           accountId={accountId}
         />

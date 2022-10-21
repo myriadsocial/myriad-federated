@@ -52,7 +52,7 @@ const Header = ({ title }: { title: string }) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const dataMatric = queryClient.getQueryData<any>(['/getServerMatric']);
+  const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
 
   const handleSwitchInstance = async (item: ServerListProps) => {
     const installed = await enablePolkadotExtension();
@@ -107,14 +107,14 @@ const Header = ({ title }: { title: string }) => {
             <div className="flex items-center">
               <Image
                 alt=""
-                src={(dataMatric?.serverImageURL as string) ?? ''}
+                src={(dataMetric?.serverImageURL as string) ?? ''}
                 className="rounded-full bg-blue-50"
                 height={24}
                 width={24}
               />
               <div className="mx-2">
                 <div className="text-sm text-black capitalize text-left">
-                  {formatAddress(dataMatric?.name as string) ?? ''}
+                  {formatAddress(dataMetric?.name as string) ?? ''}
                 </div>
               </div>
             </div>
