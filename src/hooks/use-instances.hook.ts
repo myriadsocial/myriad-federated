@@ -43,7 +43,9 @@ export const useInstances = (
           let data = null;
 
           try {
-            const response = await fetch(`${server.apiUrl}/server?median=true`);
+            const response = await fetch(
+              `${server.apiUrl}/server?average=true`,
+            );
             data = await response.json();
           } catch {
             // ignore
@@ -82,7 +84,9 @@ export const useInstances = (
           let data = null;
 
           try {
-            const response = await fetch(`${server.apiUrl}/server?median=true`);
+            const response = await fetch(
+              `${server.apiUrl}/server?average=true`,
+            );
             data = await response.json();
           } catch {
             // ignore
@@ -121,7 +125,7 @@ export const useInstances = (
         async (server, signerOpened) => {
           if (signerOpened) setLoading(true);
           if (server) {
-            fetch(`${server.apiUrl}/server?median=true`)
+            fetch(`${server.apiUrl}/server?average=true`)
               .then((res) => res.json())
               .then((data) => {
                 server.detail = data;
