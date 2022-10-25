@@ -11,10 +11,7 @@ import { patchEditInstance } from 'src/api/PATCH_EditInstance';
 import { UploadImage } from 'src/api/POST_UploadImage';
 import { useAuth } from 'src/hooks/use-auth.hook';
 import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
-import {
-  ServerDetail,
-  ServerListProps,
-} from 'src/interface/ServerListInterface';
+import { ServerListProps } from 'src/interface/ServerListInterface';
 import { colors } from '../../../utils';
 import Button from '../../atoms/Button';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
@@ -27,11 +24,9 @@ interface EditInstanceInterface {
   imageUrl: string;
 }
 const CardEditInstance = ({
-  data,
   accessToken,
   accountId,
 }: {
-  data: ServerDetail;
   accessToken: string;
   accountId: string;
 }) => {
@@ -56,11 +51,18 @@ const CardEditInstance = ({
     },
   });
 
-  const { refetch: refetchingServerMetric } = useQuery(
+  const { refetch: refetchingServerMetric, data: dataMetric } = useQuery(
     ['/getServerMetric'],
     () => getServersMetric({ baseUrl: selectedInstance.apiUrl }),
     {
       enabled: false,
+      onSuccess: (data) => {
+        formik.setFieldValue('instanceName', data?.name);
+        formik.setFieldValue('apiUrl', selectedInstance.apiUrl);
+        formik.setFieldValue('walletAddress', selectedInstance.owner);
+        formik.setFieldValue('description', data?.description);
+        formik.setFieldValue('imageUrl', data?.serverImageURL);
+      },
     },
   );
 
@@ -76,7 +78,7 @@ const CardEditInstance = ({
         name: formik.values.instanceName,
         serverImageURL: formik.values.imageUrl,
         description: formik.values.description,
-        categories: data.categories,
+        categories: dataMetric.categories,
         accountId: {},
         images: {},
       },
@@ -116,11 +118,8 @@ const CardEditInstance = ({
     useMutation(UploadImage);
 
   useEffect(() => {
-    formik.setFieldValue('instanceName', data?.name);
-    formik.setFieldValue('apiUrl', selectedInstance.apiUrl);
-    formik.setFieldValue('walletAddress', selectedInstance.owner);
-    formik.setFieldValue('description', data?.description);
-    formik.setFieldValue('imageUrl', data?.serverImageURL);
+    refetchingServerMetric();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -149,9 +148,9 @@ const CardEditInstance = ({
 
   function isEdit() {
     return (
-      (data?.serverImageURL !== formik.values.imageUrl ||
-        data?.name !== formik.values.instanceName ||
-        data?.description !== formik.values.description) &&
+      (dataMetric?.serverImageURL !== formik.values.imageUrl ||
+        dataMetric?.name !== formik.values.instanceName ||
+        dataMetric?.description !== formik.values.description) &&
       !isLoading
     );
   }

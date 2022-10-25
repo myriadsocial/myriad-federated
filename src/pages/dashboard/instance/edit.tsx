@@ -1,4 +1,3 @@
-import { useQueryClient } from '@tanstack/react-query';
 import cookie from 'cookie';
 import { GetServerSidePropsContext } from 'next';
 import { ReactElement } from 'react';
@@ -15,17 +14,10 @@ export default function EditInstance({
   accessToken: string;
   accountId: string;
 }) {
-  const queryClient = useQueryClient();
-  const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
-
   return (
     <div className="h-full">
       <div className="flex">
-        <CardEditInstance
-          data={dataMetric}
-          accessToken={accessToken}
-          accountId={accountId}
-        />
+        <CardEditInstance accessToken={accessToken} accountId={accountId} />
       </div>
     </div>
   );
