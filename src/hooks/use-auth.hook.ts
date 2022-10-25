@@ -58,7 +58,7 @@ export const useAuth = () => {
       signature,
       publicAddress: toHex,
       walletType: 'polkadot{.js}',
-      networkType: 'polkadot',
+      networkType: 'myriad',
       apiURL,
       address: account.address,
     });
