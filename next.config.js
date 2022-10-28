@@ -4,7 +4,6 @@ const {
   APP_SECRET,
   NEXT_PUBLIC_APP_NAME,
   NEXT_PUBLIC_APP_AUTH_URL,
-  NEXT_PUBLIC_APP_BUILD_ID,
   NEXT_PUBLIC_MYRIAD_WEBSITE_URL,
   NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL,
   NEXT_PUBLIC_MYRIAD_RPC_URL,
@@ -44,14 +43,7 @@ const nextConfig = {
     myriadSupportMail:
       NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL ?? 'support@myriad.social',
     myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? 'ws://localhost:9944',
-  },
-  generateBuildId: async () => {
-    if (NEXT_PUBLIC_APP_BUILD_ID) {
-      return NEXT_PUBLIC_APP_BUILD_ID;
-    }
-
-    return null;
-  },
+  }
 };
 
 module.exports = nextConfig;
