@@ -19,15 +19,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**.pravatar.cc',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.googleapis.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.twimg.com',
+        hostname: '*',
       },
     ],
   },

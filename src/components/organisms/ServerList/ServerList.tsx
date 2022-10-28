@@ -165,7 +165,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
         <Container maxWidth="lg" disableGutters>
           <div className="flex flex-col pt-5 gap-5">
             <div className="mb-[60px] flex justify-between">
-              <Image alt="" src={MyriadFullBlack} objectFit="contain" />
+              <Image alt="" src={MyriadFullBlack} />
               <div className="flex">
                 <Button
                   label="Visit website"
@@ -206,7 +206,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
             </div>
             <header className="relative mb-[85px]">
               <div className="absolute z-10 right-0 -top-24">
-                <Image alt="" src={Illustration} objectFit="contain" />
+                <Image alt="" src={Illustration} />
               </div>
               <div className="max-w-[422px]">
                 <div className="text-[28px] mb-[14px] font-semibold">

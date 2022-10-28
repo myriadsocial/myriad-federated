@@ -182,7 +182,6 @@ const CardEditInstance = ({
         height={160}
         width={160}
         style={{ borderRadius: 8 }}
-        objectFit="fill"
         alt=""
       />
       <div>
