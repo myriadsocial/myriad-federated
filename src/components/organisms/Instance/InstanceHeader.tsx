@@ -30,7 +30,7 @@ export const InstanceHeader: React.FC<InstanceHeaderProps> = ({
   return (
     <React.Fragment>
       <div className="flex justify-between">
-        <Image src={MyriadFullBlack} objectFit="contain" alt="" />
+        <Image src={MyriadFullBlack} alt="" />
 
         <div className="w-[144px]">
           <Button onClick={onLogout} type="withChild">
