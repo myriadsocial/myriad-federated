@@ -32,7 +32,6 @@ const nextConfig = {
     ],
   },
   reactStrictMode: true,
-  swcMinify: false, // crash on chart.js set false until next.js v12.3.2 release
   serverRuntimeConfig: {
     appSecret: APP_SECRET ?? 'd98b4af078b46a9984829a72030976e0',
   },
@@ -43,7 +42,7 @@ const nextConfig = {
     myriadSupportMail:
       NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL ?? 'support@myriad.social',
     myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? 'ws://localhost:9944',
-  }
+  },
 };
 
 module.exports = nextConfig;
