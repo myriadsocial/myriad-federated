@@ -127,7 +127,7 @@ jobs:
               --set replicaCount=1 \
               --set autoscaling.enabled=true \
               --set autoscaling.minReplicas=1 \
-              --set autoscaling.maxReplicas=11 \
+              --set autoscaling.maxReplicas=1 \
               --set-string nodeSelector.pool=general
             kubectl rollout status deployment/myriad-federated
 
@@ -218,6 +218,6 @@ jobs:
               --set replicaCount=1 \
               --set autoscaling.enabled=true \
               --set autoscaling.minReplicas=1 \
-              --set autoscaling.maxReplicas=11 \
+              --set autoscaling.maxReplicas=1 \
               --set-string nodeSelector.pool=general
             kubectl rollout status deployment/myriad-federated
