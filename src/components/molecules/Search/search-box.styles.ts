@@ -18,6 +18,7 @@ export const useStyles = makeStyles<Theme, SearchBoxProps>((theme) =>
     input: {
       marginLeft: theme.spacing(1),
       flex: 1,
+      fontFamily: 'mulish',
     },
     iconButton: {
       padding: 10,
