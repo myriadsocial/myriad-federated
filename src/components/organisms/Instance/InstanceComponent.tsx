@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 
-import { Backdrop, CircularProgress } from '@material-ui/core';
-
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 import { useAuth } from 'src/hooks/use-auth.hook';
@@ -15,9 +13,10 @@ import { setCookie } from 'nookies';
 
 import { PolkadotAccountList } from '../../molecules/PolkadotAccountList';
 import SwitchAccount from '../../molecules/SwitchAccount';
-import { useStyles } from './Instance.styles';
+
 import { InstanceHeader } from './InstanceHeader';
 import { InstanceList } from './InstanceList';
+import { Backdrop, CircularProgress } from '@mui/material';
 
 const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
   ssr: false,
@@ -30,7 +29,6 @@ type InstanceComponentProps = {
 export const InstanceComponent: React.FC<InstanceComponentProps> = ({
   accountId,
 }) => {
-  const style = useStyles();
   const router = useRouter();
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const { enablePolkadotExtension, getPolkadotAccounts } =
@@ -99,8 +97,8 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         open={open}
         onClose={() => setOpen(!open)}
       />
-      <Backdrop className={style.backdrop} open={loading}>
-        <CircularProgress />
+      <Backdrop style={{ zIndex: 100, color: '#fff' }} open={loading}>
+        <CircularProgress style={{ color: '#7342CC' }} />
       </Backdrop>
       <SwitchAccount
         title="Account"

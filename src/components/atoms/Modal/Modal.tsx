@@ -1,16 +1,11 @@
-import { XIcon } from '@heroicons/react/solid';
-
 import React from 'react';
-
-import { IconButton, SvgIcon, Typography } from '@material-ui/core';
-import Dialog, { DialogProps } from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 
 import ShowIf from 'src/components/molecules/common/show-if.component';
 
-import { useStyles } from './Modal.styles';
+import { Dialog, DialogProps, IconButton } from '@mui/material';
 import { AllignTitle, TitleSize } from './Modal.types';
+import Image from 'next/image';
+import { IcClosePurple } from 'public/icons';
 
 export type ModalProps = DialogProps & {
   title?: string | React.ReactNode;
@@ -36,8 +31,6 @@ export const Modal: React.FC<ModalProps> = (props) => {
     ...otherProps
   } = props;
 
-  const styles = useStyles({ align, titleSize, gutter, fullScreen });
-
   const handleClose = () => {
     onClose();
   };
@@ -47,43 +40,37 @@ export const Modal: React.FC<ModalProps> = (props) => {
       onClose={handleClose}
       {...otherProps}
       fullScreen={fullScreen}
-      className={styles.root}
-      classes={{ paper: styles.paper }}
       disableEnforceFocus
+      PaperProps={{ style: { borderRadius: 10 } }}
     >
       <ShowIf condition={!fullScreen}>
-        <DialogTitle
-          disableTypography
-          className={[styles.title, className].join(' ')}
-        >
-          <Typography variant={titleSize === 'small' ? 'h5' : 'h4'}>
-            {title}
-          </Typography>
+        <div className="items-center">
+          <div className="p-7 text-xl font-bold">{title}</div>
           {subtitle &&
           (typeof subtitle === 'string' || subtitle instanceof String) ? (
-            <Typography
-              variant="subtitle1"
-              display="block"
-              className={styles.subtitle}
-            >
-              {subtitle}
-            </Typography>
+            <div className="text-base">{subtitle}</div>
           ) : (
             <>{subtitle}</>
           )}
           <IconButton
-            color="secondary"
             aria-label="close"
             size="small"
-            className={styles.close}
+            style={{
+              position: 'absolute',
+              right: 30,
+              top: 30,
+              fill: 'currentcolor',
+              width: 30,
+              height: 30,
+            }}
             onClick={onClose}
           >
-            <SvgIcon component={XIcon} color="primary" fontSize="medium" />
+            <Image src={IcClosePurple} height={20} width={20} alt="" />
           </IconButton>
-        </DialogTitle>
+        </div>
       </ShowIf>
 
-      <DialogContent className={styles.content}> {children} </DialogContent>
+      <div className="px-4 py-2"> {children} </div>
     </Dialog>
   );
 };

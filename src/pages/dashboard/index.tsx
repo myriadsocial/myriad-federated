@@ -22,6 +22,7 @@ import ChartPie from 'src/components/molecules/ChartPie';
 import ChartTopCoint from 'src/components/molecules/ChartTopCoint';
 import ShowIf from 'src/components/molecules/common/show-if.component';
 import MedianStatistics from 'src/components/molecules/MedianStatistics';
+import { useEnqueueSnackbar } from 'src/components/molecules/Snackbar/useEnqueueSnackbar.hook';
 import CardRecentReported from 'src/components/organisms/CardRecentReported';
 import DashCounter from 'src/components/organisms/DashCounter';
 import { Arrays } from 'src/constans/array';
@@ -46,6 +47,7 @@ const Dashboard: NextPageWithLayout = () => {
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const [sortingDate, setSortingDate] = useState<string>('DESC');
   const pageNumber = 1;
+  const enqueueSnackbar = useEnqueueSnackbar();
 
   const filterPost = JSON.stringify({
     where: { status: 'pending', referenceType: { inq: ['post', 'comment'] } },

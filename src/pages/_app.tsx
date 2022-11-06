@@ -1,9 +1,9 @@
 import {
   dehydrate,
   Hydrate,
+  QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryCache,
 } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -11,18 +11,14 @@ import { Fragment, ReactElement, ReactNode, useEffect } from 'react';
 import { CookiesProvider } from 'react-cookie';
 
 import { NextPage } from 'next';
-import App from 'next/app';
 import type { AppContext, AppProps } from 'next/app';
+import App from 'next/app';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-
-import { ThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { SnackbarProvider } from 'notistack';
 
 import '../styles/globals.css';
-import theme from '../themes/light-theme';
 
 const BlockchainProvider = dynamic(
   () =>
@@ -71,22 +67,19 @@ function MyriadApp({ Component, pageProps }: AppPropsWithLayout) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <ThemeProvider theme={theme}>
-        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-        <CssBaseline />
-        <SnackbarProvider maxSnack={4}>
-          <BlockchainProvider>
-            <CookiesProvider>
-              <QueryClientProvider client={queryClient}>
-                <Hydrate state={dehydratedState}>
-                  <ReactQueryDevtools initialIsOpen={false} />
-                  {getLayout(<Component {...pageProps} />)}
-                </Hydrate>
-              </QueryClientProvider>
-            </CookiesProvider>
-          </BlockchainProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
+
+      <SnackbarProvider maxSnack={4}>
+        <BlockchainProvider>
+          <CookiesProvider>
+            <QueryClientProvider client={queryClient}>
+              <Hydrate state={dehydratedState}>
+                <ReactQueryDevtools initialIsOpen={false} />
+                {getLayout(<Component {...pageProps} />)}
+              </Hydrate>
+            </QueryClientProvider>
+          </CookiesProvider>
+        </BlockchainProvider>
+      </SnackbarProvider>
     </Fragment>
   );
 }

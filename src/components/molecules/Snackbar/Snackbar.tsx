@@ -15,12 +15,9 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { SnackbarContent, useSnackbar } from 'notistack';
 
 import { SnackbarProps } from './Snackbar.interface';
-import { useStyles } from './Snackbar.style';
 
 export const Snackbar = React.forwardRef<HTMLDivElement, SnackbarProps>(
   (props, ref) => {
-    const style = useStyles(props);
-
     const { closeSnackbar } = useSnackbar();
     const dismiss = () => closeSnackbar(props.key);
 
@@ -68,13 +65,17 @@ export const Snackbar = React.forwardRef<HTMLDivElement, SnackbarProps>(
               viewBox="0 0 20 20"
             />
             <div className="text-sm">{props.message}</div>
-            <div className={style.icons}>
+            <div>
               <IconButton aria-label="close" onClick={dismiss}>
                 <SvgIcon
                   component={XIcon}
                   viewBox="0 0 20 20"
-                  classes={{ root: style.iconClose }}
                   color="inherit"
+                  style={{
+                    marginRight: '5px',
+                    marginLeft: '5px',
+                    fill: '#66788A',
+                  }}
                 />
               </IconButton>
             </div>

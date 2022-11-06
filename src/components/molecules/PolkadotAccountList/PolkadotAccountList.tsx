@@ -2,21 +2,13 @@ import React from 'react';
 
 import dynamic from 'next/dynamic';
 
-import { Typography } from '@material-ui/core';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import YouTubeIcon from '@material-ui/icons/YouTube';
-
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
+import { Button, ListItemButton } from '@mui/material';
 import { Modal } from '../../atoms/Modal';
 import { AllignTitle } from '../../atoms/Modal/Modal.types';
 import { PolkadotLink } from '../common/PolkadotLink.component';
 import ShowIf from '../common/show-if.component';
-import { useStyles } from './PolkadotAccountList.styles';
 
 type PolkadotAccountListProps = {
   isOpen: boolean;
@@ -35,8 +27,6 @@ export const PolkadotAccountList: React.FC<PolkadotAccountListProps> = ({
   title,
   align,
 }) => {
-  const styles = useStyles();
-
   const IdenticonWithoutSSR = dynamic(
     () => import('@polkadot/react-identicon'),
     {
@@ -51,54 +41,59 @@ export const PolkadotAccountList: React.FC<PolkadotAccountListProps> = ({
       onClose={onClose}
       align={align ?? 'center'}
     >
-      <div className={styles.wrapper}>
+      <div className="w-[380px]">
         <ShowIf condition={accounts.length == 0}>
-          <Typography className={styles.help}>
+          <div className="p-1 text-center max-w-[390px] ml-auto mr-auto text-base font-semibold">
             Please open your&nbsp;
             <PolkadotLink />
             &nbsp;extension and create new account or import existing.Then
             reload this page.
-          </Typography>
+          </div>
 
-          <div className={styles.buttonGroup}>
+          <div className="w-full py-2 flex flex-wrap justify-between">
             <Button
               variant="contained"
-              fullWidth
               size="medium"
-              href="https://polkadot.js.org/extension"
-              startIcon={<YouTubeIcon />}
+              fullWidth
+              style={{
+                padding: 8,
+                borderRadius: 20,
+                fontFamily: 'mulish',
+                textTransform: 'capitalize',
+                backgroundColor: '#BCBCBC',
+                fontSize: 14,
+              }}
             >
-              Watch Tutorial Video
+              <div>Watch Tutorial Video</div>
             </Button>
           </div>
         </ShowIf>
         <ShowIf condition={accounts.length > 0}>
-          <List className={styles.list}>
+          <div className="mb-4">
             {accounts.map((account) => {
               return (
-                <ListItem
-                  disableGutters
+                <button
                   onClick={() => onSelect(account)}
                   key={account.address}
-                  className={styles.list}
-                  button
+                  className="hover:bg-selected-yellow flex w-[360px] p-2 overflow-hidden items-center"
                 >
-                  <ListItemAvatar>
-                    <IdenticonWithoutSSR
-                      value={account.address}
-                      size={48}
-                      theme="polkadot"
-                    />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={account.meta.name}
-                    secondary={account.address}
-                    className={styles.accountDetail}
+                  <IdenticonWithoutSSR
+                    value={account.address}
+                    size={48}
+                    theme="polkadot"
                   />
-                </ListItem>
+                  <div className="ml-2">
+                    <div className="text-sm text-left text-[#0A0A0A]">
+                      {account.meta.name}
+                    </div>
+                    <div className="max-w-sm text-left text-xs text-[#616161]">
+                      {account.address}
+                    </div>
+                  </div>
+                </button>
               );
             })}
-          </List>
+          </div>
         </ShowIf>
       </div>
     </Modal>

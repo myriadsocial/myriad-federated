@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -23,15 +23,15 @@ import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
 });
-
 const Header = ({ title }: { title: string }) => {
+  const queryClient = useQueryClient();
+  const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
   const enqueueSnackbar = useEnqueueSnackbar();
   const router = useRouter();
   const { cookie, switchInstance } = useAuth();
   const accountId = cookie?.session?.currentAddress ?? '';
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
-  const queryClient = useQueryClient();
 
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const listOwnerInstances: Array<ServerListProps> =
@@ -51,8 +51,6 @@ const Header = ({ title }: { title: string }) => {
   ) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
 
   const handleSwitchInstance = async (item: ServerListProps) => {
     const installed = await enablePolkadotExtension();

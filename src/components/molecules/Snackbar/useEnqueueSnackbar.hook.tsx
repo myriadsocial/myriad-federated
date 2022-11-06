@@ -1,5 +1,3 @@
-import { useMediaQuery, useTheme } from '@material-ui/core';
-
 import { useSnackbar as useDefaultSnackbar } from 'notistack';
 
 import { Snackbar } from './Snackbar';
@@ -7,8 +5,6 @@ import { SnackbarProps } from './Snackbar.interface';
 
 export const useEnqueueSnackbar = () => {
   const { enqueueSnackbar } = useDefaultSnackbar();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
 
   const pushSnackbar = (
     payload: Omit<SnackbarProps, 'key'> & { id?: string | number },
@@ -19,7 +15,7 @@ export const useEnqueueSnackbar = () => {
       variant,
       preventDuplicate: true,
       anchorOrigin: {
-        vertical: isMobile ? 'bottom' : 'top',
+        vertical: 'top',
         horizontal: 'right',
       },
       content: (key) => {
