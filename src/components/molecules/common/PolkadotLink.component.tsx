@@ -1,6 +1,5 @@
+import { Link } from '@mui/material';
 import React from 'react';
-
-import { Link } from '@material-ui/core';
 
 export const PolkadotLink: React.FC = () => {
   return (

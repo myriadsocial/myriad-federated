@@ -8,8 +8,6 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-import { Container, SvgIcon } from '@material-ui/core';
-
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 import { SearchBoxContainer } from 'src/components/molecules/Search/SearchBoxContainer';
@@ -29,6 +27,7 @@ import CardInstance from '../../molecules/CardInstance';
 import ShowIf from '../../molecules/common/show-if.component';
 import SwitchAccount from '../../molecules/SwitchAccount';
 import { ShimerComponent } from './Shimer';
+import { Container, SvgIcon } from '@mui/material';
 
 const PolkadotAccountList = dynamic(
   () =>

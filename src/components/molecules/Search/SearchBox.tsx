@@ -2,18 +2,13 @@ import React, { useState } from 'react';
 
 import Image from 'next/image';
 
-import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
-import Paper from '@material-ui/core/Paper';
-
 import { debounce } from 'lodash';
 import { Magnifier } from 'public/icons';
 
-import { SearchBoxColor, SearchBoxProps, useStyles } from '.';
+import { IconButton, InputBase } from '@mui/material';
+import { SearchBoxProps } from './SearchBox.interfaces';
 
 const SearchBox: React.FC<SearchBoxProps> = ({
-  color = SearchBoxColor.PRIMARY,
   ariaLabel = 'search-box',
   placeholder = 'Search',
   outlined = false,
@@ -22,8 +17,6 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   hidden = false,
   ...props
 }) => {
-  const classes = useStyles({ outlined, hidden });
-
   const [input, setInput] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,30 +39,20 @@ const SearchBox: React.FC<SearchBoxProps> = ({
   }, 500);
 
   return (
-    <Grid
-      container
-      direction={iconPosition === 'end' ? 'row-reverse' : 'row'}
-      className={classes.root}
-      component={Paper}
-      elevation={iconPosition === 'end' ? 0 : 1}
-    >
-      <IconButton
-        className={classes.iconButton}
-        aria-label="search"
-        onClick={submitClickSearch}
-      >
+    <div className="py-2 px-2 bg-white rounded-[10px] shadow-md items-center flex">
+      <IconButton aria-label="search" onClick={submitClickSearch}>
         <Image src={Magnifier} alt="" height={24} width={24} />
       </IconButton>
       <InputBase
         onKeyUp={submitSearch}
-        className={classes.input}
         value={input}
         onChange={handleChange}
         placeholder={placeholder}
         inputProps={{ 'aria-label': ariaLabel }}
+        style={{ marginLeft: 8, fontFamily: 'mulish' }}
         {...props}
       />
-    </Grid>
+    </div>
   );
 };
 
