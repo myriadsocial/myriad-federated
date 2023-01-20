@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 
 import Image from 'next/image';
 
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 
 import Button from 'src/components/atoms/Button';
 import ModalComponent from 'src/components/molecules/Modal';
 
-import { IcOpenUrl } from 'public/icons';
+import { IcMyriad, IcOpenUrl } from 'public/icons';
+import { NumberFormatCustom } from 'src/helpers/formatNumber';
 
 type InstanceStepperModalProps = {
   onCreateInstance: (apiURL: string, callback?: () => void) => void;
@@ -23,6 +24,8 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   const [isStepOne, setIsStepOne] = useState<boolean>(true);
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
+  const [amount, setAmount] = useState<number>(0);
+  const [errorAmount, setErrorAmount] = useState<boolean>(false);
 
   const handleClick = async () => {
     if (isStepOne) return setIsStepOne(false);
@@ -35,6 +38,8 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
     setIsStepOne(true);
     setError(false);
     setValue('');
+    setAmount(0);
+    setErrorAmount(false);
   };
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +50,26 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
     setError(!isValid);
   };
 
+  const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    const isValid = isValidAmount(newValue);
+
+    setAmount(Number(newValue));
+    setErrorAmount(!isValid);
+  };
+
   const isValidURL = (url: string) => {
     try {
       return Boolean(new URL(url));
     } catch {
+      return false;
+    }
+  };
+
+  const isValidAmount = (amount: string) => {
+    if (Number(amount) >= 50000) {
+      return true;
+    } else {
       return false;
     }
   };
@@ -77,28 +98,69 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
                 can also access the deployment guide on the settings page.
               </div>
             </div>
-            <div className="flex justify-center">
+            <div>
               <a
                 href={`https://app.testnet.myriad.social/post/`}
                 target="_blank"
                 rel="noreferrer"
+                className="flex justify-center"
               >
-                <button className="w-[20px]">
-                  <Image src={IcOpenUrl} height={20} width={20} alt="" />
-                </button>
+                <Image src={IcOpenUrl} height={20} width={20} alt="" />
+
+                <div className="ml-2 text-base text-primary font-bold">
+                  View deployment guide
+                </div>
               </a>
-              <div className="ml-2 text-base text-primary font-bold">
-                View deployment guide
-              </div>
             </div>
           </>
         ) : (
           <div className="mt-2">
             <div className="text-sm text-darkGray text-justify">
-              To register your instance, you must enter the API URL of the
-              deployed server. After signing the contract on Polkadot.js, your
-              instance will be listed in Myriad app and published on Myriad
-              Federation site.
+              Before proceeding with the registration of the federated social
+              media platform to the official list, please be aware of the
+              following requirements:
+              <ol className="list-decimal pl-4 my-4">
+                <li>
+                  You will need to provide the API URL of the deployed server.
+                </li>
+                <li>
+                  You will need to stake in a minimum of $MYRIA 50,000 tokens.
+                </li>
+                <li>
+                  You can partially unstake your fund, but you should keep at
+                  least $MYRIA 50,000 staked to keep your instance registered.
+                </li>
+                <li>
+                  There is 24h lock period before your $MYRIA can be withdrawn
+                  if you decide to de-register your instance from Myriad.
+                </li>
+              </ol>
+              You are acknowledging and agreeing to these requirements by
+              proceeding.
+            </div>
+            <div className="my-[24px]">
+              <TextField
+                id="outlined-basic"
+                label="Amount"
+                variant="outlined"
+                value={amount}
+                onChange={handleChangeAmount}
+                error={errorAmount}
+                helperText={
+                  errorAmount
+                    ? 'Input must be greater than or equal to 50,000 MYRIA'
+                    : ''
+                }
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Image src={IcMyriad} height={20} width={20} alt="" />
+                    </InputAdornment>
+                  ),
+                  inputComponent: NumberFormatCustom as any,
+                }}
+              />
             </div>
             <div className="my-[24px]">
               <TextField
@@ -120,6 +182,11 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
         label={isStepOne ? 'Continue' : 'Publish Instance'}
         primary
         onClick={handleClick}
+        disable={
+          isStepOne
+            ? false
+            : amount === 0 || value === '' || error || errorAmount
+        }
       />
     </ModalComponent>
   );
