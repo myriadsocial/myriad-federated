@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from '@heroicons/react/outline';
 import { NativeSelect } from '@mui/material';
 
 interface DropdownItemInterface {
