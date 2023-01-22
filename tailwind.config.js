@@ -17,6 +17,7 @@ module.exports = {
         darkPrimary: '#452680',
         darkGray: '#404040',
         softGray: '#757575',
+        softGray2: '#E0E0E0',
       },
     },
   },

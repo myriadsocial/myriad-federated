@@ -8,6 +8,7 @@ interface ButtonOutlineInterface {
   onClick: any;
   label?: string | ReactNode;
   primary?: boolean;
+  error?: boolean;
   isFullWidth?: boolean;
   disable?: boolean;
   type?: string;
@@ -17,6 +18,7 @@ interface ButtonOutlineInterface {
 const Button = ({
   label,
   primary,
+  error,
   onClick,
   isFullWidth,
   disable,
@@ -76,6 +78,27 @@ const Button = ({
           paddingLeft: 20,
           height: 40,
           backgroundColor: disable ? colors.backgroundGray : colors.primary,
+          borderRadius: 20,
+          color: disable ? colors.textGray : 'white',
+          textTransform: 'capitalize',
+          fontFamily: 'mulish',
+        }}
+        fullWidth={isFullWidth}
+        {...props}
+      >
+        {label}
+      </ButtonMui>
+    );
+  }
+  if (error) {
+    return (
+      <ButtonMui
+        onClick={disable ? undefined : onClick}
+        style={{
+          paddingRight: 20,
+          paddingLeft: 20,
+          height: 40,
+          backgroundColor: disable ? colors.backgroundGray : colors.error,
           borderRadius: 20,
           color: disable ? colors.textGray : 'white',
           textTransform: 'capitalize',
