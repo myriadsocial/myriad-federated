@@ -106,15 +106,17 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   return (
     <React.Fragment>
       <div className="mt-2">
-        <DropdownFilter
-          label="Instance Status :"
-          data={Arrays.dataFilterInstance ?? []}
-          value={''}
-          onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
-            // setSortingDate(event.target.value)
-            null
-          }
-        />
+        <div className="mb-2">
+          <DropdownFilter
+            label="Instance Status :"
+            data={Arrays.dataFilterInstance ?? []}
+            value={''}
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+              // setSortingDate(event.target.value)
+              null
+            }
+          />
+        </div>
         {servers.map((server) => {
           return (
             <CardInstance
