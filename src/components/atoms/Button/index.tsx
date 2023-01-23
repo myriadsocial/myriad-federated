@@ -13,6 +13,8 @@ interface ButtonOutlineInterface {
   disable?: boolean;
   type?: string;
   children?: ReactNode;
+  radius?: number | string;
+  customStyle?: any;
 }
 
 const Button = ({
@@ -24,6 +26,8 @@ const Button = ({
   disable,
   type,
   children,
+  radius,
+  customStyle,
   ...props
 }: ButtonOutlineInterface) => {
   if (type === 'text') {
@@ -38,9 +42,10 @@ const Button = ({
           paddingLeft: 20,
           paddingRight: 20,
           height: 40,
-          borderRadius: 20,
+          borderRadius: radius ?? 20,
           fontFamily: 'mulish',
           color: 'black',
+          ...customStyle,
         }}
       >
         {label}
@@ -63,6 +68,7 @@ const Button = ({
           paddingRight: 10,
           paddingLeft: 10,
           fontFamily: 'mulish',
+          ...customStyle,
         }}
       >
         {children}
@@ -78,10 +84,11 @@ const Button = ({
           paddingLeft: 20,
           height: 40,
           backgroundColor: disable ? colors.backgroundGray : colors.primary,
-          borderRadius: 20,
+          borderRadius: radius ?? 20,
           color: disable ? colors.textGray : 'white',
           textTransform: 'capitalize',
           fontFamily: 'mulish',
+          ...customStyle,
         }}
         fullWidth={isFullWidth}
         {...props}
@@ -99,10 +106,11 @@ const Button = ({
           paddingLeft: 20,
           height: 40,
           backgroundColor: disable ? colors.backgroundGray : colors.error,
-          borderRadius: 20,
+          borderRadius: radius ?? 20,
           color: disable ? colors.textGray : 'white',
           textTransform: 'capitalize',
           fontFamily: 'mulish',
+          ...customStyle,
         }}
         fullWidth={isFullWidth}
         {...props}
@@ -120,11 +128,12 @@ const Button = ({
         paddingLeft: 20,
         paddingRight: 20,
         backgroundColor: disable ? '#EDEDED' : 'white',
-        borderRadius: 20,
+        borderRadius: radius ?? 20,
         color: disable ? '#C2C2C2' : 'black',
         borderColor: disable ? '#C2C2C2' : '#FFD24D',
         textTransform: 'capitalize',
         fontFamily: 'mulish',
+        ...customStyle,
       }}
       fullWidth={isFullWidth}
       {...props}
