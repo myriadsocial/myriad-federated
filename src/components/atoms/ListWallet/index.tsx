@@ -5,13 +5,16 @@ interface ListSwitchAccount {
   label: string | undefined;
   network?: string | undefined;
   image: string;
-  amount: string;
+  amount?: string;
+  classes?: string;
 }
 const ListWallet = (props: ListSwitchAccount) => {
-  const { label, image, network, amount } = props;
+  const { label, image, network, amount, classes } = props;
 
   return (
-    <div className="flex justify-between items-center gap-x-2 pb-1">
+    <div
+      className={`flex justify-between items-center gap-x-2 ${classes ?? ''}`}
+    >
       <div className="flex items-center gap-x-1">
         <Image
           src={image}
@@ -19,17 +22,19 @@ const ListWallet = (props: ListSwitchAccount) => {
           height={network ? 35 : 18}
           width={network ? 35 : 18}
         />
-        <div className="text-[14px] text-black font-semibold">
+        <div className="text-[14px] text-black font-semibold leading-4">
           <div>{label}</div>
           {network && (
-            <div className="text-sm text-softGray capitalize">
+            <div className="text-xs text-softGray3 capitalize font-medium">
               {network} network
             </div>
           )}
         </div>
       </div>
 
-      <div className="text-[14px] text-black font-semibold">{amount}</div>
+      {amount && (
+        <div className="text-[14px] text-black font-semibold">{amount}</div>
+      )}
     </div>
   );
 };
