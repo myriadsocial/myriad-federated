@@ -81,12 +81,12 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
       onClose={handleClose}
       title={'Create Instance'}
     >
-      <div className="min-h-[200px] mb-[100px]">
+      <div className="min-h-[200px] ">
         <div className="mb-2">
           <div className="text-sm">Step {isStepOne ? 1 : 2} of 2</div>
         </div>
         <div className="text-2xl font-semibold">
-          {isStepOne ? 'Deploy the server' : ' Register Instance'}
+          {isStepOne ? 'Deploy the server' : 'Registration Prerequisite'}
         </div>
         {isStepOne ? (
           <>
@@ -98,7 +98,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
                 can also access the deployment guide on the settings page.
               </div>
             </div>
-            <div>
+            <div className="pb-20">
               <a
                 href={`https://app.testnet.myriad.social/post/`}
                 target="_blank"
@@ -116,27 +116,24 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
         ) : (
           <div className="mt-2">
             <div className="text-sm text-darkGray text-justify">
-              Before proceeding with the registration of the federated social
-              media platform to the official list, please be aware of the
-              following requirements:
+              <p>
+                Before officially listing your Myriad instance in the Myriad
+                Federation list, please be aware of the following prerequisites.
+              </p>
+              <p className="pt-4">You will need:</p>
               <ol className="list-decimal pl-4 my-4">
+                <li>To provide the API URL of the deployed server.</li>
                 <li>
-                  You will need to provide the API URL of the deployed server.
-                </li>
-                <li>
-                  You will need to stake in a minimum of $MYRIA 50,000 tokens.
-                </li>
-                <li>
-                  You can partially unstake your fund, but you should keep at
-                  least $MYRIA 50,000 staked to keep your instance registered.
-                </li>
-                <li>
-                  There is 24h lock period before your $MYRIA can be withdrawn
-                  if you decide to de-register your instance from Myriad.
+                  To stake a minimum of 50,000 $MYRIA tokens (you can of course
+                  stake a larger amount)
                 </li>
               </ol>
-              You are acknowledging and agreeing to these requirements by
-              proceeding.
+              <p className="pb-4">
+                Unstaking all your $MYRIA tokens will de-register your instance.
+                The minimum 50,000 $MYRIA necessary to keep your instance
+                registered will be returned after a lock period of 24h. Any
+                exceeding balance can be unstaked with no lock period.
+              </p>
             </div>
             <div className="my-[24px]">
               <TextField

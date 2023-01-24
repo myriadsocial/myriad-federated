@@ -75,15 +75,6 @@ const SwitchAccount = (props: SwitchAccountProps) => {
 
         <div className="flex mt-4 gap-2 justify-between">
           <div className="text-sm font-semibold">My Balance</div>
-          <a
-            href={`https://app.testnet.myriad.social/post/`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex cursor-pointer items-center"
-          >
-            <Image src={IcOpenUrl} height={18} width={18} alt="" />
-            <div className="ml-1 text-xs text-primary">Buy MYRIA</div>
-          </a>
         </div>
 
         <div className="flex mt-4 gap-2 ">
@@ -92,6 +83,27 @@ const SwitchAccount = (props: SwitchAccountProps) => {
             {currentBalance ?? '123,456.789'} MYRIA
           </div>
         </div>
+        <div className="my-4 flex flex-col gap-y-1">
+          <a
+            href={`https://app.testnet.myriad.social/post/`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex cursor-pointer items-center"
+          >
+            <Image src={IcOpenUrl} height={18} width={18} alt="" />
+            <div className="ml-1 text-xs text-primary">Buy $MYRIA</div>
+          </a>
+          <a
+            href={`https://app.testnet.myriad.social/post/`}
+            target="_blank"
+            rel="noreferrer"
+            className="flex cursor-pointer items-center"
+          >
+            <Image src={IcOpenUrl} height={18} width={18} alt="" />
+            <div className="ml-1 text-xs text-primary">Bridge $MYRIA</div>
+          </a>
+        </div>
+
         <div className="flex mt-4 gap-2 justify-between">
           <div className="text-sm font-semibold">Staked Balance</div>
         </div>
