@@ -47,6 +47,13 @@ export const UnclaimReward = () => {
         title={'Staking Rewards'}
       >
         <div className="min-h-[200px] mt-6">
+          <div className="text-xs  text-darkGray mb-4">
+            You might have unclaimed rewards in another network. Switch your
+            network to view it.
+          </div>
+          <div className="text-xs  text-darkGray mb-5">
+            All the reward is subject to a 10% claiming fee.
+          </div>
           <div className="flex items-center text-[14px] text-softGray mb-5">
             <div>Network : </div>
             <SwitchNetwork handleSelect={() => null} />
@@ -67,14 +74,7 @@ export const UnclaimReward = () => {
               classes="pb-3"
             />
           </div>
-          <div className="mb-1"></div>
-          <div className="text-xs  text-darkGray mb-4">
-            You might have unclaimed rewards in another network. Switch your
-            network to view it.
-          </div>
-          <div className="text-xs  text-darkGray mb-5">
-            All the reward is subject to a 10% claiming fee.
-          </div>
+
           <Button
             onClick={handleOpenModal}
             label={'Claim Rewards'}
