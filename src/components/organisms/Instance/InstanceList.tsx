@@ -16,6 +16,7 @@ import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.
 import addressFormatter from 'src/utils/addressFormatter';
 import { DropdownFilter } from 'src/components/atoms';
 import { Arrays } from 'src/constans/array';
+import { numberFormatter } from 'src/utils/numberFormatter';
 
 const PolkadotAccountList = dynamic(
   () =>
@@ -130,6 +131,13 @@ export const InstanceList: React.FC<InstanceListProps> = ({
               serverDescription={`Server Id: ${server.id}`}
               image={server?.detail?.serverImageURL ?? ''}
               type="instance"
+              post={numberFormatter(
+                server?.detail?.metric?.totalPosts?.totalAll ?? 0,
+              )}
+              users={numberFormatter(server?.detail?.metric?.totalUsers ?? 0)}
+              experience={numberFormatter(
+                server?.detail?.metric?.totalExperiences ?? 0,
+              )}
             />
           );
         })}
