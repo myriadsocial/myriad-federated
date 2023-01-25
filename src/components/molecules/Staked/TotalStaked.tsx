@@ -9,10 +9,12 @@ import ModalComponent from '../Modal';
 
 export const TotalStaked = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [modalType, setModalType] = useState<string>('');
   const [amount, setAmount] = useState<number>(0);
   const [errorAmount, setErrorAmount] = useState<boolean>(false);
 
-  const handleOpenModal = () => {
+  const handleOpenModal = (type: string) => {
+    setModalType(type);
     setOpenModal(!openModal);
   };
 
@@ -47,9 +49,13 @@ export const TotalStaked = () => {
             </div>
           </div>
           <div className="flex gap-x-2">
-            <Button onClick={null} label={`Unstake`} isFullWidth />
             <Button
-              onClick={handleOpenModal}
+              onClick={() => handleOpenModal('Unstake')}
+              label={`Unstake`}
+              isFullWidth
+            />
+            <Button
+              onClick={() => handleOpenModal('Stake')}
               label={'Stake'}
               primary
               isFullWidth
@@ -60,8 +66,8 @@ export const TotalStaked = () => {
       <ModalComponent
         type="small"
         open={openModal}
-        onClose={handleOpenModal}
-        title={'Stake'}
+        onClose={() => handleOpenModal(modalType)}
+        title={`${modalType}`}
       >
         <div className="min-h-[200px] mt-6">
           <div className="font-semibold mb-4">
@@ -113,8 +119,18 @@ export const TotalStaked = () => {
             <div>10.000.000 MYRIA</div>
           </div>
           <div className="text-xs text-error mt-1">
-            Insufficient balance, add $MYRIA or input acceptable amounts.
+            {modalType === 'Stake'
+              ? 'Insufficient balance, add $MYRIA or input acceptable amounts.'
+              : 'Inset withdrawal amount correctly'}
           </div>
+          {modalType === 'Unstake' && (
+            <div className="text-xs text-black mt-1">
+              Your <span className="text-primary">50,000</span> MYRIA will not
+              be eligible to unstake because it is used to list your instance in
+              the official list. If you want to unstake all your funds, choose
+              De-Register.
+            </div>
+          )}
           <div className="mb-5 mt-3 flex flex-col gap-y-1">
             <a
               href={`https://app.testnet.myriad.social/post/`}
@@ -136,8 +152,8 @@ export const TotalStaked = () => {
             </a>
           </div>
           <Button
-            onClick={handleOpenModal}
-            label={'Stake'}
+            onClick={() => handleOpenModal(modalType)}
+            label={`${modalType}`}
             primary
             isFullWidth
           />
