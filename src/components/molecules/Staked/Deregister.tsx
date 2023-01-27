@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Button from 'src/components/atoms/Button';
+import Gasfee from 'src/components/atoms/Gasfee';
 import CardStaked from '../../atoms/CardStaked';
 import ModalComponent from '../Modal';
 
@@ -57,6 +58,9 @@ export const Deregister = () => {
             </ol>
             Make sure you have enough $MYRIA to pay for the gas fee. Please
             consider this carefully before deciding to unstake your $MYRIA.
+          </div>
+          <div className="mb-5">
+            <Gasfee amount="0.0001" />
           </div>
           <Button
             onClick={handleOpenModal}

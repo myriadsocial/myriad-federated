@@ -9,6 +9,7 @@ import ModalComponent from 'src/components/molecules/Modal';
 
 import { IcMyriad, IcOpenUrl } from 'public/icons';
 import { NumberFormatCustom } from 'src/helpers/formatNumber';
+import Gasfee from 'src/components/atoms/Gasfee';
 
 type InstanceStepperModalProps = {
   onCreateInstance: (apiURL: string, callback?: () => void) => void;
@@ -170,6 +171,9 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
                 helperText={error ? 'Invalid URL' : ''}
                 fullWidth
               />
+            </div>
+            <div className="mb-5">
+              <Gasfee amount="0.0001" />
             </div>
           </div>
         )}
