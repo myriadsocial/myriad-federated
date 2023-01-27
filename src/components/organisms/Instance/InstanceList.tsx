@@ -13,6 +13,10 @@ import { ServerListProps } from 'src/interface/ServerListInterface';
 import { setCookie } from 'nookies';
 
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
+import addressFormatter from 'src/utils/addressFormatter';
+import { DropdownFilter } from 'src/components/atoms';
+import { Arrays } from 'src/constans/array';
+import { numberFormatter } from 'src/utils/numberFormatter';
 
 const PolkadotAccountList = dynamic(
   () =>
@@ -103,15 +107,37 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   return (
     <React.Fragment>
       <div className="mt-2">
+        <div className="mb-2">
+          <DropdownFilter
+            label="Instance Status :"
+            data={Arrays.dataFilterInstance ?? []}
+            value={''}
+            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+              // setSortingDate(event.target.value)
+              null
+            }
+          />
+        </div>
         {servers.map((server) => {
           return (
             <CardInstance
               key={server.id}
-              onClick={handleSignIn(server)}
+              // onClick={handleSignIn(server)}
               serverName={server?.detail?.name ?? 'Unknown Instance'}
-              serverDetail={`by ${accountId}`}
-              serverDescription={`Instance Id: ${server.id}`}
+              serverDetail={`by ${addressFormatter({
+                text: accountId,
+                length: 4,
+              })}`}
+              serverDescription={`Server Id: ${server.id}`}
               image={server?.detail?.serverImageURL ?? ''}
+              type="instance"
+              post={numberFormatter(
+                server?.detail?.metric?.totalPosts?.totalAll ?? 0,
+              )}
+              users={numberFormatter(server?.detail?.metric?.totalUsers ?? 0)}
+              experience={numberFormatter(
+                server?.detail?.metric?.totalExperiences ?? 0,
+              )}
             />
           );
         })}

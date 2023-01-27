@@ -65,4 +65,14 @@ export const Arrays = {
       title: 'New user',
     },
   ],
+  dataFilterInstance: [
+    {
+      value: 'registered',
+      title: 'Registered',
+    },
+    {
+      value: 'deregistered',
+      title: 'Deregistered',
+    },
+  ],
 };

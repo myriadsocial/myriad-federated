@@ -5,4 +5,5 @@ export const colors = {
   textGray: '#9E9E9E',
   textDarkGray: '#404040',
   backgroundGray: '#EDEDED',
+  error: '#FE4747',
 };

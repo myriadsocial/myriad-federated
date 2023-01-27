@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 
 import Image from 'next/image';
 
-import { TextField } from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 
 import Button from 'src/components/atoms/Button';
 import ModalComponent from 'src/components/molecules/Modal';
 
-import { IcOpenUrl } from 'public/icons';
+import { IcMyriad, IcOpenUrl } from 'public/icons';
+import { NumberFormatCustom } from 'src/helpers/formatNumber';
 
 type InstanceStepperModalProps = {
   onCreateInstance: (apiURL: string, callback?: () => void) => void;
@@ -23,6 +24,8 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   const [isStepOne, setIsStepOne] = useState<boolean>(true);
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
+  const [amount, setAmount] = useState<number>(0);
+  const [errorAmount, setErrorAmount] = useState<boolean>(false);
 
   const handleClick = async () => {
     if (isStepOne) return setIsStepOne(false);
@@ -35,6 +38,8 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
     setIsStepOne(true);
     setError(false);
     setValue('');
+    setAmount(0);
+    setErrorAmount(false);
   };
 
   const handleChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,10 +50,26 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
     setError(!isValid);
   };
 
+  const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    const isValid = isValidAmount(newValue);
+
+    setAmount(Number(newValue));
+    setErrorAmount(!isValid);
+  };
+
   const isValidURL = (url: string) => {
     try {
       return Boolean(new URL(url));
     } catch {
+      return false;
+    }
+  };
+
+  const isValidAmount = (amount: string) => {
+    if (Number(amount) >= 50000) {
+      return true;
+    } else {
       return false;
     }
   };
@@ -60,12 +81,12 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
       onClose={handleClose}
       title={'Create Instance'}
     >
-      <div className="min-h-[200px] mb-[100px]">
+      <div className="min-h-[200px] ">
         <div className="mb-2">
           <div className="text-sm">Step {isStepOne ? 1 : 2} of 2</div>
         </div>
         <div className="text-2xl font-semibold">
-          {isStepOne ? 'Deploy the server' : ' Register Instance'}
+          {isStepOne ? 'Deploy the server' : 'Registration Prerequisite'}
         </div>
         {isStepOne ? (
           <>
@@ -77,28 +98,66 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
                 can also access the deployment guide on the settings page.
               </div>
             </div>
-            <div className="flex justify-center">
+            <div className="pb-20">
               <a
                 href={`https://app.testnet.myriad.social/post/`}
                 target="_blank"
                 rel="noreferrer"
+                className="flex justify-center"
               >
-                <button className="w-[20px]">
-                  <Image src={IcOpenUrl} height={20} width={20} alt="" />
-                </button>
+                <Image src={IcOpenUrl} height={20} width={20} alt="" />
+
+                <div className="ml-2 text-base text-primary font-bold">
+                  View deployment guide
+                </div>
               </a>
-              <div className="ml-2 text-base text-primary font-bold">
-                View deployment guide
-              </div>
             </div>
           </>
         ) : (
           <div className="mt-2">
             <div className="text-sm text-darkGray text-justify">
-              To register your instance, you must enter the API URL of the
-              deployed server. After signing the contract on Polkadot.js, your
-              instance will be listed in Myriad app and published on Myriad
-              Federation site.
+              <p>
+                Before officially listing your Myriad instance in the Myriad
+                Federation list, please be aware of the following prerequisites.
+              </p>
+              <p className="pt-4">You will need:</p>
+              <ol className="list-decimal pl-4 my-4">
+                <li>To provide the API URL of the deployed server.</li>
+                <li>
+                  To stake a minimum of 50,000 $MYRIA tokens (you can of course
+                  stake a larger amount)
+                </li>
+              </ol>
+              <p className="pb-4">
+                Unstaking all your $MYRIA tokens will de-register your instance.
+                The minimum 50,000 $MYRIA necessary to keep your instance
+                registered will be returned after a lock period of 24h. Any
+                exceeding balance can be unstaked with no lock period.
+              </p>
+            </div>
+            <div className="my-[24px]">
+              <TextField
+                id="outlined-basic"
+                label="Amount"
+                variant="outlined"
+                value={amount}
+                onChange={handleChangeAmount}
+                error={errorAmount}
+                helperText={
+                  errorAmount
+                    ? 'Input must be greater than or equal to 50,000 MYRIA'
+                    : ''
+                }
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Image src={IcMyriad} height={20} width={20} alt="" />
+                    </InputAdornment>
+                  ),
+                  inputComponent: NumberFormatCustom as any,
+                }}
+              />
             </div>
             <div className="my-[24px]">
               <TextField
@@ -120,6 +179,11 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
         label={isStepOne ? 'Continue' : 'Publish Instance'}
         primary
         onClick={handleClick}
+        disable={
+          isStepOne
+            ? false
+            : amount === 0 || value === '' || error || errorAmount
+        }
       />
     </ModalComponent>
   );

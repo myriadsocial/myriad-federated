@@ -79,14 +79,14 @@ const Settings: NextPageWithLayout = () => {
               href={`https://app.testnet.myriad.social/post/`}
               target="_blank"
               rel="noreferrer"
+              className="flex justify-center"
             >
-              <button className="w-[20px]">
-                <Image src={IcOpenUrl} height={20} width={20} alt="" />
-              </button>
+              <Image src={IcOpenUrl} height={20} width={20} alt="" />
+
+              <div className="ml-2 text-base text-primary font-bold">
+                View deployment guide
+              </div>
             </a>
-            <div className="ml-2 text-sm text-primary">
-              View deployment guide
-            </div>
           </div>
           <Button label="Verify now" onClick={undefined} primary />
         </div>
