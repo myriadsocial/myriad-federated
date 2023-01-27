@@ -50,7 +50,7 @@ export default function CardInstance(props: CardInstanceInterface) {
           '&.MuiAccordion-root': {
             borderRadius: '10px',
             boxShadow: '0px 6px 10px rgba(0, 0, 0, 0.05)',
-            margin: 0,
+            margin: '0 0 20px 0',
           },
           '&.MuiAccordion-root:before': {
             display: 'none',
