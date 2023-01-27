@@ -1,6 +1,7 @@
 import { IcDebio, IcMyriad } from 'public/icons';
 import React, { useState } from 'react';
 import Button from 'src/components/atoms/Button';
+import Gasfee from 'src/components/atoms/Gasfee';
 import ListWallet from 'src/components/atoms/ListWallet';
 import CardStaked from '../../atoms/CardStaked';
 import ModalComponent from '../Modal';
@@ -73,6 +74,9 @@ export const UnclaimReward = () => {
               network="debio"
               classes="pb-3"
             />
+          </div>
+          <div className="mb-5">
+            <Gasfee amount="0.0001" />
           </div>
 
           <Button

@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { IcMyriad, IcOpenUrl } from 'public/icons';
 import React, { useState } from 'react';
 import Button from 'src/components/atoms/Button';
+import Gasfee from 'src/components/atoms/Gasfee';
 import { NumberFormatCustom } from 'src/helpers/formatNumber';
 import CardStaked from '../../atoms/CardStaked';
 import ModalComponent from '../Modal';
@@ -150,6 +151,9 @@ export const TotalStaked = () => {
               <Image src={IcOpenUrl} height={18} width={18} alt="" />
               <div className="ml-1 text-xs text-primary">Bridge $MYRIA</div>
             </a>
+          </div>
+          <div className="mb-5">
+            <Gasfee amount="0.0001" />
           </div>
           <Button
             onClick={() => handleOpenModal(modalType)}
