@@ -85,7 +85,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         </div>
         <div className="my-4 flex flex-col gap-y-1">
           <a
-            href={`https://app.testnet.myriad.social/post/`}
+            href={`https://app.ref.finance/#near%7Cmyriadcore.near`}
             target="_blank"
             rel="noreferrer"
             className="flex cursor-pointer items-center"
@@ -94,7 +94,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
             <div className="ml-1 text-xs text-primary">Buy $MYRIA</div>
           </a>
           <a
-            href={`https://app.testnet.myriad.social/post/`}
+            href={`https://mainnet.oct.network/bridge/near/myriad`}
             target="_blank"
             rel="noreferrer"
             className="flex cursor-pointer items-center"
