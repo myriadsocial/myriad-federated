@@ -9,9 +9,10 @@ import cookie from 'cookie';
 
 type HomeAppProps = {
   signIn: boolean;
+  address?: string;
 };
 
-const HomeApp: React.FC<HomeAppProps> = ({ signIn }) => {
+const HomeApp: React.FC<HomeAppProps> = ({ signIn, address }) => {
   return (
     <div>
       <Head>
@@ -19,7 +20,7 @@ const HomeApp: React.FC<HomeAppProps> = ({ signIn }) => {
         <meta name="description" content="Myriad Federated" />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <ServerListComponent signIn={signIn} />
+      <ServerListComponent signIn={signIn} address={address} />
     </div>
   );
 };
@@ -31,10 +32,12 @@ export const getServerSideProps = async (
   const server = cookies?.session;
 
   let signIn = false;
+  let address;
 
   try {
     const data = JSON.parse(server);
     if (data?.currentAddress) signIn = true;
+    address = data?.currentAddress;
   } catch {
     // ignore
   }
@@ -42,6 +45,7 @@ export const getServerSideProps = async (
   return {
     props: {
       signIn,
+      address,
     },
   };
 };

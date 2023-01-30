@@ -30,21 +30,25 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
   accountId,
 }) => {
   const router = useRouter();
-  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+
+  const { logout } = useAuth();
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
-  const [showAccountList, setShowAccountList] = useState<boolean>(false);
-  const [extensionInstalled, setExtensionInstalled] = useState(false);
-  const { createInstance, servers, loading } = useInstances(
+  const { createInstance, servers, loading, fetchBalance } = useInstances(
     InstanceType.OWNED,
     accountId,
   );
 
-  const [open, setOpen] = useState<boolean>(false);
-
-  const { logout } = useAuth();
-
+  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [showAccountList, setShowAccountList] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [extensionInstalled, setExtensionInstalled] = useState(false);
+  const [balance, setBalance] = useState({
+    account: '0',
+    stake: '0',
+  });
+
   const openMenu = Boolean(anchorEl);
 
   const checkExtensionInstalled = async () => {
@@ -65,10 +69,15 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
     setAccounts(accounts);
   };
 
-  const handleShowSwitchAccount = (
+  const handleShowSwitchAccount = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setAnchorEl(event.currentTarget);
+    const { account, stake } = await fetchBalance();
+    setBalance({
+      account: (account / 10 ** 18).toLocaleString(),
+      stake: (stake / 10 ** 18).toLocaleString(),
+    });
   };
 
   const handleSelectedSubstrateAccount = async (
@@ -111,6 +120,8 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         handleLogout={logout}
         handleClose={() => setAnchorEl(null)}
         handleSwitchAccount={handleSignIn}
+        currentBalance={balance.account}
+        stakedBalance={balance.stake}
       />
       <PolkadotAccountList
         align="left"

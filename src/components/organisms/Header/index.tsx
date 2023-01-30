@@ -19,37 +19,50 @@ import { setCookie } from 'nookies';
 import { useQueryClient } from '@tanstack/react-query';
 import { IcDropdownPrimary, IcNotification } from '../../../../public/icons';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
+import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
 });
 const Header = ({ title }: { title: string }) => {
+  const router = useRouter();
   const queryClient = useQueryClient();
   const dataMetric = queryClient.getQueryData<any>(['/getServerMetric']);
   const enqueueSnackbar = useEnqueueSnackbar();
-  const router = useRouter();
+
   const { cookie, switchInstance } = useAuth();
-  const accountId = cookie?.session?.currentAddress ?? '';
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [instanceSelected, setInstanceSelected] = useState<number | null>();
+  const [showModalInstance, setShowModalInstance] = useState<boolean>(false);
+  const [balance, setBalance] = useState({
+    account: '0',
+    stake: '0',
+  });
+
+  const accountId = cookie?.session?.currentAddress ?? '';
+  const openMenu = Boolean(anchorEl);
   const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
   const listOwnerInstances: Array<ServerListProps> =
     cookie?.listOwnerInstances ?? '';
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const openMenu = Boolean(anchorEl);
-  const [instanceSelected, setInstanceSelected] = useState<number | null>();
-  const [showModalInstance, setShowModalInstance] = useState<boolean>(false);
+  const { fetchBalance } = useInstances(InstanceType.OWNED, accountId, true);
 
   const handleClickNotification = () => {
     router.push('/dashboard/notification');
   };
 
-  const handleShowSwitchAccount = (
+  const handleShowSwitchAccount = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setAnchorEl(event.currentTarget);
+    const { account, stake } = await fetchBalance(selectedInstance);
+    setBalance({
+      account: (account / 10 ** 18).toLocaleString(),
+      stake: (stake / 10 ** 18).toLocaleString(),
+    });
   };
 
   const handleSwitchInstance = async (item: ServerListProps) => {
@@ -188,6 +201,8 @@ const Header = ({ title }: { title: string }) => {
         type="switchInstance"
         leftButtonLabel={'Switch Instance'}
         rightButtonLabel={'Logout Instance'}
+        currentBalance={balance.account}
+        stakedBalance={balance.stake}
       />
       <ModalComponent
         open={showModalInstance}

@@ -13,19 +13,20 @@ export enum InstanceType {
 }
 
 export const useInstances = (
-  instanceType?: InstanceType,
+  instanceType: InstanceType,
   accountId?: string,
+  skip = false,
 ) => {
   const { provider, loading: loadingBlockchain, error } = useBlockchain();
 
   const enqueueSnackbar = useEnqueueSnackbar();
   const [serverList, setServerList] = useState<ServerListProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [metric, setMetric] = useState({
     totalUsers: 0,
     totalPosts: 0,
     totalInstances: 0,
   });
-  const [loading, setLoading] = useState<boolean>(true);
 
   const getAllInstances = useCallback(async () => {
     let totalUsers = 0;
@@ -108,12 +109,13 @@ export const useInstances = (
   }, [accountId, provider]);
 
   useEffect(() => {
+    if (skip) return;
     if (instanceType === InstanceType.ALL) {
       getAllInstances();
     } else {
       getOwnerInstances();
     }
-  }, [getAllInstances, getOwnerInstances, instanceType]);
+  }, [getAllInstances, getOwnerInstances, instanceType, skip]);
 
   const createInstance = async (apiURL: string, callback?: () => void) => {
     try {
@@ -149,14 +151,14 @@ export const useInstances = (
   const updateInstance = async (
     accountId: string,
     newApiURL: string,
-    serverId: number,
+    server: ServerListProps,
   ) => {
     try {
       if (!provider || !accountId) return;
 
       await provider.updateApiUrl(
         accountId,
-        serverId,
+        server,
         newApiURL,
         async (newServer, signerOpened) => {
           if (signerOpened) setLoading(true);
@@ -169,7 +171,7 @@ export const useInstances = (
               .catch(console.log)
               .finally(() => {
                 const newServerList = serverList.map((e) => {
-                  if (e.id === serverId) return newServer;
+                  if (e.id === server.id) return newServer;
                   return e;
                 });
 
@@ -185,6 +187,35 @@ export const useInstances = (
     }
   };
 
+  const fetchBalance = async (selectedServer?: ServerListProps) => {
+    if (!provider || !accountId) return { account: 0, stake: 0 };
+
+    let serverOwner: ServerListProps[] = [];
+    let stakedBalance = 0;
+    console.log(selectedServer);
+    if (selectedServer) {
+      serverOwner = [selectedServer];
+    } else {
+      if (instanceType === InstanceType.OWNED) {
+        serverOwner = serverList;
+      } else {
+        serverOwner = await provider.serverListByOwner(accountId);
+      }
+    }
+
+    for (const server of serverOwner) {
+      if (!server.stakedAmount) continue;
+      const balance = Number(server.stakedAmount.replace(/,/gi, ''));
+      stakedBalance += balance;
+    }
+
+    const accountBalance = await provider.accountBalance(accountId);
+    return {
+      account: accountBalance,
+      stake: stakedBalance,
+    };
+  };
+
   return {
     createInstance,
     updateInstance,
@@ -192,5 +223,6 @@ export const useInstances = (
     metric,
     loading,
     error,
+    fetchBalance,
   };
 };

@@ -41,25 +41,37 @@ const { publicRuntimeConfig } = getConfig();
 
 type ServerListComponentProps = {
   signIn: boolean;
+  address?: string;
 };
 
 export const ServerListComponent: React.FC<ServerListComponentProps> = ({
   signIn,
+  address,
 }) => {
   const router = useRouter();
-  const { servers, metric, loading } = useInstances(InstanceType.ALL);
+
+  const { logout } = useAuth();
+  const { servers, metric, loading, fetchBalance } = useInstances(
+    InstanceType.ALL,
+    address,
+  );
   const { connectWallet } = useAuth();
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
+
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
   const [query, setQuery] = React.useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [currentAddress, setCurrentAddress] = useState<string>('');
+  const [balance, setBalance] = useState({
+    account: '0',
+    stake: '0',
+  });
+
   const cookies = parseCookies();
   const session = cookies?.session;
-  const { logout } = useAuth();
 
   useEffect(() => {
     if (!session) return;
@@ -152,10 +164,15 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
     logout();
   };
 
-  const handleShowSwitchAccount = (
+  const handleShowSwitchAccount = async (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setAnchorEl(event.currentTarget);
+    const { account, stake } = await fetchBalance();
+    setBalance({
+      account: (account / 10 ** 18).toLocaleString(),
+      stake: (stake / 10 ** 18).toLocaleString(),
+    });
   };
 
   return (
@@ -339,6 +356,8 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
         handleLogout={_handleLogout}
         handleSwitchAccount={handleSignIn}
         handleClickCurrentAddress={() => router.push('/instance')}
+        currentBalance={balance.account}
+        stakedBalance={balance.stake}
       />
       <PolkadotAccountList
         align="left"

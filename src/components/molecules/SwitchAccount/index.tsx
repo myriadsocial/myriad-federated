@@ -80,7 +80,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="flex mt-4 gap-2 ">
           <Image src={IcMyriad} height={20} width={20} alt="" />
           <div className="ml-1 text-sm font-semibold">
-            {currentBalance ?? '123,456.789'} MYRIA
+            {currentBalance ?? '0'} MYRIA
           </div>
         </div>
         <div className="my-4 flex flex-col gap-y-1">
@@ -111,7 +111,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="flex mt-4 gap-2 ">
           <Image src={IcMyriad} height={20} width={20} alt="" />
           <div className="ml-1 text-sm font-semibold">
-            {stakedBalance ?? '123,456.789'} MYRIA
+            {stakedBalance ?? '0'} MYRIA
           </div>
         </div>
 

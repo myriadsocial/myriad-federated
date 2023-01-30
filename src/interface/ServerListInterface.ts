@@ -2,6 +2,8 @@ export interface ServerListProps {
   id: number;
   owner: string;
   apiUrl: string;
+  stakedAmount: string;
+  unstakedAt: number;
   detail?: ServerDetail;
 }
 
