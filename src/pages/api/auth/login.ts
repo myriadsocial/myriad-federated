@@ -31,7 +31,7 @@ export default async function handler(
       return res.status(401).send({ status: 'Unauthorized' });
 
     const result = await axios(data.apiURL).post(
-      '/admin/login',
+      '/authentication/login/wallet',
       omit(data, ['apiURL', 'address']),
     );
     const payload = encryptMessage(result.data.accessToken, data.publicAddress);

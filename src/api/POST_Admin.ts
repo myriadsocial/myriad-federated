@@ -8,6 +8,7 @@ export interface Credential {
   networkType: string;
   apiURL?: string;
   address?: string;
+  role?: string;
 }
 
 interface SuccessProps {

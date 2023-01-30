@@ -8,7 +8,7 @@ export const getNotifications = async ({
   filter: any;
 }) => {
   return axios()
-    .get(`/api/notifications`, {
+    .get(`/api/user/notifications`, {
       params: {
         pageNumber: pageNumber,
         filter,
