@@ -154,7 +154,7 @@ export class PolkadotJs implements IProvider {
 
   async updateApiUrl(
     owner: string,
-    serverId: number,
+    server: ServerListProps,
     newApiURL: string,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ): Promise<string | null> {
@@ -167,7 +167,7 @@ export class PolkadotJs implements IProvider {
       callback && callback(undefined, true);
 
       const extrinsic = this.provider.tx.server.updateApiUrl(
-        serverId,
+        server.id,
         newApiURL,
       );
       const txInfo = await extrinsic.signAsync(signer.address, {
@@ -212,9 +212,11 @@ export class PolkadotJs implements IProvider {
 
       callback &&
         callback({
-          id: serverId,
+          id: server.id,
           owner: owner,
           apiUrl: newApiURL,
+          stakedAmount: server.stakedAmount,
+          unstakedAt: server.unstakedAt,
         });
 
       return txHash;
@@ -284,6 +286,16 @@ export class PolkadotJs implements IProvider {
     }
   }
 
+  async accountBalance(accountId: string): Promise<number> {
+    try {
+      const result = await this.provider.query.system.account(accountId);
+      const data = result.toHuman() as any;
+      return Number(data?.data?.free?.replace(/,/gi, '') ?? 0);
+    } catch {
+      return 0;
+    }
+  }
+
   async disconnect(): Promise<void> {
     await this.provider.disconnect();
   }
@@ -302,7 +314,7 @@ export interface IProvider {
 
   updateApiUrl: (
     owner: string,
-    serverId: number,
+    server: ServerListProps,
     newApiURL: string,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ) => Promise<string | null>;
@@ -319,6 +331,8 @@ export interface IProvider {
     startKey?: string,
     pageSize?: number,
   ) => Promise<ServerListProps[]>;
+
+  accountBalance: (accountId: string) => Promise<number>;
 
   disconnect: () => Promise<void>;
 }

@@ -61,6 +61,7 @@ export const useAuth = () => {
       networkType: 'myriad',
       apiURL,
       address: account.address,
+      role: 'admin',
     });
 
     if (!success) throw new Error('Failed to authorize');
@@ -85,6 +86,7 @@ export const useAuth = () => {
       networkType: 'polkadot',
       apiURL,
       address: account.address,
+      role: 'admin',
     });
 
     if (!success) throw new Error('Failed to authorize');

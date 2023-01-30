@@ -80,12 +80,12 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="flex mt-4 gap-2 ">
           <Image src={IcMyriad} height={20} width={20} alt="" />
           <div className="ml-1 text-sm font-semibold">
-            {currentBalance ?? '123,456.789'} MYRIA
+            {currentBalance ?? '0'} MYRIA
           </div>
         </div>
         <div className="my-4 flex flex-col gap-y-1">
           <a
-            href={`https://app.testnet.myriad.social/post/`}
+            href={`https://app.ref.finance/#near%7Cmyriadcore.near`}
             target="_blank"
             rel="noreferrer"
             className="flex cursor-pointer items-center"
@@ -94,7 +94,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
             <div className="ml-1 text-xs text-primary">Buy $MYRIA</div>
           </a>
           <a
-            href={`https://app.testnet.myriad.social/post/`}
+            href={`https://mainnet.oct.network/bridge/near/myriad`}
             target="_blank"
             rel="noreferrer"
             className="flex cursor-pointer items-center"
@@ -111,7 +111,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
         <div className="flex mt-4 gap-2 ">
           <Image src={IcMyriad} height={20} width={20} alt="" />
           <div className="ml-1 text-sm font-semibold">
-            {stakedBalance ?? '123,456.789'} MYRIA
+            {stakedBalance ?? '0'} MYRIA
           </div>
         </div>
 

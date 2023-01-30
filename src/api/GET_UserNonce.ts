@@ -7,7 +7,9 @@ export async function getUserNonce(
   address: string,
 ): Promise<UserNonce> {
   try {
-    const result = await axios(api).get(`/wallets/${address}/nonce`);
+    const result = await axios(api).get(
+      `/authentication/nonce?type=wallet&id=${address}`,
+    );
     return result.data;
   } catch {
     return { nonce: 0 };
