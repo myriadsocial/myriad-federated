@@ -122,7 +122,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
           return (
             <CardInstance
               key={server.id}
-              // onClick={handleSignIn(server)}
+              onClick={handleSignIn(server)}
               serverName={server?.detail?.name ?? 'Unknown Instance'}
               serverDetail={`by ${addressFormatter({
                 text: accountId,

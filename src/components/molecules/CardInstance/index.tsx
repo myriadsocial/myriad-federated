@@ -172,7 +172,11 @@ export default function CardInstance(props: CardInstanceInterface) {
                       onClick={handleExpand}
                       label={`${expand ? 'Hide' : 'View'} Staked Assets`}
                     />
-                    <Button onClick={null} label={'Manage Dashboard'} primary />
+                    <Button
+                      onClick={onClick}
+                      label={'Manage Dashboard'}
+                      primary
+                    />
                   </div>
                 </div>
               </>

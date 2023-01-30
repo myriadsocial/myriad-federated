@@ -39,25 +39,32 @@ export const Deregister = () => {
       >
         <div className="min-h-[200px] mt-6">
           <div className="text-base text-darkGray text-justify mb-5">
-            By De-Registering your Instance:
+            <p className="mb-4">
+              Please make sure you have enough $MYRIA to cover the
+              De-Registration gas fees.
+            </p>
+            <p className="mb-4">
+              Please carefully consider the following before deciding to unstake
+              your $MYRIA tokens:
+            </p>
             <ol className="list-decimal pl-4 my-4 gap-y-4">
-              <li className="mb-3">
-                The federated social media you have registered with will be
-                delisted from the official list.
+              <li className="mb-4">
+                De-Registering your Instance will remove it from the official
+                Myriad Federation List, and it will not be eligible for future
+                rewards.
               </li>
-              <li className="mb-3">
-                You will get your staked $MYRIA back after 24 hours.
+              <li className="mb-4">
+                Your previously staked $MYRIA tokens will be returned to you
+                after a 24 hours lock period.
               </li>
-              <li className="mb-3">
-                You will need to claim your reward manually.
+              <li className="mb-4">
+                You will still be able to claim your Instance’s unclaimed
+                rewards.
               </li>
-              <li className="mb-3">
-                You can still claim the remaining rewards even after
-                de-registering your instance.
+              <li className="mb-4">
+                Claiming unclaimed rewards must be done manually.
               </li>
             </ol>
-            Make sure you have enough $MYRIA to pay for the gas fee. Please
-            consider this carefully before deciding to unstake your $MYRIA.
           </div>
           <div className="mb-5">
             <Gasfee amount="0.0001" />
