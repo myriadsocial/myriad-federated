@@ -1,9 +1,4 @@
-import {
-  Backdrop,
-  CircularProgress,
-  InputAdornment,
-  TextField,
-} from '@mui/material';
+import { InputAdornment, TextField } from '@mui/material';
 import { BN, BN_ZERO } from '@polkadot/util';
 import Image from 'next/image';
 import { IcMyriad, IcOpenUrl } from 'public/icons';
@@ -28,7 +23,6 @@ interface TotalStakedProps {
     },
     estimateFee?: boolean,
   ) => Promise<BN | void>;
-  loading?: boolean;
   balance: {
     account: BN;
     staked: BN;
@@ -38,7 +32,7 @@ interface TotalStakedProps {
 }
 
 export const TotalStaked = (props: TotalStakedProps) => {
-  const { balance, instance, onUpdateInstance, loading = false } = props;
+  const { balance, instance, onUpdateInstance } = props;
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
 
@@ -190,7 +184,7 @@ export const TotalStaked = (props: TotalStakedProps) => {
   };
 
   return (
-    <>
+    <React.Fragment>
       <CardStaked title="Total Staked">
         <div className="p-5 flex flex-col justify-between h-full">
           <div>
@@ -204,17 +198,28 @@ export const TotalStaked = (props: TotalStakedProps) => {
             </div>
           </div>
           <div className="flex gap-x-2">
-            <Button
-              onClick={() => handleOpenModal('Unstake')}
-              label={`Unstake`}
-              isFullWidth
-            />
-            <Button
-              onClick={() => handleOpenModal('Stake')}
-              label={'Stake'}
-              primary
-              isFullWidth
-            />
+            <ShowIf condition={!Boolean(instance.unstakedAt)}>
+              <Button
+                onClick={() => handleOpenModal('Unstake')}
+                label={`Unstake`}
+                isFullWidth
+              />
+              <Button
+                onClick={() => handleOpenModal('Stake')}
+                label={'Stake'}
+                primary
+                isFullWidth
+              />
+            </ShowIf>
+            <ShowIf condition={Boolean(instance.unstakedAt)}>
+              <Button
+                onClick={null}
+                label={'Waiting To Unstaked'}
+                primary
+                isFullWidth
+                disable
+              />
+            </ShowIf>
           </div>
         </div>
       </CardStaked>
@@ -325,9 +330,6 @@ export const TotalStaked = (props: TotalStakedProps) => {
         onSelect={handleSelectedSubstrateAccount}
         onClose={onCloseAccountList}
       />
-      <Backdrop style={{ zIndex: 1400, color: '#fff' }} open={loading}>
-        <CircularProgress style={{ color: '#7342CC' }} />
-      </Backdrop>
-    </>
+    </React.Fragment>
   );
 };

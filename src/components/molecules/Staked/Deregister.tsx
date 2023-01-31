@@ -1,18 +1,73 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Button from 'src/components/atoms/Button';
 import Gasfee from 'src/components/atoms/Gasfee';
+import { usePolkadotExtension } from 'src/hooks/use-polkadot-app.hook';
+import { ServerListProps } from 'src/interface/ServerListInterface';
 import CardStaked from '../../atoms/CardStaked';
 import ModalComponent from '../Modal';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { PolkadotAccountList } from '../PolkadotAccountList';
 
-export const Deregister = () => {
+interface DeregisterProps {
+  instance: ServerListProps;
+  onRemoveInstance?: (
+    accountId: string,
+    instance: ServerListProps,
+  ) => Promise<void>;
+}
+
+export const Deregister = (props: DeregisterProps) => {
+  const { instance, onRemoveInstance } = props;
+  const { enablePolkadotExtension, getPolkadotAccounts } =
+    usePolkadotExtension();
+
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+  const [extensionInstalled, setExtensionInstalled] = useState(false);
+  const [showAccountList, setShowAccountList] = useState<boolean>(false);
 
   const handleOpenModal = () => {
     setOpenModal(!openModal);
   };
 
+  const handleDeregister = () => {
+    checkExtensionInstalled();
+  };
+
+  const checkExtensionInstalled = async () => {
+    const installed = await enablePolkadotExtension();
+
+    setShowAccountList(true);
+    setExtensionInstalled(installed);
+
+    getAvailableAccounts();
+  };
+
+  const getAvailableAccounts = async () => {
+    const accounts = await getPolkadotAccounts().catch(() => []);
+    const account = accounts.find((e) => e.address === instance.owner);
+    if (account) setAccounts([account]);
+  };
+
+  const handleSelectedSubstrateAccount = async (
+    account: InjectedAccountWithMeta,
+  ) => {
+    if (!onRemoveInstance) return;
+    try {
+      await onRemoveInstance(account.address, instance);
+      onCloseAccountList();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const onCloseAccountList = () => {
+    setShowAccountList(false);
+    handleOpenModal();
+  };
+
   return (
-    <>
+    <React.Fragment>
       <CardStaked title="De-Register Instance">
         <div className="p-5 flex flex-col justify-between h-full">
           <div>
@@ -24,9 +79,13 @@ export const Deregister = () => {
           <div className="flex gap-x-2">
             <Button
               onClick={handleOpenModal}
-              label={'De-Register Instance'}
-              error
+              label={
+                Boolean(instance.unstakedAt)
+                  ? 'Waiting To Unstaked'
+                  : 'De-Register Instance'
+              }
               isFullWidth
+              disable={Boolean(instance.unstakedAt)}
             />
           </div>
         </div>
@@ -70,13 +129,21 @@ export const Deregister = () => {
             <Gasfee amount="0.0001" />
           </div>
           <Button
-            onClick={handleOpenModal}
+            onClick={handleDeregister}
             label={'De-Register'}
             primary
             isFullWidth
           />
         </div>
       </ModalComponent>
-    </>
+      <PolkadotAccountList
+        align="left"
+        title="Select account"
+        isOpen={showAccountList && extensionInstalled}
+        accounts={accounts}
+        onSelect={handleSelectedSubstrateAccount}
+        onClose={onCloseAccountList}
+      />
+    </React.Fragment>
   );
 };
