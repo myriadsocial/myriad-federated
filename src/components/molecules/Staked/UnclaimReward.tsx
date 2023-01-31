@@ -3,18 +3,71 @@ import React, { useState } from 'react';
 import Button from 'src/components/atoms/Button';
 import Gasfee from 'src/components/atoms/Gasfee';
 import ListWallet from 'src/components/atoms/ListWallet';
+import { usePolkadotExtension } from 'src/hooks/use-polkadot-app.hook';
 import CardStaked from '../../atoms/CardStaked';
 import ModalComponent from '../Modal';
 import { SwitchNetwork } from '../SwitchNetwork';
+import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
+import { ServerListProps } from 'src/interface/ServerListInterface';
+import { PolkadotAccountList } from '../PolkadotAccountList';
 
-export const UnclaimReward = () => {
+interface UnclaimRewardProps {
+  instance: ServerListProps;
+  onWithdrawReward?: (accountId: string) => Promise<void>;
+}
+
+export const UnclaimReward = (props: UnclaimRewardProps) => {
+  const { instance, onWithdrawReward } = props;
+  const { enablePolkadotExtension, getPolkadotAccounts } =
+    usePolkadotExtension();
+
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
+  const [extensionInstalled, setExtensionInstalled] = useState(false);
+  const [showAccountList, setShowAccountList] = useState<boolean>(false);
 
   const handleOpenModal = () => {
     setOpenModal(!openModal);
   };
+
+  const handleWithdraw = () => {
+    checkExtensionInstalled();
+  };
+
+  const checkExtensionInstalled = async () => {
+    const installed = await enablePolkadotExtension();
+
+    setShowAccountList(true);
+    setExtensionInstalled(installed);
+
+    getAvailableAccounts();
+  };
+
+  const getAvailableAccounts = async () => {
+    const accounts = await getPolkadotAccounts().catch(() => []);
+    const account = accounts.find((e) => e.address === instance.owner);
+    if (account) setAccounts([account]);
+  };
+
+  const handleSelectedSubstrateAccount = async (
+    account: InjectedAccountWithMeta,
+  ) => {
+    if (!onWithdrawReward) return;
+    try {
+      await onWithdrawReward(account.address);
+      onCloseAccountList();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const onCloseAccountList = () => {
+    setShowAccountList(false);
+    handleOpenModal();
+  };
+
   return (
-    <>
+    <React.Fragment>
       <CardStaked title="Unclaimed Reward">
         <div className="p-5 flex flex-col justify-between h-full">
           <div>
@@ -80,13 +133,21 @@ export const UnclaimReward = () => {
           </div>
 
           <Button
-            onClick={handleOpenModal}
+            onClick={handleWithdraw}
             label={'Claim Rewards'}
             primary
             isFullWidth
           />
         </div>
       </ModalComponent>
-    </>
+      <PolkadotAccountList
+        align="left"
+        title="Select account"
+        isOpen={showAccountList && extensionInstalled}
+        accounts={accounts}
+        onSelect={handleSelectedSubstrateAccount}
+        onClose={onCloseAccountList}
+      />
+    </React.Fragment>
   );
 };

@@ -416,6 +416,65 @@ export class PolkadotJs implements IProvider {
     }
   }
 
+  async withdrawReward(
+    accountId: string,
+    callback?: (signerOpened?: boolean) => void,
+  ): Promise<string | undefined> {
+    try {
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
+
+      const signer = await this.signer(accountId);
+      const injector = await web3FromSource(signer.meta.source);
+
+      callback && callback(true);
+
+      const extrinsic = this.provider.tx.tipping.withdrawReward();
+      const txInfo = await extrinsic.signAsync(signer.address, {
+        signer: injector.signer,
+        nonce: -1,
+      });
+
+      const txHash: string = await new Promise((resolve, reject) => {
+        txInfo
+          .send(({ status, isError, dispatchError, events }) => {
+            if (status.isInBlock) {
+              console.log(`\tBlock hash    : ${status.asInBlock.toHex()}`);
+            } else if (status.isFinalized) {
+              console.log(`\tFinalized     : ${status.asFinalized.toHex()}`);
+              resolve(status.asFinalized.toHex());
+            } else if (isError) {
+              console.log(`\tFinalized     : null`);
+              reject('FailedToSendTip');
+            }
+
+            if (dispatchError) {
+              if (dispatchError.isModule) {
+                const { name } = this.provider.registry.findMetaError(
+                  dispatchError.asModule,
+                );
+
+                reject(new Error(name));
+              } else {
+                const dispatchErrorType = dispatchError.toString();
+                const parseDispatch = JSON.parse(dispatchErrorType);
+
+                const values: string[] = Object.values(parseDispatch);
+
+                reject(new Error(values[0] ?? 'ExtrinsicFailed'));
+              }
+            }
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+
+      return txHash;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async accountBalance(accountId: string): Promise<BN> {
     try {
       const result = await this.provider.query.system.account(accountId);
@@ -469,6 +528,11 @@ export interface IProvider {
     startKey?: string,
     pageSize?: number,
   ) => Promise<ServerListProps[]>;
+
+  withdrawReward: (
+    accountId: string,
+    callback?: (signerOpened?: boolean) => void,
+  ) => Promise<string | void>;
 
   accountBalance: (accountId: string) => Promise<BN>;
 

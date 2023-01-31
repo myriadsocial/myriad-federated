@@ -39,6 +39,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
     createInstance,
     updateInstance,
     removeInstance,
+    withdrawReward,
     servers,
     loading,
     balance,
@@ -109,7 +110,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         balance={balance}
         onUpdateInstance={updateInstance}
         onRemoveInstance={removeInstance}
-        loading={loading}
+        onWithdrawReward={withdrawReward}
       />
       <InstanceStepperModal
         balance={balance}

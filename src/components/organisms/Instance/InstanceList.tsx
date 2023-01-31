@@ -43,7 +43,7 @@ type InstanceListProps = {
     accountId: string,
     instance: ServerListProps,
   ) => Promise<void>;
-  loading?: boolean;
+  onWithdrawReward?: (accountId: string) => Promise<void>;
 };
 
 export const InstanceList: React.FC<InstanceListProps> = ({
@@ -52,7 +52,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   balance,
   onUpdateInstance,
   onRemoveInstance,
-  loading,
+  onWithdrawReward,
 }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const { loginDashboard } = useAuth();
@@ -146,6 +146,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
               onClick={handleSignIn(server)}
               onUpdateInstance={onUpdateInstance}
               onRemoveInstance={onRemoveInstance}
+              onWithdrawReward={onWithdrawReward}
               type={InstanceType.OWNED}
             />
           );

@@ -31,12 +31,20 @@ interface CardInstanceInterface {
     accountId: string,
     instance: ServerListProps,
   ) => Promise<void>;
+  onWithdrawReward?: (accountId: string) => Promise<void>;
   type: InstanceType;
 }
 
 export default function CardInstance(props: CardInstanceInterface) {
-  const { server, onClick, type, balance, onUpdateInstance, onRemoveInstance } =
-    props;
+  const {
+    server,
+    onClick,
+    type,
+    balance,
+    onUpdateInstance,
+    onRemoveInstance,
+    onWithdrawReward,
+  } = props;
 
   const [expand, setExpand] = useState<boolean>(false);
 
@@ -202,7 +210,10 @@ export default function CardInstance(props: CardInstanceInterface) {
                 formattedStaked: formatAmount(server?.stakedAmount ?? BN_ZERO),
               }}
             />
-            <UnclaimReward />
+            <UnclaimReward
+              instance={server}
+              onWithdrawReward={onWithdrawReward}
+            />
             <Deregister instance={server} onRemoveInstance={onRemoveInstance} />
           </div>
         </AccordionDetails>
