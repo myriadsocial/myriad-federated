@@ -65,6 +65,7 @@ export default function CardInstance(props: CardInstanceInterface) {
   return (
     <React.Fragment>
       <Accordion
+        onClick={type === 'landingPage' ? onClick : undefined}
         expanded={expand}
         sx={{
           '&.MuiAccordion-root': {
