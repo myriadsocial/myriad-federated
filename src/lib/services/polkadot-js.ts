@@ -2,7 +2,7 @@ import getConfig from 'next/config';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { BN, numberToHex } from '@polkadot/util';
+import { BN, BN_ZERO, numberToHex } from '@polkadot/util';
 
 import { ServerListProps } from 'src/interface/ServerListInterface';
 import { RewardBalance } from '../../interface/RewardBalanceInterface';
@@ -484,7 +484,7 @@ export class PolkadotJs implements IProvider {
     serverId: number,
     startKey?: string,
     pageSize = 10,
-  ): Promise<RewardBalance[]> {
+  ): Promise<[RewardBalance, string[]]> {
     try {
       const result =
         await this.provider.query.tipping.rewardBalance.entriesPaged({
@@ -493,19 +493,22 @@ export class PolkadotJs implements IProvider {
           startKey,
         });
 
-      const data = result.map((list) => {
+      const ftIdentifier: string[] = [];
+      const rewardBalance: { [property: string]: BN } = {};
+
+      result.forEach((list) => {
         const key = list[0].toHuman() as string[];
         const reward = list[1].toHuman() as string;
+        const amount = new BN(reward.replace(/,/gi, ''));
 
-        return {
-          ftIdentifier: key[1],
-          amount: new BN(reward.replace(/,/gi, '')),
-        };
+        if (amount.gt(BN_ZERO)) {
+          rewardBalance[key[2]] = amount;
+        }
       });
 
-      return data;
+      return [rewardBalance, ftIdentifier];
     } catch {
-      return [];
+      return [{}, []];
     }
   }
 
@@ -576,7 +579,7 @@ export interface IProvider {
     serverId: number,
     startKey?: string,
     pageSize?: number,
-  ) => Promise<RewardBalance[]>;
+  ) => Promise<[RewardBalance, string[]]>;
 
   accountBalance: (accountId: string) => Promise<BN>;
 

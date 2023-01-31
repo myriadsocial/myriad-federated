@@ -16,9 +16,7 @@ interface UnclaimRewardProps {
   onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
   onChangeNetwork?: (
     network: string,
-    rpcURL: string,
-    accountId: string,
-    instanceId: number,
+    instance: ServerListProps,
   ) => Promise<void>;
 }
 

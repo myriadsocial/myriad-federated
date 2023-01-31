@@ -8,6 +8,8 @@ import { setCookie } from 'nookies';
 import { useEnqueueSnackbar } from '../components/molecules/Snackbar/useEnqueueSnackbar.hook';
 import { BN, BN_ZERO } from '@polkadot/util';
 import { PolkadotJs } from 'src/lib/services/polkadot-js';
+import { getCurrencies } from 'src/api/GET_Currencies';
+import { getNetwork } from 'src/api/GET_Network';
 
 export enum InstanceType {
   ALL = 'all',
@@ -26,7 +28,7 @@ export const useInstances = (
   const [loading, setLoading] = useState<boolean>(true);
   const [balance, setBalance] = useState<BN>(BN_ZERO);
   const [totalStaked, setTotalStaked] = useState<BN>(BN_ZERO);
-  const [currentNetwork, setCurrentNetwork] = useState('myriad');
+  const [currentNetworkId, setCurrentNetworkId] = useState('myriad');
   const [metric, setMetric] = useState({
     totalUsers: 0,
     totalPosts: 0,
@@ -92,7 +94,7 @@ export const useInstances = (
             totalStakedAmount = totalStakedAmount.add(server.stakedAmount);
           }
 
-          const [rewards, data] = await Promise.all([
+          const [[rewards, ftIdentifiers], data] = await Promise.all([
             provider.rewardBalance(accountId, server.id),
             fetch(`${server.apiUrl}/server`)
               .then((response) => response.json())
@@ -100,9 +102,24 @@ export const useInstances = (
               .catch(() => null),
           ]);
 
+          const currencies = await getCurrencies(
+            server.apiUrl,
+            currentNetworkId,
+            ftIdentifiers,
+          );
+
           return {
             ...server,
-            rewards,
+            rewards: currencies?.map((currency) => {
+              const ftIdentifier = currency?.native
+                ? 'native'
+                : currency.referenceId;
+              const amount = rewards[ftIdentifier ?? ''];
+              return {
+                ...currency,
+                amount,
+              };
+            }),
             detail: data,
           };
         }),
@@ -116,6 +133,7 @@ export const useInstances = (
     } catch {
       setLoading(false);
     }
+    /* eslint-disable react-hooks/exhaustive-deps*/
   }, [accountId, provider]);
 
   useEffect(() => {
@@ -310,24 +328,40 @@ export const useInstances = (
     };
   };
 
-  const fetchReward = async (
-    network: string,
-    rpcURL: string,
-    accountId: string,
-    instanceId: number,
-  ) => {
-    if (network === currentNetwork) return;
-    const polkadot = await PolkadotJs.connect(rpcURL).catch(() => null);
+  const fetchReward = async (networkId: string, instance: ServerListProps) => {
+    if (networkId === currentNetworkId) return;
+    const network = await getNetwork(instance.apiUrl, networkId);
+    if (!network) return;
+    const polkadot = await PolkadotJs.connect(network.rpcURL).catch(() => null);
     if (!polkadot) return;
-    const rewardBalance = await polkadot.rewardBalance(accountId, instanceId);
+    const [rewards, ftIdentifiers] = await polkadot.rewardBalance(
+      instance.owner,
+      instance.id,
+    );
+    const currencies = await getCurrencies(
+      instance.apiUrl,
+      networkId,
+      ftIdentifiers,
+    );
     const newServerList = serverList.map((server) => {
-      if (server.id === instanceId)
-        return { ...server, rewards: rewardBalance };
-      return server;
+      if (server.id !== instance.id) return server;
+      return {
+        ...server,
+        rewards: currencies?.map((currency) => {
+          const ftIdentifier = currency?.native
+            ? 'native'
+            : currency.referenceId;
+          const amount = rewards[ftIdentifier ?? ''];
+          return {
+            ...currency,
+            amount,
+          };
+        }),
+      };
     });
 
     setServerList(newServerList);
-    setCurrentNetwork(network);
+    setCurrentNetworkId(networkId);
   };
 
   return {
