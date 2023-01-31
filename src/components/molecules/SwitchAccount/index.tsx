@@ -70,6 +70,7 @@ const SwitchAccount = (props: SwitchAccountProps) => {
                 : accountId
             }
             onClick={handleClickCurrentAddress}
+            address={accountId ?? ''}
           />
         </div>
 
