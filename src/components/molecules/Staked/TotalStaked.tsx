@@ -211,7 +211,11 @@ export const TotalStaked = (props: TotalStakedProps) => {
             <ShowIf condition={Boolean(instance.unstakedAt)}>
               <Button
                 onClick={null}
-                label={instance.stakedAmount.lte(BN_ZERO) ? 'Unstaked' : 'Waiting for Unstaked'}
+                label={
+                  instance.stakedAmount.lte(BN_ZERO)
+                    ? 'Unstaked'
+                    : 'Waiting for Unstaked'
+                }
                 primary
                 isFullWidth
                 disable

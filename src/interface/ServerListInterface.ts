@@ -1,4 +1,5 @@
 import { BN } from '@polkadot/util';
+import { RewardBalance } from './RewardBalanceInterface';
 
 export interface ServerListProps {
   id: number;
@@ -6,6 +7,7 @@ export interface ServerListProps {
   apiUrl: string;
   stakedAmount: BN;
   unstakedAt?: number;
+  rewards?: RewardBalance[];
   detail?: ServerDetail;
 }
 

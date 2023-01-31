@@ -84,8 +84,9 @@ export const useInstances = (
 
       let totalStakedAmount = BN_ZERO;
 
-      const [result, balance] = await Promise.all([
+      const [result, rewards, balance] = await Promise.all([
         provider.serverListByOwner(accountId),
+        provider.rewardBalance(accountId, 0),
         provider.accountBalance(accountId),
       ]);
 
@@ -108,6 +109,7 @@ export const useInstances = (
 
           return {
             ...server,
+            rewards,
             detail: data,
           };
         }),
@@ -266,13 +268,23 @@ export const useInstances = (
     }
   };
 
-  const withdrawReward = async (accountId: string): Promise<void> => {
+  const withdrawReward = async (
+    accountId: string,
+    instanceId: number,
+  ): Promise<void> => {
     try {
       if (!provider || !accountId) return;
 
       await provider.withdrawReward(accountId, async (signerOpened) => {
         if (signerOpened) setLoading(true);
       });
+
+      const newServerList = serverList.map((e) => {
+        if (e.id === instanceId) return { ...e, rewards: [] };
+        return e;
+      });
+
+      setServerList([...newServerList]);
     } catch (err) {
       console.log(err);
     } finally {
