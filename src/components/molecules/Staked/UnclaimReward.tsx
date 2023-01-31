@@ -13,7 +13,7 @@ import { PolkadotAccountList } from '../PolkadotAccountList';
 
 interface UnclaimRewardProps {
   instance: ServerListProps;
-  onWithdrawReward?: (accountId: string) => Promise<void>;
+  onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
 }
 
 export const UnclaimReward = (props: UnclaimRewardProps) => {
@@ -25,6 +25,8 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = useState(false);
   const [showAccountList, setShowAccountList] = useState<boolean>(false);
+
+  const hasReward = instance.rewards && instance.rewards.length > 0;
 
   const handleOpenModal = () => {
     setOpenModal(!openModal);
@@ -54,7 +56,7 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
   ) => {
     if (!onWithdrawReward) return;
     try {
-      await onWithdrawReward(account.address);
+      await onWithdrawReward(account.address, instance.id);
       onCloseAccountList();
     } catch (err) {
       console.log(err);
@@ -90,6 +92,7 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
               label={'Claim Rewards'}
               primary
               isFullWidth
+              disable={!hasReward}
             />
           </div>
         </div>

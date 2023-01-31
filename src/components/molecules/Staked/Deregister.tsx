@@ -7,6 +7,7 @@ import CardStaked from '../../atoms/CardStaked';
 import ModalComponent from '../Modal';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { PolkadotAccountList } from '../PolkadotAccountList';
+import { BN_ZERO } from '@polkadot/util';
 
 interface DeregisterProps {
   instance: ServerListProps;
@@ -81,7 +82,9 @@ export const Deregister = (props: DeregisterProps) => {
               onClick={handleOpenModal}
               label={
                 Boolean(instance.unstakedAt)
-                  ? 'Waiting To Unstaked'
+                  ? instance.stakedAmount.lte(BN_ZERO)
+                    ? 'Unstaked'
+                    : 'Waiting for Unstaked'
                   : 'De-Register Instance'
               }
               isFullWidth

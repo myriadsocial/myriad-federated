@@ -43,7 +43,7 @@ type InstanceListProps = {
     accountId: string,
     instance: ServerListProps,
   ) => Promise<void>;
-  onWithdrawReward?: (accountId: string) => Promise<void>;
+  onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
 };
 
 export const InstanceList: React.FC<InstanceListProps> = ({

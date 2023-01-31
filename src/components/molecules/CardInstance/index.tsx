@@ -31,7 +31,7 @@ interface CardInstanceInterface {
     accountId: string,
     instance: ServerListProps,
   ) => Promise<void>;
-  onWithdrawReward?: (accountId: string) => Promise<void>;
+  onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
   type: InstanceType;
 }
 

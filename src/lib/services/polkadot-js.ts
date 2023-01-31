@@ -5,6 +5,7 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { BN, numberToHex } from '@polkadot/util';
 
 import { ServerListProps } from 'src/interface/ServerListInterface';
+import { RewardBalance } from '../../interface/RewardBalanceInterface';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -332,6 +333,65 @@ export class PolkadotJs implements IProvider {
     }
   }
 
+  async withdrawReward(
+    accountId: string,
+    callback?: (signerOpened?: boolean) => void,
+  ): Promise<string | undefined> {
+    try {
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
+
+      const signer = await this.signer(accountId);
+      const injector = await web3FromSource(signer.meta.source);
+
+      callback && callback(true);
+
+      const extrinsic = this.provider.tx.tipping.withdrawReward();
+      const txInfo = await extrinsic.signAsync(signer.address, {
+        signer: injector.signer,
+        nonce: -1,
+      });
+
+      const txHash: string = await new Promise((resolve, reject) => {
+        txInfo
+          .send(({ status, isError, dispatchError }) => {
+            if (status.isInBlock) {
+              console.log(`\tBlock hash    : ${status.asInBlock.toHex()}`);
+            } else if (status.isFinalized) {
+              console.log(`\tFinalized     : ${status.asFinalized.toHex()}`);
+              resolve(status.asFinalized.toHex());
+            } else if (isError) {
+              console.log(`\tFinalized     : null`);
+              reject('FailedToSendTip');
+            }
+
+            if (dispatchError) {
+              if (dispatchError.isModule) {
+                const { name } = this.provider.registry.findMetaError(
+                  dispatchError.asModule,
+                );
+
+                reject(new Error(name));
+              } else {
+                const dispatchErrorType = dispatchError.toString();
+                const parseDispatch = JSON.parse(dispatchErrorType);
+
+                const values: string[] = Object.values(parseDispatch);
+
+                reject(new Error(values[0] ?? 'ExtrinsicFailed'));
+              }
+            }
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+
+      return txHash;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async totalServer(): Promise<number> {
     try {
       const result = await this.provider.query.server.serverCount();
@@ -416,62 +476,33 @@ export class PolkadotJs implements IProvider {
     }
   }
 
-  async withdrawReward(
+  async rewardBalance(
     accountId: string,
-    callback?: (signerOpened?: boolean) => void,
-  ): Promise<string | undefined> {
+    serverId: number,
+    startKey?: string,
+    pageSize = 10,
+  ): Promise<RewardBalance[]> {
     try {
-      const { web3FromSource } = await import('@polkadot/extension-dapp');
+      const result =
+        await this.provider.query.tipping.rewardBalance.entriesPaged({
+          args: [accountId],
+          pageSize,
+          startKey,
+        });
 
-      const signer = await this.signer(accountId);
-      const injector = await web3FromSource(signer.meta.source);
+      const data = result.map((list) => {
+        const key = list[0].toHuman() as string[];
+        const reward = list[1].toHuman() as string;
 
-      callback && callback(true);
-
-      const extrinsic = this.provider.tx.tipping.withdrawReward();
-      const txInfo = await extrinsic.signAsync(signer.address, {
-        signer: injector.signer,
-        nonce: -1,
+        return {
+          ftIdentifier: key[1],
+          amount: new BN(reward.replace(/,/gi, '')),
+        };
       });
 
-      const txHash: string = await new Promise((resolve, reject) => {
-        txInfo
-          .send(({ status, isError, dispatchError, events }) => {
-            if (status.isInBlock) {
-              console.log(`\tBlock hash    : ${status.asInBlock.toHex()}`);
-            } else if (status.isFinalized) {
-              console.log(`\tFinalized     : ${status.asFinalized.toHex()}`);
-              resolve(status.asFinalized.toHex());
-            } else if (isError) {
-              console.log(`\tFinalized     : null`);
-              reject('FailedToSendTip');
-            }
-
-            if (dispatchError) {
-              if (dispatchError.isModule) {
-                const { name } = this.provider.registry.findMetaError(
-                  dispatchError.asModule,
-                );
-
-                reject(new Error(name));
-              } else {
-                const dispatchErrorType = dispatchError.toString();
-                const parseDispatch = JSON.parse(dispatchErrorType);
-
-                const values: string[] = Object.values(parseDispatch);
-
-                reject(new Error(values[0] ?? 'ExtrinsicFailed'));
-              }
-            }
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
-
-      return txHash;
-    } catch (err) {
-      throw err;
+      return data;
+    } catch {
+      return [];
     }
   }
 
@@ -495,6 +526,7 @@ export interface IProvider {
 
   signer: (accountId: string) => Promise<InjectedAccountWithMeta>;
 
+  // Call
   createServer: (
     owner: string,
     apiURL: string,
@@ -516,6 +548,12 @@ export interface IProvider {
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ) => Promise<string | null>;
 
+  withdrawReward: (
+    accountId: string,
+    callback?: (signerOpened?: boolean) => void,
+  ) => Promise<string | void>;
+
+  // View
   totalServer: () => Promise<number>;
 
   serverList: (
@@ -529,10 +567,12 @@ export interface IProvider {
     pageSize?: number,
   ) => Promise<ServerListProps[]>;
 
-  withdrawReward: (
+  rewardBalance: (
     accountId: string,
-    callback?: (signerOpened?: boolean) => void,
-  ) => Promise<string | void>;
+    serverId: number,
+    startKey?: string,
+    pageSize?: number,
+  ) => Promise<RewardBalance[]>;
 
   accountBalance: (accountId: string) => Promise<BN>;
 
