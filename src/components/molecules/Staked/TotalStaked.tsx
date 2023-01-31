@@ -85,11 +85,8 @@ export const TotalStaked = (props: TotalStakedProps) => {
     let fixedValue = Number(inputValue[0]).toLocaleString() + inputDecimal;
 
     if (inputValue[1]?.length > 10) return;
-    console.log(fixedValue);
-
     const valueDecimal = inputValue[1]?.length ?? 0;
     const updatedDecimal = new BN((10 ** (18 - valueDecimal)).toString());
-    console.log(+updatedDecimal);
     let value = +fixedValue.replace(/,/gi, '').replace(/\./gi, '');
     if (+value >= 100000 * 10 ** valueDecimal) {
       value = 100000 * 10 ** valueDecimal;
@@ -214,7 +211,7 @@ export const TotalStaked = (props: TotalStakedProps) => {
             <ShowIf condition={Boolean(instance.unstakedAt)}>
               <Button
                 onClick={null}
-                label={'Waiting To Unstaked'}
+                label={instance.stakedAmount.lte(BN_ZERO) ? 'Unstaked' : 'Waiting for Unstaked'}
                 primary
                 isFullWidth
                 disable

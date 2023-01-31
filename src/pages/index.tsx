@@ -32,7 +32,7 @@ export const getServerSideProps = async (
   const server = cookies?.session;
 
   let signIn = false;
-  let address;
+  let address = null;
 
   try {
     const data = JSON.parse(server);
