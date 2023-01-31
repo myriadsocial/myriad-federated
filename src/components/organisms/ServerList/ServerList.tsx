@@ -317,21 +317,16 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
                 </ShowIf>
                 <ShowIf condition={serverList.length > 0}>
                   {serverList.map((server) => {
-                    if (!server?.detail)
+                    if (!server?.detail) {
                       return <React.Fragment key={server.id} />;
+                    }
+
                     return (
                       <CardInstance
                         key={server.id}
                         server={server}
                         balance={BN_ZERO}
-                        type="landingPage"
-                        experience={numberFormatter(
-                          server.detail.metric.totalExperiences,
-                        )}
-                        post={numberFormatter(
-                          server.detail.metric.totalPosts.totalAll,
-                        )}
-                        users={numberFormatter(server.detail.metric.totalUsers)}
+                        type={InstanceType.ALL}
                         onClick={goToMyriadApp(
                           'https://app.testnet.myriad.social',
                         )} // TODO: change to dynamic url

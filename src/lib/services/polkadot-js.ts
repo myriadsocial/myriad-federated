@@ -145,11 +145,18 @@ export class PolkadotJs implements IProvider {
           });
       });
 
+      let unstakedAt;
+
+      if (server?.unstakedAt) {
+        unstakedAt = Number(server?.unstakedAt?.replace(/,/gi, ''));
+      }
+
       if (server) {
         callback &&
           callback({
             ...server,
             stakedAmount: new BN(server.stakedAmount.replace(/,/gi, '')),
+            unstakedAt,
           });
       }
 
@@ -246,6 +253,85 @@ export class PolkadotJs implements IProvider {
     }
   }
 
+  async removeServer(
+    owner: string,
+    server: ServerListProps,
+    callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
+  ): Promise<string | null> {
+    try {
+      const { web3FromSource } = await import('@polkadot/extension-dapp');
+
+      const signer = await this.signer(owner);
+      const injector = await web3FromSource(signer.meta.source);
+
+      callback && callback(undefined, true);
+
+      const extrinsic = this.provider.tx.server.unregister(server.id);
+      const txInfo = await extrinsic.signAsync(signer.address, {
+        signer: injector.signer,
+        nonce: -1,
+      });
+
+      let unstakedAt;
+
+      const txHash: string = await new Promise((resolve, reject) => {
+        txInfo
+          .send(({ status, isError, dispatchError, events }) => {
+            events.forEach((record) => {
+              const { event } = record;
+
+              if (event.method === 'Scheduled') {
+                const scheduled = event.data.toHuman() as any;
+                unstakedAt = Number(scheduled.when.replace(/,/gi, ''));
+              }
+            });
+
+            if (status.isInBlock) {
+              console.log(`\tBlock hash    : ${status.asInBlock.toHex()}`);
+            } else if (status.isFinalized) {
+              console.log(`\tFinalized     : ${status.asFinalized.toHex()}`);
+              resolve(status.asFinalized.toHex());
+            } else if (isError) {
+              console.log(`\tFinalized     : null`);
+              reject('FailedToSendTip');
+            }
+
+            if (dispatchError) {
+              if (dispatchError.isModule) {
+                const { name } = this.provider.registry.findMetaError(
+                  dispatchError.asModule,
+                );
+
+                reject(new Error(name));
+              } else {
+                const dispatchErrorType = dispatchError.toString();
+                const parseDispatch = JSON.parse(dispatchErrorType);
+
+                const values: string[] = Object.values(parseDispatch);
+
+                reject(new Error(values[0] ?? 'ExtrinsicFailed'));
+              }
+            }
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+
+      if (server) {
+        callback &&
+          callback({
+            ...server,
+            unstakedAt,
+          });
+      }
+
+      return txHash;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async totalServer(): Promise<number> {
     try {
       const result = await this.provider.query.server.serverCount();
@@ -270,9 +356,17 @@ export class PolkadotJs implements IProvider {
       const data = result
         .map((list) => {
           const server = list[1].toHuman() as any;
+
+          let unstakedAt;
+
+          if (server?.unstakedAt) {
+            unstakedAt = Number(server?.unstakedAt?.replace(/,/gi, ''));
+          }
+
           return {
             ...server,
             stakedAmount: new BN(server.stakedAmount.replace(/,/gi, '')),
+            unstakedAt,
           };
         })
         .filter((list) => {
@@ -303,9 +397,16 @@ export class PolkadotJs implements IProvider {
 
       const data = result.map((list) => {
         const server = list[1].toHuman() as any;
+        let unstakedAt;
+
+        if (server?.unstakedAt) {
+          unstakedAt = Number(server?.unstakedAt?.replace(/,/gi, ''));
+        }
+
         return {
           ...server,
           stakedAmount: new BN(server.stakedAmount.replace(/,/gi, '')),
+          unstakedAt,
         };
       });
 
@@ -349,6 +450,12 @@ export interface IProvider {
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
     estimateFee?: boolean,
   ) => Promise<string | null | BN>;
+
+  removeServer: (
+    owner: string,
+    server: ServerListProps,
+    callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
+  ) => Promise<string | null>;
 
   totalServer: () => Promise<number>;
 

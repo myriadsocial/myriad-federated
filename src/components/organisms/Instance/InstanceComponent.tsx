@@ -37,11 +37,12 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
     usePolkadotExtension();
   const {
     createInstance,
+    updateInstance,
+    removeInstance,
     servers,
     loading,
     balance,
     totalStaked,
-    updateInstance,
   } = useInstances(InstanceType.OWNED, accountId);
 
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
@@ -107,6 +108,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         accountId={accountId}
         balance={balance}
         onUpdateInstance={updateInstance}
+        onRemoveInstance={removeInstance}
         loading={loading}
       />
       <InstanceStepperModal
@@ -115,9 +117,6 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         open={open}
         onClose={() => setOpen(!open)}
       />
-      <Backdrop style={{ zIndex: 100, color: '#fff' }} open={loading}>
-        <CircularProgress style={{ color: '#7342CC' }} />
-      </Backdrop>
       <SwitchAccount
         title="Account"
         type="switchAccount"
@@ -140,6 +139,9 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         onSelect={handleSelectedSubstrateAccount}
         onClose={() => setShowAccountList(false)}
       />
+      <Backdrop style={{ zIndex: 1400, color: '#fff' }} open={loading}>
+        <CircularProgress style={{ color: '#7342CC' }} />
+      </Backdrop>
     </React.Fragment>
   );
 };

@@ -17,6 +17,7 @@ import { DropdownFilter } from 'src/components/atoms';
 import { Arrays } from 'src/constans/array';
 import { numberFormatter } from 'src/utils/numberFormatter';
 import { BN } from '@polkadot/util';
+import { InstanceType } from 'src/hooks/use-instances.hook';
 
 const PolkadotAccountList = dynamic(
   () =>
@@ -38,6 +39,10 @@ type InstanceListProps = {
     },
     estimateFee?: boolean,
   ) => Promise<BN | void>;
+  onRemoveInstance?: (
+    accountId: string,
+    instance: ServerListProps,
+  ) => Promise<void>;
   loading?: boolean;
 };
 
@@ -46,6 +51,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   servers,
   balance,
   onUpdateInstance,
+  onRemoveInstance,
   loading,
 }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
@@ -139,15 +145,8 @@ export const InstanceList: React.FC<InstanceListProps> = ({
               balance={balance}
               onClick={handleSignIn(server)}
               onUpdateInstance={onUpdateInstance}
-              loading={loading}
-              type="instance"
-              post={numberFormatter(
-                server?.detail?.metric?.totalPosts?.totalAll ?? 0,
-              )}
-              users={numberFormatter(server?.detail?.metric?.totalUsers ?? 0)}
-              experience={numberFormatter(
-                server?.detail?.metric?.totalExperiences ?? 0,
-              )}
+              onRemoveInstance={onRemoveInstance}
+              type={InstanceType.OWNED}
             />
           );
         })}

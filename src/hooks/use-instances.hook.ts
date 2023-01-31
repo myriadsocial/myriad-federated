@@ -237,6 +237,35 @@ export const useInstances = (
     }
   };
 
+  const removeInstance = async (
+    accountId: string,
+    instance: ServerListProps,
+  ): Promise<void> => {
+    try {
+      if (!provider || !accountId) return;
+
+      await provider.removeServer(
+        accountId,
+        instance,
+        async (server, signerOpened) => {
+          if (signerOpened) setLoading(true);
+          if (server) {
+            const newServerList = serverList.map((e) => {
+              if (e.id === server.id) return { ...e, ...server };
+              return e;
+            });
+
+            setServerList([...newServerList]);
+          }
+        },
+      );
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchBalance = async (selected?: ServerListProps) => {
     if (!provider || !accountId) return { account: BN_ZERO, stake: BN_ZERO };
 
@@ -261,6 +290,7 @@ export const useInstances = (
   return {
     createInstance,
     updateInstance,
+    removeInstance,
     servers: serverList,
     metric,
     loading,
