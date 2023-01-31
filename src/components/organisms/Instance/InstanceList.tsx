@@ -13,10 +13,10 @@ import { ServerListProps } from 'src/interface/ServerListInterface';
 import { setCookie } from 'nookies';
 
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
-import addressFormatter from 'src/utils/addressFormatter';
 import { DropdownFilter } from 'src/components/atoms';
 import { Arrays } from 'src/constans/array';
 import { numberFormatter } from 'src/utils/numberFormatter';
+import { BN } from '@polkadot/util';
 
 const PolkadotAccountList = dynamic(
   () =>
@@ -29,11 +29,24 @@ const PolkadotAccountList = dynamic(
 type InstanceListProps = {
   accountId: string;
   servers: ServerListProps[];
+  balance: BN;
+  onUpdateInstance?: (
+    accountId: string,
+    instance: ServerListProps,
+    data: {
+      [property: string]: any;
+    },
+    estimateFee?: boolean,
+  ) => Promise<BN | void>;
+  loading?: boolean;
 };
 
 export const InstanceList: React.FC<InstanceListProps> = ({
   accountId,
   servers,
+  balance,
+  onUpdateInstance,
+  loading,
 }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const { loginDashboard } = useAuth();
@@ -122,14 +135,11 @@ export const InstanceList: React.FC<InstanceListProps> = ({
           return (
             <CardInstance
               key={server.id}
+              server={server}
+              balance={balance}
               onClick={handleSignIn(server)}
-              serverName={server?.detail?.name ?? 'Unknown Instance'}
-              serverDetail={`by ${addressFormatter({
-                text: accountId,
-                length: 4,
-              })}`}
-              serverDescription={`Server Id: ${server.id}`}
-              image={server?.detail?.serverImageURL ?? ''}
+              onUpdateInstance={onUpdateInstance}
+              loading={loading}
               type="instance"
               post={numberFormatter(
                 server?.detail?.metric?.totalPosts?.totalAll ?? 0,

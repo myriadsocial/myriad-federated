@@ -28,6 +28,7 @@ import ShowIf from '../../molecules/common/show-if.component';
 import SwitchAccount from '../../molecules/SwitchAccount';
 import { ShimerComponent } from './Shimer';
 import { Container, SvgIcon } from '@mui/material';
+import { BN_ZERO } from '@polkadot/util';
 
 const PolkadotAccountList = dynamic(
   () =>
@@ -169,9 +170,10 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
   ) => {
     setAnchorEl(event.currentTarget);
     const { account, stake } = await fetchBalance();
+    const decimal = 10 ** 18;
     setBalance({
-      account: (account / 10 ** 18).toLocaleString(),
-      stake: (stake / 10 ** 18).toLocaleString(),
+      account: (+account.toString() / decimal).toLocaleString(),
+      stake: (+stake.toString() / decimal).toLocaleString(),
     });
   };
 
@@ -320,10 +322,8 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
                     return (
                       <CardInstance
                         key={server.id}
-                        serverName={server.detail.name}
-                        serverDetail={server.detail.categories.join(', ')}
-                        serverDescription={server.detail.description}
-                        image={server.detail.serverImageURL}
+                        server={server}
+                        balance={BN_ZERO}
                         type="landingPage"
                         experience={numberFormatter(
                           server.detail.metric.totalExperiences,

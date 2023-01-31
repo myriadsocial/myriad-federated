@@ -1,8 +1,10 @@
+import { BN } from '@polkadot/util';
+
 export interface ServerListProps {
   id: number;
   owner: string;
   apiUrl: string;
-  stakedAmount: string;
+  stakedAmount: BN;
   unstakedAt: number;
   detail?: ServerDetail;
 }

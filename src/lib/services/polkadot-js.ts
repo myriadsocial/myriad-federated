@@ -2,7 +2,7 @@ import getConfig from 'next/config';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { numberToHex } from '@polkadot/util';
+import { BN, numberToHex } from '@polkadot/util';
 
 import { ServerListProps } from 'src/interface/ServerListInterface';
 
@@ -84,6 +84,7 @@ export class PolkadotJs implements IProvider {
   async createServer(
     owner: string,
     apiURL: string,
+    stakeAmount: BN | null,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ): Promise<string | null> {
     try {
@@ -94,13 +95,13 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(undefined, true);
 
-      const extrinsic = this.provider.tx.server.register(apiURL);
+      const extrinsic = this.provider.tx.server.register(apiURL, stakeAmount);
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
       });
 
-      let server;
+      let server: any;
 
       const txHash: string = await new Promise((resolve, reject) => {
         txInfo
@@ -109,7 +110,7 @@ export class PolkadotJs implements IProvider {
               const { event } = record;
 
               if (event.method === 'Registered')
-                server = event.data[0].toHuman();
+                server = event.data[0].toHuman() as any;
             });
 
             if (status.isInBlock) {
@@ -144,7 +145,13 @@ export class PolkadotJs implements IProvider {
           });
       });
 
-      callback && callback(server);
+      if (server) {
+        callback &&
+          callback({
+            ...server,
+            stakedAmount: new BN(server.stakedAmount.replace(/,/gi, '')),
+          });
+      }
 
       return txHash;
     } catch (err) {
@@ -152,13 +159,21 @@ export class PolkadotJs implements IProvider {
     }
   }
 
-  async updateApiUrl(
+  async updateServer(
     owner: string,
     server: ServerListProps,
-    newApiURL: string,
+    data: { [property: string]: any },
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
-  ): Promise<string | null> {
+    estimateFee = false,
+  ): Promise<string | null | BN> {
     try {
+      const extrinsic = this.provider.tx.server.updateServer(server.id, data);
+
+      if (estimateFee) {
+        const { partialFee } = await extrinsic.paymentInfo(owner);
+        return partialFee.toBn();
+      }
+
       const { web3FromSource } = await import('@polkadot/extension-dapp');
 
       const signer = await this.signer(owner);
@@ -166,10 +181,6 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(undefined, true);
 
-      const extrinsic = this.provider.tx.server.updateApiUrl(
-        server.id,
-        newApiURL,
-      );
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -210,12 +221,22 @@ export class PolkadotJs implements IProvider {
           });
       });
 
+      let stakedAmount = server.stakedAmount;
+
+      if (data?.StakeAmount) {
+        stakedAmount = stakedAmount.add(data.StakeAmount);
+      }
+
+      if (data?.UnstakeAmount) {
+        stakedAmount = stakedAmount.sub(data.UnstakeAmount);
+      }
+
       callback &&
         callback({
           id: server.id,
-          owner: owner,
-          apiUrl: newApiURL,
-          stakedAmount: server.stakedAmount,
+          owner: data?.TransferOwner ? data.TransferOwner : server.owner,
+          apiUrl: data?.UpdateApiUrl ? data.UpdateApiUrl : server.apiUrl,
+          stakedAmount: stakedAmount,
           unstakedAt: server.unstakedAt,
         });
 
@@ -248,7 +269,11 @@ export class PolkadotJs implements IProvider {
 
       const data = result
         .map((list) => {
-          return list[1].toHuman();
+          const server = list[1].toHuman() as any;
+          return {
+            ...server,
+            stakedAmount: new BN(server.stakedAmount.replace(/,/gi, '')),
+          };
         })
         .filter((list) => {
           return (list as unknown as ServerListProps).apiUrl?.startsWith(
@@ -277,7 +302,11 @@ export class PolkadotJs implements IProvider {
         });
 
       const data = result.map((list) => {
-        return list[1].toHuman();
+        const server = list[1].toHuman() as any;
+        return {
+          ...server,
+          stakedAmount: new BN(server.stakedAmount.replace(/,/gi, '')),
+        };
       });
 
       return data as unknown as ServerListProps[];
@@ -286,13 +315,13 @@ export class PolkadotJs implements IProvider {
     }
   }
 
-  async accountBalance(accountId: string): Promise<number> {
+  async accountBalance(accountId: string): Promise<BN> {
     try {
       const result = await this.provider.query.system.account(accountId);
       const data = result.toHuman() as any;
-      return Number(data?.data?.free?.replace(/,/gi, '') ?? 0);
+      return new BN(data?.data?.free?.replace(/,/gi, '') ?? 0);
     } catch {
-      return 0;
+      return new BN(0);
     }
   }
 
@@ -309,15 +338,17 @@ export interface IProvider {
   createServer: (
     owner: string,
     apiURL: string,
+    stakeAmount: BN | null,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
   ) => Promise<string | null>;
 
-  updateApiUrl: (
+  updateServer: (
     owner: string,
     server: ServerListProps,
-    newApiURL: string,
+    data: { [property: string]: string },
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
-  ) => Promise<string | null>;
+    estimateFee?: boolean,
+  ) => Promise<string | null | BN>;
 
   totalServer: () => Promise<number>;
 
@@ -332,7 +363,7 @@ export interface IProvider {
     pageSize?: number,
   ) => Promise<ServerListProps[]>;
 
-  accountBalance: (accountId: string) => Promise<number>;
+  accountBalance: (accountId: string) => Promise<BN>;
 
   disconnect: () => Promise<void>;
 }

@@ -10,9 +10,15 @@ import ModalComponent from 'src/components/molecules/Modal';
 import { IcMyriad, IcOpenUrl } from 'public/icons';
 import { NumberFormatCustom } from 'src/helpers/formatNumber';
 import Gasfee from 'src/components/atoms/Gasfee';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 type InstanceStepperModalProps = {
-  onCreateInstance: (apiURL: string, callback?: () => void) => void;
+  balance: BN;
+  onCreateInstance: (
+    apiURL: string,
+    stakeAmount: BN | null,
+    callback?: () => void,
+  ) => void;
   open: boolean;
   onClose: () => void;
 };
@@ -20,7 +26,7 @@ type InstanceStepperModalProps = {
 export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   props,
 ) => {
-  const { onCreateInstance, open, onClose } = props;
+  const { onCreateInstance, open, onClose, balance } = props;
 
   const [isStepOne, setIsStepOne] = useState<boolean>(true);
   const [value, setValue] = useState<string>('');
@@ -31,7 +37,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   const handleClick = async () => {
     if (isStepOne) return setIsStepOne(false);
     if (error || !value) return setError(true);
-    onCreateInstance(value, () => handleClose());
+    onCreateInstance(value, BN_ZERO, () => handleClose());
   };
 
   const handleClose = () => {
@@ -54,7 +60,6 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     const isValid = isValidAmount(newValue);
-
     setAmount(Number(newValue));
     setErrorAmount(!isValid);
   };
@@ -67,12 +72,9 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
     }
   };
 
-  const isValidAmount = (amount: string) => {
-    if (Number(amount) >= 50000) {
-      return true;
-    } else {
-      return false;
-    }
+  const isValidAmount = (value: string) => {
+    if (Number(value) >= 50000) return true;
+    return false;
   };
 
   return (
