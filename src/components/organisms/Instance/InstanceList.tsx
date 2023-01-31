@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import dynamic from 'next/dynamic';
 
@@ -63,6 +63,10 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
+  const [filteredServer, setFilteredServer] = React.useState<ServerListProps[]>(
+    [],
+  );
+  const [filterName, setFilterName] = React.useState<string>('registered');
 
   const checkExtensionInstalled = async (url: string) => {
     const installed = await enablePolkadotExtension();
@@ -110,6 +114,34 @@ export const InstanceList: React.FC<InstanceListProps> = ({
     setCookie(null, 'selectedInstance', JSON.stringify(server));
   };
 
+  useEffect(() => {
+    console.log({ servers });
+    const filtered = servers.filter(
+      (server) => server.unstakedAt === null || server.unstakedAt === undefined,
+    );
+    setFilteredServer(filtered);
+  }, [servers]);
+
+  const handleChangeFilter = (type: string) => {
+    setFilterName(type);
+    let filtered;
+    if (type === 'registered')
+      filtered = servers.filter(
+        (server) => server.unstakedAt === null || server.stakedAmount !== '0',
+      );
+    else
+      filtered = servers.filter(
+        (server) => server.unstakedAt != null && server.stakedAmount === '0',
+      );
+    console.log({ filtered });
+    setFilteredServer(filtered);
+  };
+
+  const statusInstance = (server: ServerListProps) => {
+    if (server.unstakedAt === null || server.stakedAmount !== '0') return true;
+    else return false;
+  };
+
   if (servers.length === 0) {
     return (
       <div className="w-full h-[400px] mt-6">
@@ -130,14 +162,14 @@ export const InstanceList: React.FC<InstanceListProps> = ({
           <DropdownFilter
             label="Instance Status :"
             data={Arrays.dataFilterInstance ?? []}
-            value={''}
-            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+            value={filterName}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               // setSortingDate(event.target.value)
-              null
+              handleChangeFilter(e.target.value)
             }
           />
         </div>
-        {servers.map((server) => {
+        {filteredServer.map((server) => {
           return (
             <CardInstance
               key={server.id}
@@ -148,6 +180,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
               onRemoveInstance={onRemoveInstance}
               onWithdrawReward={onWithdrawReward}
               type={InstanceType.OWNED}
+              status={statusInstance(server)}
             />
           );
         })}

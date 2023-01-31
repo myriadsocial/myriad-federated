@@ -177,10 +177,6 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
     });
   };
 
-  useEffect(() => {
-    console.log({ serverList });
-  }, [serverList]);
-
   return (
     <>
       <div className="bg-background-content min-h-screen pb-4">
