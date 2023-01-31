@@ -20,9 +20,11 @@ export class PolkadotJs implements IProvider {
     return this._provider;
   }
 
-  static async connect() {
+  static async connect(rpcURL?: string) {
     try {
-      const provider = new WsProvider(publicRuntimeConfig.myriadRPCURL);
+      const provider = new WsProvider(
+        rpcURL ?? publicRuntimeConfig.myriadRPCURL,
+      );
       const api = new ApiPromise({ provider });
 
       await api.isReadyOrError;

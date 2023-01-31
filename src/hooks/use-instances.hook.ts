@@ -7,6 +7,7 @@ import { setCookie } from 'nookies';
 
 import { useEnqueueSnackbar } from '../components/molecules/Snackbar/useEnqueueSnackbar.hook';
 import { BN, BN_ZERO } from '@polkadot/util';
+import { PolkadotJs } from 'src/lib/services/polkadot-js';
 
 export enum InstanceType {
   ALL = 'all',
@@ -25,6 +26,7 @@ export const useInstances = (
   const [loading, setLoading] = useState<boolean>(true);
   const [balance, setBalance] = useState<BN>(BN_ZERO);
   const [totalStaked, setTotalStaked] = useState<BN>(BN_ZERO);
+  const [currentNetwork, setCurrentNetwork] = useState('myriad');
   const [metric, setMetric] = useState({
     totalUsers: 0,
     totalPosts: 0,
@@ -308,11 +310,32 @@ export const useInstances = (
     };
   };
 
+  const fetchReward = async (
+    network: string,
+    rpcURL: string,
+    accountId: string,
+    instanceId: number,
+  ) => {
+    if (network === currentNetwork) return;
+    const polkadot = await PolkadotJs.connect(rpcURL).catch(() => null);
+    if (!polkadot) return;
+    const rewardBalance = await polkadot.rewardBalance(accountId, instanceId);
+    const newServerList = serverList.map((server) => {
+      if (server.id === instanceId)
+        return { ...server, rewards: rewardBalance };
+      return server;
+    });
+
+    setServerList(newServerList);
+    setCurrentNetwork(network);
+  };
+
   return {
     createInstance,
     updateInstance,
     removeInstance,
     withdrawReward,
+    fetchReward,
     servers: serverList,
     metric,
     loading,

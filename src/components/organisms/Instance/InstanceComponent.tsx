@@ -40,6 +40,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
     updateInstance,
     removeInstance,
     withdrawReward,
+    fetchReward,
     servers,
     loading,
     balance,
@@ -108,6 +109,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         servers={servers}
         accountId={accountId}
         balance={balance}
+        onChangeNetwork={fetchReward}
         onUpdateInstance={updateInstance}
         onRemoveInstance={removeInstance}
         onWithdrawReward={withdrawReward}

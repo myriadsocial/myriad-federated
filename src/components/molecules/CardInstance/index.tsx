@@ -18,6 +18,8 @@ import { InstanceType } from 'src/hooks/use-instances.hook';
 interface CardInstanceInterface {
   server: ServerListProps;
   balance: BN;
+  type: InstanceType;
+  status?: boolean;
   onClick?: () => void;
   onUpdateInstance?: (
     accountId: string,
@@ -32,8 +34,12 @@ interface CardInstanceInterface {
     instance: ServerListProps,
   ) => Promise<void>;
   onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
-  type: InstanceType;
-  status?: boolean;
+  onChangeNetwork?: (
+    network: string,
+    rpcURL: string,
+    accountId: string,
+    instanceId: number,
+  ) => Promise<void>;
 }
 
 export default function CardInstance(props: CardInstanceInterface) {
@@ -45,6 +51,7 @@ export default function CardInstance(props: CardInstanceInterface) {
     onUpdateInstance,
     onRemoveInstance,
     onWithdrawReward,
+    onChangeNetwork,
     status,
   } = props;
 
@@ -207,35 +214,34 @@ export default function CardInstance(props: CardInstanceInterface) {
           style={{ backgroundColor: '#FBFBFB', borderRadius: '0 0 10px 10px' }}
         >
           <div className="grid grid-cols-3 pt-2">
-            {status ? (
-              <>
-                <TotalStaked
-                  onUpdateInstance={onUpdateInstance}
-                  instance={server}
-                  balance={{
-                    account: balance,
-                    staked: server?.stakedAmount ?? BN_ZERO,
-                    formattedAccount: formatAmount(balance),
-                    formattedStaked: formatAmount(
-                      server?.stakedAmount ?? BN_ZERO,
-                    ),
-                  }}
-                />
-                <UnclaimReward
-                  instance={server}
-                  onWithdrawReward={onWithdrawReward}
-                />
-                <Deregister
-                  instance={server}
-                  onRemoveInstance={onRemoveInstance}
-                />
-              </>
-            ) : (
+            <ShowIf condition={Boolean(status)}>
+              <TotalStaked
+                onUpdateInstance={onUpdateInstance}
+                instance={server}
+                balance={{
+                  account: balance,
+                  staked: server?.stakedAmount ?? BN_ZERO,
+                  formattedAccount: formatAmount(balance),
+                  formattedStaked: formatAmount(
+                    server?.stakedAmount ?? BN_ZERO,
+                  ),
+                }}
+              />
               <UnclaimReward
                 instance={server}
                 onWithdrawReward={onWithdrawReward}
               />
-            )}
+              <Deregister
+                instance={server}
+                onRemoveInstance={onRemoveInstance}
+              />
+            </ShowIf>
+            <ShowIf condition={!Boolean(status)}>
+              <UnclaimReward
+                instance={server}
+                onWithdrawReward={onWithdrawReward}
+              />
+            </ShowIf>
           </div>
         </AccordionDetails>
       </Accordion>

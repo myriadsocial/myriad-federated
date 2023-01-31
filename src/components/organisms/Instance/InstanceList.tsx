@@ -15,8 +15,7 @@ import { setCookie } from 'nookies';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 import { DropdownFilter } from 'src/components/atoms';
 import { Arrays } from 'src/constans/array';
-import { numberFormatter } from 'src/utils/numberFormatter';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 import { InstanceType } from 'src/hooks/use-instances.hook';
 
 const PolkadotAccountList = dynamic(
@@ -44,6 +43,12 @@ type InstanceListProps = {
     instance: ServerListProps,
   ) => Promise<void>;
   onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
+  onChangeNetwork?: (
+    network: string,
+    rpcURL: string,
+    accountId: string,
+    instanceId: number,
+  ) => Promise<void>;
 };
 
 export const InstanceList: React.FC<InstanceListProps> = ({
@@ -53,6 +58,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   onUpdateInstance,
   onRemoveInstance,
   onWithdrawReward,
+  onChangeNetwork,
 }) => {
   const enqueueSnackbar = useEnqueueSnackbar();
   const { loginDashboard } = useAuth();
@@ -190,6 +196,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
               onUpdateInstance={onUpdateInstance}
               onRemoveInstance={onRemoveInstance}
               onWithdrawReward={onWithdrawReward}
+              onChangeNetwork={onChangeNetwork}
               type={InstanceType.OWNED}
               status={statusInstance(server)}
             />

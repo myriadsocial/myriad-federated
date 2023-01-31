@@ -14,6 +14,12 @@ import { PolkadotAccountList } from '../PolkadotAccountList';
 interface UnclaimRewardProps {
   instance: ServerListProps;
   onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
+  onChangeNetwork?: (
+    network: string,
+    rpcURL: string,
+    accountId: string,
+    instanceId: number,
+  ) => Promise<void>;
 }
 
 export const UnclaimReward = (props: UnclaimRewardProps) => {

@@ -329,7 +329,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
                         type={InstanceType.ALL}
                         onClick={goToMyriadApp(
                           `${publicRuntimeConfig.myriadAppURL}/login?rpc=${server.apiUrl}`,
-                        )} // TODO: change to dynamic url
+                        )}
                       />
                     );
                   })}
