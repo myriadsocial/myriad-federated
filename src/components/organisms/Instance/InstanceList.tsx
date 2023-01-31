@@ -16,7 +16,7 @@ import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.
 import { DropdownFilter } from 'src/components/atoms';
 import { Arrays } from 'src/constans/array';
 import { numberFormatter } from 'src/utils/numberFormatter';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { InstanceType } from 'src/hooks/use-instances.hook';
 
 const PolkadotAccountList = dynamic(
@@ -115,7 +115,6 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   };
 
   useEffect(() => {
-    console.log({ servers });
     const filtered = servers.filter(
       (server) => server.unstakedAt === null || server.unstakedAt === undefined,
     );
@@ -127,18 +126,21 @@ export const InstanceList: React.FC<InstanceListProps> = ({
     let filtered;
     if (type === 'registered')
       filtered = servers.filter(
-        (server) => server.unstakedAt === null || server.stakedAmount !== '0',
+        (server) =>
+          server.unstakedAt === null || server.stakedAmount !== BN_ZERO,
       );
     else
       filtered = servers.filter(
-        (server) => server.unstakedAt != null && server.stakedAmount === '0',
+        (server) =>
+          server.unstakedAt != null && server.stakedAmount === BN_ZERO,
       );
     console.log({ filtered });
     setFilteredServer(filtered);
   };
 
   const statusInstance = (server: ServerListProps) => {
-    if (server.unstakedAt === null || server.stakedAmount !== '0') return true;
+    if (server.unstakedAt === null || server.stakedAmount !== BN_ZERO)
+      return true;
     else return false;
   };
 

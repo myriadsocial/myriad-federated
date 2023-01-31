@@ -45,9 +45,6 @@ export default function CardInstance(props: CardInstanceInterface) {
     onUpdateInstance,
     onRemoveInstance,
     onWithdrawReward,
-    users,
-    post,
-    experience,
     status,
   } = props;
 
@@ -70,7 +67,7 @@ export default function CardInstance(props: CardInstanceInterface) {
   return (
     <React.Fragment>
       <Accordion
-        onClick={type === 'landingPage' ? onClick : undefined}
+        onClick={type === InstanceType.ALL ? onClick : undefined}
         expanded={expand}
         sx={{
           '&.MuiAccordion-root': {
