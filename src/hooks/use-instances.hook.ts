@@ -266,6 +266,20 @@ export const useInstances = (
     }
   };
 
+  const withdrawReward = async (accountId: string): Promise<void> => {
+    try {
+      if (!provider || !accountId) return;
+
+      await provider.withdrawReward(accountId, async (signerOpened) => {
+        if (signerOpened) setLoading(true);
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchBalance = async (selected?: ServerListProps) => {
     if (!provider || !accountId) return { account: BN_ZERO, stake: BN_ZERO };
 
@@ -291,6 +305,7 @@ export const useInstances = (
     createInstance,
     updateInstance,
     removeInstance,
+    withdrawReward,
     servers: serverList,
     metric,
     loading,
