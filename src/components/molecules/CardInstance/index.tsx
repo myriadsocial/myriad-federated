@@ -153,7 +153,10 @@ export default function CardInstance(props: CardInstanceInterface) {
                   </div>
                 </div>
                 <div className="w-1/5 text-right">
-                  Status: <span className="text-primary">Active</span>
+                  Status:{' '}
+                  <span className={status ? 'text-primary' : 'text-error'}>
+                    {status ? 'Active' : 'Inactive'}
+                  </span>
                 </div>
               </div>
               <div className="flex justify-between items-center mt-2">

@@ -115,45 +115,54 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   };
 
   useEffect(() => {
-    const filtered = servers.filter(
-      (server) => server.unstakedAt === null || server.unstakedAt === undefined,
-    );
+    const filtered = servers.filter((server) => !Boolean(server.unstakedAt));
     setFilteredServer(filtered);
+    console.log({ servers });
   }, [servers]);
 
   const handleChangeFilter = (type: string) => {
     setFilterName(type);
     let filtered;
     if (type === 'registered')
-      filtered = servers.filter(
-        (server) =>
-          server.unstakedAt === null || server.stakedAmount !== BN_ZERO,
-      );
+      filtered = servers.filter((server) => !Boolean(server.unstakedAt));
     else
-      filtered = servers.filter(
-        (server) =>
-          server.unstakedAt != null && server.stakedAmount === BN_ZERO,
-      );
-    console.log({ filtered });
+      filtered = servers.filter((server) => {
+        return Boolean(server.unstakedAt);
+      });
     setFilteredServer(filtered);
   };
 
   const statusInstance = (server: ServerListProps) => {
-    if (server.unstakedAt === null || server.stakedAmount !== BN_ZERO)
-      return true;
-    else return false;
+    return !Boolean(server.unstakedAt);
   };
 
-  if (servers.length === 0) {
+  if (filteredServer.length === 0) {
     return (
-      <div className="w-full h-[400px] mt-6">
-        <EmptyState
-          title={'You don’t have an instance'}
-          desc={
-            'Create your own instance and enjoy the decentralized Web 3 social network.'
-          }
-        />
-      </div>
+      <>
+        <div className="my-2">
+          <DropdownFilter
+            label="Instance Status :"
+            data={Arrays.dataFilterInstance ?? []}
+            value={filterName}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              // setSortingDate(event.target.value)
+              handleChangeFilter(e.target.value)
+            }
+          />
+        </div>
+        <div className="w-full h-[400px] mt-4">
+          <EmptyState
+            title={`You don’t have an ${
+              filterName === 'registered' ? 'active' : 'inactive'
+            } instance`}
+            desc={
+              filterName === 'registered'
+                ? `Create your own instance and enjoy the decentralized Web 3 social network.`
+                : ''
+            }
+          />
+        </div>
+      </>
     );
   }
 
