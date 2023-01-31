@@ -335,6 +335,7 @@ export class PolkadotJs implements IProvider {
 
   async withdrawReward(
     accountId: string,
+    serverId: number,
     callback?: (signerOpened?: boolean) => void,
   ): Promise<string | undefined> {
     try {
@@ -345,7 +346,7 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(true);
 
-      const extrinsic = this.provider.tx.tipping.withdrawReward();
+      const extrinsic = this.provider.tx.tipping.withdrawReward(serverId);
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -485,7 +486,7 @@ export class PolkadotJs implements IProvider {
     try {
       const result =
         await this.provider.query.tipping.rewardBalance.entriesPaged({
-          args: [accountId],
+          args: [accountId, serverId],
           pageSize,
           startKey,
         });
@@ -550,6 +551,7 @@ export interface IProvider {
 
   withdrawReward: (
     accountId: string,
+    serverId: number,
     callback?: (signerOpened?: boolean) => void,
   ) => Promise<string | void>;
 

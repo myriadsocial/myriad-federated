@@ -42,18 +42,13 @@ export const useInstances = (
         provider.serverList(),
         provider.totalServer(),
       ]);
+
       const servers = await Promise.all(
         result.map(async (server) => {
-          let data = null;
-
-          try {
-            const response = await fetch(
-              `${server.apiUrl}/server?average=true`,
-            );
-            data = await response.json();
-          } catch {
-            // ignore
-          }
+          const data = await fetch(`${server.apiUrl}/server`)
+            .then((response) => response.json())
+            .then((data) => data)
+            .catch(() => null);
 
           totalUsers += data?.metric?.totalUsers ?? 0;
           totalPosts += data?.metric?.totalPosts?.totalAll ?? 0;
@@ -84,9 +79,8 @@ export const useInstances = (
 
       let totalStakedAmount = BN_ZERO;
 
-      const [result, rewards, balance] = await Promise.all([
+      const [result, balance] = await Promise.all([
         provider.serverListByOwner(accountId),
-        provider.rewardBalance(accountId, 0),
         provider.accountBalance(accountId),
       ]);
 
@@ -96,16 +90,13 @@ export const useInstances = (
             totalStakedAmount = totalStakedAmount.add(server.stakedAmount);
           }
 
-          let data = null;
-
-          try {
-            const response = await fetch(
-              `${server.apiUrl}/server?average=true`,
-            );
-            data = await response.json();
-          } catch {
-            // ignore
-          }
+          const [rewards, data] = await Promise.all([
+            provider.rewardBalance(accountId, server.id),
+            fetch(`${server.apiUrl}/server`)
+              .then((response) => response.json())
+              .then((data) => data)
+              .catch(() => null),
+          ]);
 
           return {
             ...server,
@@ -149,7 +140,7 @@ export const useInstances = (
         async (server, signerOpened) => {
           if (signerOpened) setLoading(true);
           if (server) {
-            fetch(`${server.apiUrl}/server?average=true`)
+            fetch(`${server.apiUrl}/server`)
               .then((res) => res.json())
               .then((data) => {
                 server.detail = data;
@@ -275,9 +266,13 @@ export const useInstances = (
     try {
       if (!provider || !accountId) return;
 
-      await provider.withdrawReward(accountId, async (signerOpened) => {
-        if (signerOpened) setLoading(true);
-      });
+      await provider.withdrawReward(
+        accountId,
+        instanceId,
+        async (signerOpened) => {
+          if (signerOpened) setLoading(true);
+        },
+      );
 
       const newServerList = serverList.map((e) => {
         if (e.id === instanceId) return { ...e, rewards: [] };
