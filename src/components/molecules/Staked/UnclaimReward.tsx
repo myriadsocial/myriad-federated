@@ -86,7 +86,7 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
               classes="pb-1"
             />
           </div>
-          <div className="flex gap-x-2">
+          <div className="flex gap-x-2 mt-4">
             <Button
               onClick={handleOpenModal}
               label={'Claim Rewards'}

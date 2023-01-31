@@ -13,9 +13,10 @@ interface ListSwitchAccount {
   onClick?: () => void;
   label: string | undefined;
   image: string;
+  address: string;
 }
 export default function ListSwitchAccount(props: ListSwitchAccount) {
-  const { type, clickCopy, label, onClick, image } = props;
+  const { type, clickCopy, label, onClick, image, address } = props;
 
   return (
     <div
@@ -34,7 +35,7 @@ export default function ListSwitchAccount(props: ListSwitchAccount) {
         <div style={{ fontSize: 16, marginLeft: 8, flex: 1 }}>{label}</div>
       </ListItemButton>
       {type === 'switchAccount' && (
-        <CopyToClipboard text={label ?? ''}>
+        <CopyToClipboard text={address ?? ''}>
           <IconButton onClick={clickCopy} style={{ height: 40, width: 40 }}>
             <Image alt="" src={IcCopyOutline} />
           </IconButton>

@@ -7,6 +7,7 @@ const {
   NEXT_PUBLIC_MYRIAD_WEBSITE_URL,
   NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL,
   NEXT_PUBLIC_MYRIAD_RPC_URL,
+  NEXT_PUBLIC_MYRIAD_APP_URL,
 } = process.env;
 
 const nextConfig = {
@@ -34,6 +35,8 @@ const nextConfig = {
     myriadSupportMail:
       NEXT_PUBLIC_MYRIAD_SUPPORT_MAIL ?? 'support@myriad.social',
     myriadRPCURL: NEXT_PUBLIC_MYRIAD_RPC_URL ?? 'ws://localhost:9944',
+    myriadAppURL:
+      NEXT_PUBLIC_MYRIAD_APP_URL ?? 'https://app.testnet.myriad.social',
   },
 };
 

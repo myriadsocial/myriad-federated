@@ -89,6 +89,7 @@ export const Deregister = (props: DeregisterProps) => {
               }
               isFullWidth
               disable={Boolean(instance.unstakedAt)}
+              error
             />
           </div>
         </div>

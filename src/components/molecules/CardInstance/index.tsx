@@ -33,6 +33,7 @@ interface CardInstanceInterface {
   ) => Promise<void>;
   onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
   type: InstanceType;
+  status?: boolean;
 }
 
 export default function CardInstance(props: CardInstanceInterface) {
@@ -44,6 +45,7 @@ export default function CardInstance(props: CardInstanceInterface) {
     onUpdateInstance,
     onRemoveInstance,
     onWithdrawReward,
+    status,
   } = props;
 
   const [expand, setExpand] = useState<boolean>(false);
@@ -65,6 +67,7 @@ export default function CardInstance(props: CardInstanceInterface) {
   return (
     <React.Fragment>
       <Accordion
+        onClick={type === InstanceType.ALL ? onClick : undefined}
         expanded={expand}
         sx={{
           '&.MuiAccordion-root': {
@@ -150,7 +153,10 @@ export default function CardInstance(props: CardInstanceInterface) {
                   </div>
                 </div>
                 <div className="w-1/5 text-right">
-                  Status: <span className="text-primary">Active</span>
+                  Status:{' '}
+                  <span className={status ? 'text-primary' : 'text-error'}>
+                    {status ? 'Active' : 'Inactive'}
+                  </span>
                 </div>
               </div>
               <div className="flex justify-between items-center mt-2">
@@ -190,6 +196,7 @@ export default function CardInstance(props: CardInstanceInterface) {
                     onClick={onClick}
                     label={'Manage Dashboard'}
                     primary
+                    disable={!status}
                   />
                 </div>
               </div>
@@ -200,21 +207,35 @@ export default function CardInstance(props: CardInstanceInterface) {
           style={{ backgroundColor: '#FBFBFB', borderRadius: '0 0 10px 10px' }}
         >
           <div className="grid grid-cols-3 pt-2">
-            <TotalStaked
-              onUpdateInstance={onUpdateInstance}
-              instance={server}
-              balance={{
-                account: balance,
-                staked: server?.stakedAmount ?? BN_ZERO,
-                formattedAccount: formatAmount(balance),
-                formattedStaked: formatAmount(server?.stakedAmount ?? BN_ZERO),
-              }}
-            />
-            <UnclaimReward
-              instance={server}
-              onWithdrawReward={onWithdrawReward}
-            />
-            <Deregister instance={server} onRemoveInstance={onRemoveInstance} />
+            {status ? (
+              <>
+                <TotalStaked
+                  onUpdateInstance={onUpdateInstance}
+                  instance={server}
+                  balance={{
+                    account: balance,
+                    staked: server?.stakedAmount ?? BN_ZERO,
+                    formattedAccount: formatAmount(balance),
+                    formattedStaked: formatAmount(
+                      server?.stakedAmount ?? BN_ZERO,
+                    ),
+                  }}
+                />
+                <UnclaimReward
+                  instance={server}
+                  onWithdrawReward={onWithdrawReward}
+                />
+                <Deregister
+                  instance={server}
+                  onRemoveInstance={onRemoveInstance}
+                />
+              </>
+            ) : (
+              <UnclaimReward
+                instance={server}
+                onWithdrawReward={onWithdrawReward}
+              />
+            )}
           </div>
         </AccordionDetails>
       </Accordion>

@@ -328,7 +328,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
                         balance={BN_ZERO}
                         type={InstanceType.ALL}
                         onClick={goToMyriadApp(
-                          'https://app.testnet.myriad.social',
+                          `${publicRuntimeConfig.myriadAppURL}/login?rpc=${server.apiUrl}`,
                         )} // TODO: change to dynamic url
                       />
                     );

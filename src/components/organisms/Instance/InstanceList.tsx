@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import dynamic from 'next/dynamic';
 
@@ -16,7 +16,7 @@ import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.
 import { DropdownFilter } from 'src/components/atoms';
 import { Arrays } from 'src/constans/array';
 import { numberFormatter } from 'src/utils/numberFormatter';
-import { BN } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 import { InstanceType } from 'src/hooks/use-instances.hook';
 
 const PolkadotAccountList = dynamic(
@@ -63,6 +63,10 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   const [accounts, setAccounts] = React.useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = React.useState(false);
   const [showAccountList, setShowAccountList] = React.useState<boolean>(false);
+  const [filteredServer, setFilteredServer] = React.useState<ServerListProps[]>(
+    [],
+  );
+  const [filterName, setFilterName] = React.useState<string>('registered');
 
   const checkExtensionInstalled = async (url: string) => {
     const installed = await enablePolkadotExtension();
@@ -110,16 +114,55 @@ export const InstanceList: React.FC<InstanceListProps> = ({
     setCookie(null, 'selectedInstance', JSON.stringify(server));
   };
 
-  if (servers.length === 0) {
+  useEffect(() => {
+    const filtered = servers.filter((server) => !Boolean(server.unstakedAt));
+    setFilteredServer(filtered);
+    console.log({ servers });
+  }, [servers]);
+
+  const handleChangeFilter = (type: string) => {
+    setFilterName(type);
+    let filtered;
+    if (type === 'registered')
+      filtered = servers.filter((server) => !Boolean(server.unstakedAt));
+    else
+      filtered = servers.filter((server) => {
+        return Boolean(server.unstakedAt);
+      });
+    setFilteredServer(filtered);
+  };
+
+  const statusInstance = (server: ServerListProps) => {
+    return !Boolean(server.unstakedAt);
+  };
+
+  if (filteredServer.length === 0) {
     return (
-      <div className="w-full h-[400px] mt-6">
-        <EmptyState
-          title={'You don’t have an instance'}
-          desc={
-            'Create your own instance and enjoy the decentralized Web 3 social network.'
-          }
-        />
-      </div>
+      <>
+        <div className="my-2">
+          <DropdownFilter
+            label="Instance Status :"
+            data={Arrays.dataFilterInstance ?? []}
+            value={filterName}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              // setSortingDate(event.target.value)
+              handleChangeFilter(e.target.value)
+            }
+          />
+        </div>
+        <div className="w-full h-[400px] mt-4">
+          <EmptyState
+            title={`You don’t have an ${
+              filterName === 'registered' ? 'active' : 'inactive'
+            } instance`}
+            desc={
+              filterName === 'registered'
+                ? `Create your own instance and enjoy the decentralized Web 3 social network.`
+                : ''
+            }
+          />
+        </div>
+      </>
     );
   }
 
@@ -130,14 +173,14 @@ export const InstanceList: React.FC<InstanceListProps> = ({
           <DropdownFilter
             label="Instance Status :"
             data={Arrays.dataFilterInstance ?? []}
-            value={''}
-            onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+            value={filterName}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               // setSortingDate(event.target.value)
-              null
+              handleChangeFilter(e.target.value)
             }
           />
         </div>
-        {servers.map((server) => {
+        {filteredServer.map((server) => {
           return (
             <CardInstance
               key={server.id}
@@ -148,6 +191,7 @@ export const InstanceList: React.FC<InstanceListProps> = ({
               onRemoveInstance={onRemoveInstance}
               onWithdrawReward={onWithdrawReward}
               type={InstanceType.OWNED}
+              status={statusInstance(server)}
             />
           );
         })}
