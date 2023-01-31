@@ -6,6 +6,7 @@ import { ServerListProps } from 'src/interface/ServerListInterface';
 import { setCookie } from 'nookies';
 
 import { useEnqueueSnackbar } from '../components/molecules/Snackbar/useEnqueueSnackbar.hook';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 export enum InstanceType {
   ALL = 'all',
@@ -22,6 +23,8 @@ export const useInstances = (
   const enqueueSnackbar = useEnqueueSnackbar();
   const [serverList, setServerList] = useState<ServerListProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [balance, setBalance] = useState<BN>(BN_ZERO);
+  const [totalStaked, setTotalStaked] = useState<BN>(BN_ZERO);
   const [metric, setMetric] = useState({
     totalUsers: 0,
     totalPosts: 0,
@@ -79,9 +82,19 @@ export const useInstances = (
     try {
       if (!provider || !accountId) return;
 
-      const result = await provider.serverListByOwner(accountId);
+      let totalStakedAmount = BN_ZERO;
+
+      const [result, balance] = await Promise.all([
+        provider.serverListByOwner(accountId),
+        provider.accountBalance(accountId),
+      ]);
+
       const servers = await Promise.all(
         result.map(async (server) => {
+          if (server.stakedAmount) {
+            totalStakedAmount = totalStakedAmount.add(server.stakedAmount);
+          }
+
           let data = null;
 
           try {
@@ -101,6 +114,8 @@ export const useInstances = (
       );
 
       setServerList(servers);
+      setBalance(balance);
+      setTotalStaked(totalStakedAmount);
       setCookie(null, 'listOwnerInstances', JSON.stringify(servers));
       setLoading(false);
     } catch {
@@ -117,13 +132,18 @@ export const useInstances = (
     }
   }, [getAllInstances, getOwnerInstances, instanceType, skip]);
 
-  const createInstance = async (apiURL: string, callback?: () => void) => {
+  const createInstance = async (
+    apiURL: string,
+    stakeAmount: BN | null,
+    callback?: () => void,
+  ) => {
     try {
       if (!provider || !accountId) return;
 
       await provider.createServer(
         accountId,
         apiURL,
+        stakeAmount,
         async (server, signerOpened) => {
           if (signerOpened) setLoading(true);
           if (server) {
@@ -150,36 +170,66 @@ export const useInstances = (
 
   const updateInstance = async (
     accountId: string,
-    newApiURL: string,
-    server: ServerListProps,
-  ) => {
+    instance: ServerListProps,
+    data: { [property: string]: any },
+    estimateFee = false,
+  ): Promise<BN | undefined> => {
     try {
       if (!provider || !accountId) return;
 
-      await provider.updateApiUrl(
+      const result = await provider.updateServer(
         accountId,
-        server,
-        newApiURL,
-        async (newServer, signerOpened) => {
+        instance,
+        data,
+        async (server, signerOpened) => {
           if (signerOpened) setLoading(true);
-          if (newServer) {
-            fetch(`${newServer.apiUrl}/server`)
-              .then((res) => res.json())
-              .then((data) => {
-                newServer.detail = data;
-              })
-              .catch(console.log)
-              .finally(() => {
-                const newServerList = serverList.map((e) => {
-                  if (e.id === server.id) return newServer;
-                  return e;
-                });
+          if (server) {
+            if (data?.UpdateApiUrl) {
+              fetch(`${server.apiUrl}/server`)
+                .then((res) => res.json())
+                .then((data) => {
+                  server.detail = data;
+                })
+                .catch(console.log)
+                .finally(() => {
+                  const newServerList = serverList.map((e) => {
+                    if (e.id === server.id) return server;
+                    return e;
+                  });
 
-                setServerList([...newServerList]);
+                  setServerList([...newServerList]);
+                });
+            } else {
+              const newServerList = serverList.map((e) => {
+                if (e.id === server.id) return { ...e, ...server };
+                return e;
               });
+
+              let updateBalance = false;
+
+              if (data?.StakeAmount) {
+                setTotalStaked(totalStaked.add(data.StakeAmount));
+                updateBalance = true;
+              }
+
+              if (data?.UnstakeAmount) {
+                setTotalStaked(totalStaked.sub(data.UnstakeAmount));
+                updateBalance = true;
+              }
+
+              if (updateBalance) {
+                const balance = await provider.accountBalance(accountId);
+                setBalance(balance);
+              }
+
+              setServerList([...newServerList]);
+            }
           }
         },
+        estimateFee,
       );
+
+      if (estimateFee) return result as BN;
     } catch (err) {
       console.log(err);
     } finally {
@@ -187,29 +237,21 @@ export const useInstances = (
     }
   };
 
-  const fetchBalance = async (selectedServer?: ServerListProps) => {
-    if (!provider || !accountId) return { account: 0, stake: 0 };
+  const fetchBalance = async (selected?: ServerListProps) => {
+    if (!provider || !accountId) return { account: BN_ZERO, stake: BN_ZERO };
 
-    let serverOwner: ServerListProps[] = [];
-    let stakedBalance = 0;
-    console.log(selectedServer);
-    if (selectedServer) {
-      serverOwner = [selectedServer];
-    } else {
-      if (instanceType === InstanceType.OWNED) {
-        serverOwner = serverList;
-      } else {
-        serverOwner = await provider.serverListByOwner(accountId);
-      }
-    }
+    let stakedBalance = new BN(0);
+
+    const [serverOwner, accountBalance] = await Promise.all([
+      !selected ? provider.serverListByOwner(accountId) : [selected],
+      provider.accountBalance(accountId),
+    ]);
 
     for (const server of serverOwner) {
       if (!server.stakedAmount) continue;
-      const balance = Number(server.stakedAmount.replace(/,/gi, ''));
-      stakedBalance += balance;
+      stakedBalance = stakedBalance.add(server.stakedAmount);
     }
 
-    const accountBalance = await provider.accountBalance(accountId);
     return {
       account: accountBalance,
       stake: stakedBalance,
@@ -223,6 +265,8 @@ export const useInstances = (
     metric,
     loading,
     error,
+    balance,
+    totalStaked,
     fetchBalance,
   };
 };

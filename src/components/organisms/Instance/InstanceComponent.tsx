@@ -17,6 +17,7 @@ import SwitchAccount from '../../molecules/SwitchAccount';
 import { InstanceHeader } from './InstanceHeader';
 import { InstanceList } from './InstanceList';
 import { Backdrop, CircularProgress } from '@mui/material';
+import { BN } from '@polkadot/util';
 
 const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
   ssr: false,
@@ -34,20 +35,20 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
   const { logout } = useAuth();
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
-  const { createInstance, servers, loading, fetchBalance } = useInstances(
-    InstanceType.OWNED,
-    accountId,
-  );
+  const {
+    createInstance,
+    servers,
+    loading,
+    balance,
+    totalStaked,
+    updateInstance,
+  } = useInstances(InstanceType.OWNED, accountId);
 
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [showAccountList, setShowAccountList] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [extensionInstalled, setExtensionInstalled] = useState(false);
-  const [balance, setBalance] = useState({
-    account: '0',
-    stake: '0',
-  });
 
   const openMenu = Boolean(anchorEl);
 
@@ -59,6 +60,7 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
 
     getAvailableAccounts();
   };
+
   const handleSignIn = () => {
     setAnchorEl(null);
     checkExtensionInstalled();
@@ -73,11 +75,6 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
     event: React.MouseEvent<HTMLButtonElement>,
   ) => {
     setAnchorEl(event.currentTarget);
-    const { account, stake } = await fetchBalance();
-    setBalance({
-      account: (account / 10 ** 18).toLocaleString(),
-      stake: (stake / 10 ** 18).toLocaleString(),
-    });
   };
 
   const handleSelectedSubstrateAccount = async (
@@ -92,6 +89,11 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
     router.push('/instance');
   };
 
+  const formatAmount = (value: BN): string => {
+    const decimal = 10 ** 18;
+    return (+value.toString() / decimal).toLocaleString();
+  };
+
   return (
     <React.Fragment>
       <InstanceHeader
@@ -100,8 +102,15 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         onOpenStepper={() => setOpen(!open)}
         onClickBack={() => router.push('/')}
       />
-      <InstanceList servers={servers} accountId={accountId} />
+      <InstanceList
+        servers={servers}
+        accountId={accountId}
+        balance={balance}
+        onUpdateInstance={updateInstance}
+        loading={loading}
+      />
       <InstanceStepperModal
+        balance={balance}
         onCreateInstance={createInstance}
         open={open}
         onClose={() => setOpen(!open)}
@@ -120,8 +129,8 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
         handleLogout={logout}
         handleClose={() => setAnchorEl(null)}
         handleSwitchAccount={handleSignIn}
-        currentBalance={balance.account}
-        stakedBalance={balance.stake}
+        currentBalance={formatAmount(balance)}
+        stakedBalance={formatAmount(totalStaked)}
       />
       <PolkadotAccountList
         align="left"

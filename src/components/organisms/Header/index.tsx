@@ -59,9 +59,10 @@ const Header = ({ title }: { title: string }) => {
   ) => {
     setAnchorEl(event.currentTarget);
     const { account, stake } = await fetchBalance(selectedInstance);
+    const decimal = 10 ** 18;
     setBalance({
-      account: (account / 10 ** 18).toLocaleString(),
-      stake: (stake / 10 ** 18).toLocaleString(),
+      account: (+account.toString() / decimal).toLocaleString(),
+      stake: (+stake.toString() / decimal).toLocaleString(),
     });
   };
 

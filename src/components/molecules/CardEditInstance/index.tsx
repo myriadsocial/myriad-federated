@@ -67,7 +67,9 @@ const CardEditInstance = ({
   );
 
   const _handleConfirmApiUrl = async () => {
-    updateInstance(accountId, formik.values.apiUrl, selectedInstance);
+    updateInstance(accountId, selectedInstance, {
+      UpdateApiUrl: formik.values.apiUrl,
+    });
   };
 
   const _editInstance = async () => {
