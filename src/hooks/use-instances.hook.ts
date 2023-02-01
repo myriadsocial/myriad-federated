@@ -310,6 +310,9 @@ export const useInstances = (
       });
 
       setServerList([...newServerList]);
+
+      const balance = await provider.accountBalance(accountId);
+      setBalance(balance);
     } catch (err) {
       console.log(err);
     } finally {
