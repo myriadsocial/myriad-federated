@@ -64,11 +64,11 @@ export const TotalStaked = (props: TotalStakedProps) => {
 
   const handleOpenModal = (type: string) => {
     setAmount('0');
+    setEstimateFee('0');
     setModalType(type);
     setOpenModal(!openModal);
     setErrorAmount(false);
     setRawStakeAmount(BN_ZERO);
-    setEstimateFee('0');
   };
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {

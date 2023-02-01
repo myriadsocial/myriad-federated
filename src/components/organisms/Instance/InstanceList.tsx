@@ -41,8 +41,11 @@ type InstanceListProps = {
   onRemoveInstance?: (
     accountId: string,
     instance: ServerListProps,
-  ) => Promise<void>;
-  onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
+  ) => Promise<BN | void>;
+  onWithdrawReward?: (
+    accountId: string,
+    instanceId: number,
+  ) => Promise<BN | void>;
   onChangeNetwork?: (
     network: string,
     instance: ServerListProps,
