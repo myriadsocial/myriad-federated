@@ -31,7 +31,9 @@ export const getCurrencies = async (
 
   try {
     const { data } = await axios().get(`${url}/currencies`, {
-      params: { filter },
+      params: {
+        filter: JSON.stringify(filter),
+      },
     });
 
     return data.data;
