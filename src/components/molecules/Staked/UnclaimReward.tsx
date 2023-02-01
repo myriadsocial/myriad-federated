@@ -14,6 +14,10 @@ import { PolkadotAccountList } from '../PolkadotAccountList';
 interface UnclaimRewardProps {
   instance: ServerListProps;
   onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
+  onChangeNetwork?: (
+    network: string,
+    instance: ServerListProps,
+  ) => Promise<void>;
 }
 
 export const UnclaimReward = (props: UnclaimRewardProps) => {
@@ -73,18 +77,19 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
       <CardStaked title="Unclaimed Reward">
         <div className="p-5 flex flex-col justify-between h-full">
           <div>
-            <ListWallet
-              image={IcMyriad}
-              label="MYRIA"
-              amount="30,000.0000"
-              classes="pb-1"
-            />
-            <ListWallet
-              image={IcDebio}
-              label="DEBIO"
-              amount="20,000.0000"
-              classes="pb-1"
-            />
+            {(instance?.rewards ?? []).map((reward) => {
+              const amount =
+                (+reward?.amount?.toString() ?? 0) / 10 ** reward.decimal;
+              return (
+                <ListWallet
+                  key={reward.id}
+                  image={reward.image}
+                  label={reward.symbol}
+                  amount={amount.toLocaleString()}
+                  classes="pb-1"
+                />
+              );
+            })}
           </div>
           <div className="flex gap-x-2 mt-4">
             <Button
@@ -116,20 +121,20 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
             <SwitchNetwork handleSelect={() => null} />
           </div>
           <div className="mb-4">
-            <ListWallet
-              image={IcMyriad}
-              label="MYRIA"
-              amount="30,000.0000"
-              network="myriad"
-              classes="pb-3"
-            />
-            <ListWallet
-              image={IcDebio}
-              label="DEBIO"
-              amount="20,000.0000"
-              network="debio"
-              classes="pb-3"
-            />
+            {(instance?.rewards ?? []).map((reward) => {
+              const amount =
+                (+reward?.amount?.toString() ?? 0) / 10 ** reward.decimal;
+              return (
+                <ListWallet
+                  key={reward.id}
+                  image={reward.image}
+                  label={reward.symbol}
+                  amount={amount.toLocaleString()}
+                  network={reward.networkId}
+                  classes="pb-3"
+                />
+              );
+            })}
           </div>
           <div className="mb-5">
             <Gasfee amount="0.0001" />

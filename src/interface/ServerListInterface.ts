@@ -1,13 +1,13 @@
 import { BN } from '@polkadot/util';
-import { RewardBalance } from './RewardBalanceInterface';
+import { Currency } from './CurrencyInterface';
 
 export interface ServerListProps {
   id: number;
   owner: string;
   apiUrl: string;
   stakedAmount: BN;
+  rewards?: Currency[];
   unstakedAt?: number;
-  rewards?: RewardBalance[];
   detail?: ServerDetail;
 }
 

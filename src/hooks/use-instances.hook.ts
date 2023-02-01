@@ -7,6 +7,9 @@ import { setCookie } from 'nookies';
 
 import { useEnqueueSnackbar } from '../components/molecules/Snackbar/useEnqueueSnackbar.hook';
 import { BN, BN_ZERO } from '@polkadot/util';
+import { PolkadotJs } from 'src/lib/services/polkadot-js';
+import { getCurrencies } from 'src/api/GET_Currencies';
+import { getNetwork } from 'src/api/GET_Network';
 
 export enum InstanceType {
   ALL = 'all',
@@ -25,6 +28,7 @@ export const useInstances = (
   const [loading, setLoading] = useState<boolean>(true);
   const [balance, setBalance] = useState<BN>(BN_ZERO);
   const [totalStaked, setTotalStaked] = useState<BN>(BN_ZERO);
+  const [currentNetworkId, setCurrentNetworkId] = useState('myriad');
   const [metric, setMetric] = useState({
     totalUsers: 0,
     totalPosts: 0,
@@ -42,18 +46,13 @@ export const useInstances = (
         provider.serverList(),
         provider.totalServer(),
       ]);
+
       const servers = await Promise.all(
         result.map(async (server) => {
-          let data = null;
-
-          try {
-            const response = await fetch(
-              `${server.apiUrl}/server?average=true`,
-            );
-            data = await response.json();
-          } catch {
-            // ignore
-          }
+          const data = await fetch(`${server.apiUrl}/server`)
+            .then((response) => response.json())
+            .then((data) => data)
+            .catch(() => null);
 
           totalUsers += data?.metric?.totalUsers ?? 0;
           totalPosts += data?.metric?.totalPosts?.totalAll ?? 0;
@@ -84,9 +83,8 @@ export const useInstances = (
 
       let totalStakedAmount = BN_ZERO;
 
-      const [result, rewards, balance] = await Promise.all([
+      const [result, balance] = await Promise.all([
         provider.serverListByOwner(accountId),
-        provider.rewardBalance(accountId, 0),
         provider.accountBalance(accountId),
       ]);
 
@@ -96,20 +94,32 @@ export const useInstances = (
             totalStakedAmount = totalStakedAmount.add(server.stakedAmount);
           }
 
-          let data = null;
+          const [[rewards, ftIdentifiers], data] = await Promise.all([
+            provider.rewardBalance(accountId, server.id),
+            fetch(`${server.apiUrl}/server`)
+              .then((response) => response.json())
+              .then((data) => data)
+              .catch(() => null),
+          ]);
 
-          try {
-            const response = await fetch(
-              `${server.apiUrl}/server?average=true`,
-            );
-            data = await response.json();
-          } catch {
-            // ignore
-          }
+          const currencies = await getCurrencies(
+            server.apiUrl,
+            currentNetworkId,
+            ftIdentifiers,
+          );
 
           return {
             ...server,
-            rewards,
+            rewards: currencies?.map((currency) => {
+              const ftIdentifier = currency?.native
+                ? 'native'
+                : currency.referenceId;
+              const amount = rewards[ftIdentifier ?? ''];
+              return {
+                ...currency,
+                amount,
+              };
+            }),
             detail: data,
           };
         }),
@@ -123,6 +133,7 @@ export const useInstances = (
     } catch {
       setLoading(false);
     }
+    /* eslint-disable react-hooks/exhaustive-deps*/
   }, [accountId, provider]);
 
   useEffect(() => {
@@ -149,7 +160,7 @@ export const useInstances = (
         async (server, signerOpened) => {
           if (signerOpened) setLoading(true);
           if (server) {
-            fetch(`${server.apiUrl}/server?average=true`)
+            fetch(`${server.apiUrl}/server`)
               .then((res) => res.json())
               .then((data) => {
                 server.detail = data;
@@ -275,9 +286,13 @@ export const useInstances = (
     try {
       if (!provider || !accountId) return;
 
-      await provider.withdrawReward(accountId, async (signerOpened) => {
-        if (signerOpened) setLoading(true);
-      });
+      await provider.withdrawReward(
+        accountId,
+        instanceId,
+        async (signerOpened) => {
+          if (signerOpened) setLoading(true);
+        },
+      );
 
       const newServerList = serverList.map((e) => {
         if (e.id === instanceId) return { ...e, rewards: [] };
@@ -313,11 +328,48 @@ export const useInstances = (
     };
   };
 
+  const fetchReward = async (networkId: string, instance: ServerListProps) => {
+    if (networkId === currentNetworkId) return;
+    const network = await getNetwork(instance.apiUrl, networkId);
+    if (!network) return;
+    const polkadot = await PolkadotJs.connect(network.rpcURL).catch(() => null);
+    if (!polkadot) return;
+    const [rewards, ftIdentifiers] = await polkadot.rewardBalance(
+      instance.owner,
+      instance.id,
+    );
+    const currencies = await getCurrencies(
+      instance.apiUrl,
+      networkId,
+      ftIdentifiers,
+    );
+    const newServerList = serverList.map((server) => {
+      if (server.id !== instance.id) return server;
+      return {
+        ...server,
+        rewards: currencies?.map((currency) => {
+          const ftIdentifier = currency?.native
+            ? 'native'
+            : currency.referenceId;
+          const amount = rewards[ftIdentifier ?? ''];
+          return {
+            ...currency,
+            amount,
+          };
+        }),
+      };
+    });
+
+    setServerList(newServerList);
+    setCurrentNetworkId(networkId);
+  };
+
   return {
     createInstance,
     updateInstance,
     removeInstance,
     withdrawReward,
+    fetchReward,
     servers: serverList,
     metric,
     loading,

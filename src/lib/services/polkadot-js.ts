@@ -2,7 +2,7 @@ import getConfig from 'next/config';
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-import { BN, numberToHex } from '@polkadot/util';
+import { BN, BN_ZERO, numberToHex } from '@polkadot/util';
 
 import { ServerListProps } from 'src/interface/ServerListInterface';
 import { RewardBalance } from '../../interface/RewardBalanceInterface';
@@ -20,9 +20,11 @@ export class PolkadotJs implements IProvider {
     return this._provider;
   }
 
-  static async connect() {
+  static async connect(rpcURL?: string) {
     try {
-      const provider = new WsProvider(publicRuntimeConfig.myriadRPCURL);
+      const provider = new WsProvider(
+        rpcURL ?? publicRuntimeConfig.myriadRPCURL,
+      );
       const api = new ApiPromise({ provider });
 
       await api.isReadyOrError;
@@ -335,6 +337,7 @@ export class PolkadotJs implements IProvider {
 
   async withdrawReward(
     accountId: string,
+    serverId: number,
     callback?: (signerOpened?: boolean) => void,
   ): Promise<string | undefined> {
     try {
@@ -345,7 +348,7 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(true);
 
-      const extrinsic = this.provider.tx.tipping.withdrawReward();
+      const extrinsic = this.provider.tx.tipping.withdrawReward(serverId);
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -481,28 +484,34 @@ export class PolkadotJs implements IProvider {
     serverId: number,
     startKey?: string,
     pageSize = 10,
-  ): Promise<RewardBalance[]> {
+  ): Promise<[RewardBalance, string[]]> {
     try {
       const result =
         await this.provider.query.tipping.rewardBalance.entriesPaged({
-          args: [accountId],
+          args: [accountId, serverId],
           pageSize,
           startKey,
         });
 
-      const data = result.map((list) => {
+      const ftIdentifier: string[] = [];
+      const rewardBalance: { [property: string]: BN } = {};
+
+      result.forEach((list) => {
         const key = list[0].toHuman() as string[];
         const reward = list[1].toHuman() as string;
+        const amount = new BN(reward.replace(/,/gi, ''));
 
-        return {
-          ftIdentifier: key[1],
-          amount: new BN(reward.replace(/,/gi, '')),
-        };
+        if (amount.gt(BN_ZERO)) {
+          rewardBalance[key[2]] = amount;
+
+          if (key[2] === 'native') ftIdentifier.unshift(key[2]);
+          else ftIdentifier.push(key[2]);
+        }
       });
 
-      return data;
+      return [rewardBalance, ftIdentifier];
     } catch {
-      return [];
+      return [{}, []];
     }
   }
 
@@ -550,6 +559,7 @@ export interface IProvider {
 
   withdrawReward: (
     accountId: string,
+    serverId: number,
     callback?: (signerOpened?: boolean) => void,
   ) => Promise<string | void>;
 
@@ -572,7 +582,7 @@ export interface IProvider {
     serverId: number,
     startKey?: string,
     pageSize?: number,
-  ) => Promise<RewardBalance[]>;
+  ) => Promise<[RewardBalance, string[]]>;
 
   accountBalance: (accountId: string) => Promise<BN>;
 

@@ -10,7 +10,7 @@ import ModalComponent from 'src/components/molecules/Modal';
 import { IcMyriad, IcOpenUrl } from 'public/icons';
 import { NumberFormatCustom } from 'src/helpers/formatNumber';
 import Gasfee from 'src/components/atoms/Gasfee';
-import { BN, BN_ZERO } from '@polkadot/util';
+import { BN } from '@polkadot/util';
 
 type InstanceStepperModalProps = {
   balance: BN;
@@ -37,7 +37,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   const handleClick = async () => {
     if (isStepOne) return setIsStepOne(false);
     if (error || !value) return setError(true);
-    onCreateInstance(value, BN_ZERO, () => handleClose());
+    onCreateInstance(value, null, () => handleClose());
   };
 
   const handleClose = () => {
