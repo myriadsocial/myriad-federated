@@ -1,5 +1,4 @@
-import { IcDebio, IcMyriad } from 'public/icons';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Button from 'src/components/atoms/Button';
 import Gasfee from 'src/components/atoms/Gasfee';
 import ListWallet from 'src/components/atoms/ListWallet';
@@ -10,10 +9,15 @@ import { SwitchNetwork } from '../SwitchNetwork';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ServerListProps } from 'src/interface/ServerListInterface';
 import { PolkadotAccountList } from '../PolkadotAccountList';
+import { BN } from '@polkadot/util';
 
 interface UnclaimRewardProps {
   instance: ServerListProps;
-  onWithdrawReward?: (accountId: string, instanceId: number) => Promise<void>;
+  onWithdrawReward?: (
+    accountId: string,
+    instanceId: number,
+    estimateFee?: boolean,
+  ) => Promise<BN | void>;
   onChangeNetwork?: (
     network: string,
     instance: ServerListProps,
@@ -29,10 +33,24 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = useState(false);
   const [showAccountList, setShowAccountList] = useState<boolean>(false);
+  const [estimateFee, setEstimateFee] = useState<string>('0');
 
   const hasReward = instance.rewards && instance.rewards.length > 0;
 
+  const getEstimateFee = useCallback(async () => {
+    if (!onWithdrawReward) return;
+    if (!openModal) return;
+    const result = await onWithdrawReward(instance.owner, instance.id, true);
+    if (result) setEstimateFee((+result.toString() / 10 ** 18).toFixed(4));
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [instance, accounts, openModal]);
+
+  useEffect(() => {
+    getEstimateFee();
+  }, [getEstimateFee]);
+
   const handleOpenModal = () => {
+    setEstimateFee('0');
     setOpenModal(!openModal);
   };
 
@@ -135,7 +153,7 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
             })}
           </div>
           <div className="mb-5">
-            <Gasfee amount="0.0001" />
+            <Gasfee amount={estimateFee} />
           </div>
 
           <Button

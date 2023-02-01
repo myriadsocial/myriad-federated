@@ -188,7 +188,7 @@ export const useInstances = (
     instance: ServerListProps,
     data: { [property: string]: any },
     estimateFee = false,
-  ): Promise<BN | undefined> => {
+  ): Promise<BN | void> => {
     try {
       if (!provider || !accountId) return;
 
@@ -255,11 +255,12 @@ export const useInstances = (
   const removeInstance = async (
     accountId: string,
     instance: ServerListProps,
-  ): Promise<void> => {
+    estimateFee = false,
+  ): Promise<BN | void> => {
     try {
       if (!provider || !accountId) return;
 
-      await provider.removeServer(
+      const result = await provider.removeServer(
         accountId,
         instance,
         async (server, signerOpened) => {
@@ -273,7 +274,10 @@ export const useInstances = (
             setServerList([...newServerList]);
           }
         },
+        estimateFee,
       );
+
+      if (estimateFee) return result as BN;
     } catch (err) {
       console.log(err);
     } finally {
@@ -284,17 +288,21 @@ export const useInstances = (
   const withdrawReward = async (
     accountId: string,
     instanceId: number,
-  ): Promise<void> => {
+    estimateFee = false,
+  ): Promise<BN | void> => {
     try {
       if (!provider || !accountId) return;
 
-      await provider.withdrawReward(
+      const result = await provider.withdrawReward(
         accountId,
         instanceId,
         async (signerOpened) => {
           if (signerOpened) setLoading(true);
         },
+        estimateFee,
       );
+
+      if (estimateFee) return result as BN;
 
       const newServerList = serverList.map((e) => {
         if (e.id === instanceId) return { ...e, rewards: [] };

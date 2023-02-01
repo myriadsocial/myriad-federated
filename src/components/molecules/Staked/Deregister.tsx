@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Button from 'src/components/atoms/Button';
 import Gasfee from 'src/components/atoms/Gasfee';
 import { usePolkadotExtension } from 'src/hooks/use-polkadot-app.hook';
@@ -7,14 +7,15 @@ import CardStaked from '../../atoms/CardStaked';
 import ModalComponent from '../Modal';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { PolkadotAccountList } from '../PolkadotAccountList';
-import { BN_ZERO } from '@polkadot/util';
+import { BN, BN_ZERO } from '@polkadot/util';
 
 interface DeregisterProps {
   instance: ServerListProps;
   onRemoveInstance?: (
     accountId: string,
     instance: ServerListProps,
-  ) => Promise<void>;
+    estimateFee?: boolean,
+  ) => Promise<BN | void>;
 }
 
 export const Deregister = (props: DeregisterProps) => {
@@ -26,8 +27,22 @@ export const Deregister = (props: DeregisterProps) => {
   const [accounts, setAccounts] = useState<InjectedAccountWithMeta[]>([]);
   const [extensionInstalled, setExtensionInstalled] = useState(false);
   const [showAccountList, setShowAccountList] = useState<boolean>(false);
+  const [estimateFee, setEstimateFee] = useState<string>('0');
+
+  const getEstimateFee = useCallback(async () => {
+    if (!onRemoveInstance) return;
+    if (!openModal) return;
+    const result = await onRemoveInstance(instance.owner, instance, true);
+    if (result) setEstimateFee((+result.toString() / 10 ** 18).toFixed(4));
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [instance, accounts, openModal]);
+
+  useEffect(() => {
+    getEstimateFee();
+  }, [getEstimateFee]);
 
   const handleOpenModal = () => {
+    setEstimateFee('0');
     setOpenModal(!openModal);
   };
 
@@ -130,7 +145,7 @@ export const Deregister = (props: DeregisterProps) => {
             </ol>
           </div>
           <div className="mb-5">
-            <Gasfee amount="0.0001" />
+            <Gasfee amount={estimateFee} />
           </div>
           <Button
             onClick={handleDeregister}

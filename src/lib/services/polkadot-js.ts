@@ -260,8 +260,16 @@ export class PolkadotJs implements IProvider {
     owner: string,
     server: ServerListProps,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
-  ): Promise<string | null> {
+    estimateFee = false,
+  ): Promise<string | null | BN> {
     try {
+      const extrinsic = this.provider.tx.server.unregister(server.id);
+
+      if (estimateFee) {
+        const { partialFee } = await extrinsic.paymentInfo(owner);
+        return partialFee.toBn();
+      }
+
       const { web3FromSource } = await import('@polkadot/extension-dapp');
 
       const signer = await this.signer(owner);
@@ -269,7 +277,6 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(undefined, true);
 
-      const extrinsic = this.provider.tx.server.unregister(server.id);
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -336,19 +343,26 @@ export class PolkadotJs implements IProvider {
   }
 
   async withdrawReward(
-    accountId: string,
+    owner: string,
     serverId: number,
     callback?: (signerOpened?: boolean) => void,
-  ): Promise<string | undefined> {
+    estimateFee = false,
+  ): Promise<string | null | BN> {
     try {
+      const extrinsic = this.provider.tx.tipping.withdrawReward(serverId);
+
+      if (estimateFee) {
+        const { partialFee } = await extrinsic.paymentInfo(owner);
+        return partialFee.toBn();
+      }
+
       const { web3FromSource } = await import('@polkadot/extension-dapp');
 
-      const signer = await this.signer(accountId);
+      const signer = await this.signer(owner);
       const injector = await web3FromSource(signer.meta.source);
 
       callback && callback(true);
 
-      const extrinsic = this.provider.tx.tipping.withdrawReward(serverId);
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -555,13 +569,15 @@ export interface IProvider {
     owner: string,
     server: ServerListProps,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
-  ) => Promise<string | null>;
+    estimateFee?: boolean,
+  ) => Promise<string | null | BN>;
 
   withdrawReward: (
     accountId: string,
     serverId: number,
     callback?: (signerOpened?: boolean) => void,
-  ) => Promise<string | void>;
+    estimateFee?: boolean,
+  ) => Promise<string | null | BN>;
 
   // View
   totalServer: () => Promise<number>;
