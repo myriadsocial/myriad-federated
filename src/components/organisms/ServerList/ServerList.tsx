@@ -94,6 +94,10 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
     if (!query) return servers;
     const regex = new RegExp(`${query.toLowerCase()}`, 'gi');
 
+    servers.sort(
+      (a, b) => b.stakedAmount.toNumber() - a.stakedAmount.toNumber(),
+    );
+
     return servers.filter((server) => {
       if (!server?.detail) return false;
       return server.detail.name.toLowerCase().match(regex);
