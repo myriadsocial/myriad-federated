@@ -121,7 +121,6 @@ export const InstanceList: React.FC<InstanceListProps> = ({
   useEffect(() => {
     const filtered = servers.filter((server) => !Boolean(server.unstakedAt));
     setFilteredServer(filtered);
-    console.log({ servers });
   }, [servers]);
 
   const handleChangeFilter = (type: string) => {

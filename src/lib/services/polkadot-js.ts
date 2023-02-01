@@ -503,6 +503,9 @@ export class PolkadotJs implements IProvider {
 
         if (amount.gt(BN_ZERO)) {
           rewardBalance[key[2]] = amount;
+
+          if (key[2] === 'native') ftIdentifier.unshift(key[2]);
+          else ftIdentifier.push(key[2]);
         }
       });
 

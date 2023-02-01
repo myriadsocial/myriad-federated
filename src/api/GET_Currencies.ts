@@ -7,6 +7,8 @@ export const getCurrencies = async (
   networkId: string,
   ftIdentifiers: string[],
 ): Promise<Currency[] | undefined> => {
+  if (ftIdentifiers.length === 0) return [];
+
   const filter = {
     where: {
       networkId,
@@ -32,7 +34,7 @@ export const getCurrencies = async (
       params: { filter },
     });
 
-    return data;
+    return data.data;
   } catch {
     // ignore
   }
