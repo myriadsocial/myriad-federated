@@ -78,14 +78,13 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
         <div className="p-5 flex flex-col justify-between h-full">
           <div>
             {(instance?.rewards ?? []).map((reward) => {
-              const amount =
-                (+reward?.amount?.toString() ?? 0) / 10 ** reward.decimal;
+              if (reward.amount <= 0) return <React.Fragment />;
               return (
                 <ListWallet
                   key={reward.id}
                   image={reward.image}
                   label={reward.symbol}
-                  amount={amount.toLocaleString()}
+                  amount={reward.amount.toLocaleString()}
                   classes="pb-1"
                 />
               );
@@ -122,14 +121,13 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
           </div>
           <div className="mb-4">
             {(instance?.rewards ?? []).map((reward) => {
-              const amount =
-                (+reward?.amount?.toString() ?? 0) / 10 ** reward.decimal;
+              if (reward.amount <= 0) return <React.Fragment />;
               return (
                 <ListWallet
                   key={reward.id}
                   image={reward.image}
                   label={reward.symbol}
-                  amount={amount.toLocaleString()}
+                  amount={reward.amount.toLocaleString()}
                   network={reward.networkId}
                   classes="pb-3"
                 />

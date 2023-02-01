@@ -114,10 +114,12 @@ export const useInstances = (
               const ftIdentifier = currency?.native
                 ? 'native'
                 : currency.referenceId;
-              const amount = rewards[ftIdentifier ?? ''];
+              const amount = Number(rewards?.[ftIdentifier ?? ''] ?? '0');
+              const amountDecimal = 10 ** currency.decimal;
+
               return {
                 ...currency,
-                amount,
+                amount: Number(amount) / amountDecimal,
               };
             }),
             detail: data,
@@ -351,10 +353,12 @@ export const useInstances = (
           const ftIdentifier = currency?.native
             ? 'native'
             : currency.referenceId;
-          const amount = rewards[ftIdentifier ?? ''];
+          const amount = Number(rewards?.[ftIdentifier ?? ''] ?? '0');
+          const amountDecimal = 10 ** currency.decimal;
+
           return {
             ...currency,
-            amount,
+            amount: amount / amountDecimal,
           };
         }),
       };
