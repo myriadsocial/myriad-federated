@@ -1,5 +1,5 @@
 import { BN } from '@polkadot/util';
 
 export interface RewardBalance {
-  [property: string]: BN;
+  [property: string]: string;
 }

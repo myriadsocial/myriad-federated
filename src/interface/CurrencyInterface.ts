@@ -1,5 +1,3 @@
-import { BN } from '@polkadot/util';
-
 export interface Currency {
   id: string;
   name: string;
@@ -12,5 +10,5 @@ export interface Currency {
   updatedAt: string;
   networkId: string;
   referenceId?: string;
-  amount: BN;
+  amount: number;
 }

@@ -494,14 +494,14 @@ export class PolkadotJs implements IProvider {
         });
 
       const ftIdentifier: string[] = [];
-      const rewardBalance: { [property: string]: BN } = {};
+      const rewardBalance: RewardBalance = {};
 
       result.forEach((list) => {
         const key = list[0].toHuman() as string[];
         const reward = list[1].toHuman() as string;
-        const amount = new BN(reward.replace(/,/gi, ''));
+        const amount = reward.replace(/,/gi, '');
 
-        if (amount.gt(BN_ZERO)) {
+        if (amount !== '0') {
           rewardBalance[key[2]] = amount;
 
           if (key[2] === 'native') ftIdentifier.unshift(key[2]);
