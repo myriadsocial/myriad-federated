@@ -17,7 +17,7 @@ import SwitchAccount from '../../molecules/SwitchAccount';
 import { InstanceHeader } from './InstanceHeader';
 import { InstanceList } from './InstanceList';
 import { Backdrop, CircularProgress } from '@mui/material';
-import { BN } from '@polkadot/util';
+import { formatAmount } from 'src/helpers/formatNumber';
 
 const InstanceStepperModal = dynamic(() => import('./InstanceStepperModal'), {
   ssr: false,
@@ -90,11 +90,6 @@ export const InstanceComponent: React.FC<InstanceComponentProps> = ({
       JSON.stringify({ currentAddress: account.address }),
     );
     router.push('/instance');
-  };
-
-  const formatAmount = (value: BN): string => {
-    const decimal = 10 ** 18;
-    return (+value.toString() / decimal).toLocaleString();
   };
 
   return (

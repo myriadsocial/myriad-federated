@@ -12,6 +12,7 @@ import ModalComponent from '../Modal';
 import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { PolkadotAccountList } from '../PolkadotAccountList';
 import { ServerListProps } from 'src/interface/ServerListInterface';
+import { formatAmount } from 'src/helpers/formatNumber';
 
 interface TotalStakedProps {
   instance: ServerListProps;
@@ -30,6 +31,8 @@ interface TotalStakedProps {
     formattedStaked: string;
   };
 }
+
+const MIN_STAKE_AMOUNT = new BN('50000000000000000000000'); // 50,000 MYRIA
 
 export const TotalStaked = (props: TotalStakedProps) => {
   const { balance, instance, onUpdateInstance } = props;
@@ -88,10 +91,7 @@ export const TotalStaked = (props: TotalStakedProps) => {
     const valueDecimal = inputValue[1]?.length ?? 0;
     const updatedDecimal = new BN((10 ** (18 - valueDecimal)).toString());
     let value = +fixedValue.replace(/,/gi, '').replace(/\./gi, '');
-    if (+value >= 100000 * 10 ** valueDecimal) {
-      value = 100000 * 10 ** valueDecimal;
-      fixedValue = '100,000';
-    }
+    if (+value >= 1000000000000000 * 10 ** valueDecimal) return;
     const bnAmount = new BN(value.toString()).mul(updatedDecimal);
     const isValid = isValidAmount(bnAmount);
     setAmount(fixedValue);
@@ -107,11 +107,8 @@ export const TotalStaked = (props: TotalStakedProps) => {
       return true;
     }
 
-    const decimal = new BN((10 ** 18).toString());
-    const minStakeAmount = new BN('50000');
-    const bnMinStakeAmount = minStakeAmount.mul(decimal);
-
-    if (balance.staked.sub(value).gte(bnMinStakeAmount)) {
+    if (value.lte(BN_ZERO)) return true;
+    if (balance.staked.sub(value).gte(MIN_STAKE_AMOUNT)) {
       return true;
     }
 
@@ -134,9 +131,9 @@ export const TotalStaked = (props: TotalStakedProps) => {
       bnAmount = result.lte(BN_ZERO) ? BN_ZERO : result;
     }
 
-    const amount = (+bnAmount.toString() / decimal).toLocaleString();
-    setAmount(amount);
+    setAmount(formatAmount(bnAmount));
     setRawStakeAmount(bnAmount);
+    setErrorAmount(false);
   };
 
   const handleStakeUnstake = () => {

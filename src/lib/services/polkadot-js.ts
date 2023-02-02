@@ -89,8 +89,16 @@ export class PolkadotJs implements IProvider {
     apiURL: string,
     stakeAmount: BN | null,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
-  ): Promise<string | null> {
+    estimateFee = false,
+  ): Promise<string | null | BN> {
     try {
+      const extrinsic = this.provider.tx.server.register(apiURL, stakeAmount);
+
+      if (estimateFee) {
+        const { partialFee } = await extrinsic.paymentInfo(owner);
+        return partialFee.toBn();
+      }
+
       const { web3FromSource } = await import('@polkadot/extension-dapp');
 
       const signer = await this.signer(owner);
@@ -98,7 +106,6 @@ export class PolkadotJs implements IProvider {
 
       callback && callback(undefined, true);
 
-      const extrinsic = this.provider.tx.server.register(apiURL, stakeAmount);
       const txInfo = await extrinsic.signAsync(signer.address, {
         signer: injector.signer,
         nonce: -1,
@@ -555,7 +562,8 @@ export interface IProvider {
     apiURL: string,
     stakeAmount: BN | null,
     callback?: (server?: ServerListProps, signerOpened?: boolean) => void,
-  ) => Promise<string | null>;
+    estimateFee?: boolean,
+  ) => Promise<string | null | BN>;
 
   updateServer: (
     owner: string,

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import Image from 'next/image';
 
@@ -8,7 +8,6 @@ import Button from 'src/components/atoms/Button';
 import ModalComponent from 'src/components/molecules/Modal';
 
 import { IcMyriad, IcOpenUrl } from 'public/icons';
-import { NumberFormatCustom } from 'src/helpers/formatNumber';
 import Gasfee from 'src/components/atoms/Gasfee';
 import { BN } from '@polkadot/util';
 
@@ -18,10 +17,13 @@ type InstanceStepperModalProps = {
     apiURL: string,
     stakeAmount: BN | null,
     callback?: () => void,
-  ) => void;
+    estimateFee?: boolean,
+  ) => Promise<BN | void>;
   open: boolean;
   onClose: () => void;
 };
+
+const MIN_STAKE_AMOUNT = new BN('50000000000000000000000'); // 50,000 MYRIA
 
 export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   props,
@@ -29,23 +31,35 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
   const { onCreateInstance, open, onClose, balance } = props;
 
   const [isStepOne, setIsStepOne] = useState<boolean>(true);
-  const [value, setValue] = useState<string>('');
+  const [apiURL, setApiURL] = useState<string>('');
   const [error, setError] = useState<boolean>(false);
-  const [amount, setAmount] = useState<number>(0);
+  const [amount, setAmount] = useState<string>('50,000');
+  const [bnAmount, setBnAmount] = useState<BN>(MIN_STAKE_AMOUNT);
   const [errorAmount, setErrorAmount] = useState<boolean>(false);
+  const [estimateFee, setEstimateFee] = useState<string>('0');
+
+  const getEstimateFee = useCallback(async () => {
+    const result = await onCreateInstance(apiURL, bnAmount, undefined, true);
+    if (result) setEstimateFee((+result.toString() / 10 ** 18).toFixed(4));
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [apiURL, bnAmount]);
+
+  useEffect(() => {
+    getEstimateFee();
+  }, [getEstimateFee]);
 
   const handleClick = async () => {
     if (isStepOne) return setIsStepOne(false);
-    if (error || !value) return setError(true);
-    onCreateInstance(value, null, () => handleClose());
+    if (error || !apiURL || !errorAmount) return;
+    onCreateInstance(apiURL, bnAmount, () => handleClose());
   };
 
   const handleClose = () => {
     onClose();
     setIsStepOne(true);
     setError(false);
-    setValue('');
-    setAmount(0);
+    setApiURL('');
+    setAmount('50,000');
     setErrorAmount(false);
   };
 
@@ -53,14 +67,31 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
     const newValue = e.target.value;
     const isValid = isValidURL(newValue);
 
-    setValue(newValue);
+    setApiURL(newValue);
     setError(!isValid);
   };
 
   const handleChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    const isValid = isValidAmount(newValue);
-    setAmount(Number(newValue));
+    const rawValue = e.target.value.replace(/,/gi, '');
+    if (!rawValue.match(/^[0-9]*\.?[0-9]*$/)) return;
+    const inputValue = rawValue.split('.');
+    if (inputValue.length > 2) return;
+    let inputDecimal = '';
+    if (inputValue[1] != undefined) {
+      if (inputValue[1] === '') inputDecimal = '.';
+      else inputDecimal = `.${inputValue[1]}`;
+    }
+
+    let fixedValue = Number(inputValue[0]).toLocaleString() + inputDecimal;
+    if (inputValue[1]?.length > 10) return;
+    const valueDecimal = inputValue[1]?.length ?? 0;
+    const updatedDecimal = new BN((10 ** (18 - valueDecimal)).toString());
+    let value = +fixedValue.replace(/,/gi, '').replace(/\./gi, '');
+    if (+value >= 1000000000000000 * 10 ** valueDecimal) return;
+    const bnAmount = new BN(value.toString()).mul(updatedDecimal);
+    const isValid = isValidAmount();
+    setAmount(fixedValue);
+    setBnAmount(bnAmount);
     setErrorAmount(!isValid);
   };
 
@@ -72,9 +103,11 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
     }
   };
 
-  const isValidAmount = (value: string) => {
-    if (Number(value) >= 50000) return true;
-    return false;
+  const isValidAmount = () => {
+    const existensialDeposit = new BN((10 ** 16).toString());
+    const bnAmount = balance.sub(existensialDeposit);
+    if (bnAmount.lt(MIN_STAKE_AMOUNT)) return false;
+    return true;
   };
 
   return (
@@ -146,11 +179,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
                 value={amount}
                 onChange={handleChangeAmount}
                 error={errorAmount}
-                helperText={
-                  errorAmount
-                    ? 'Input must be greater than or equal to 50,000 MYRIA'
-                    : ''
-                }
+                helperText={errorAmount ? 'Insufficient Balance' : ''}
                 fullWidth
                 InputProps={{
                   startAdornment: (
@@ -158,7 +187,6 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
                       <Image src={IcMyriad} height={20} width={20} alt="" />
                     </InputAdornment>
                   ),
-                  inputComponent: NumberFormatCustom as any,
                 }}
               />
             </div>
@@ -167,7 +195,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
                 id="outlined-basic"
                 label="API URL"
                 variant="outlined"
-                value={value}
+                value={apiURL}
                 onChange={handleChangeValue}
                 error={error}
                 helperText={error ? 'Invalid URL' : ''}
@@ -175,7 +203,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
               />
             </div>
             <div className="mb-5">
-              <Gasfee amount="0.0001" />
+              <Gasfee amount={estimateFee} />
             </div>
           </div>
         )}
@@ -188,7 +216,10 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
         disable={
           isStepOne
             ? false
-            : amount === 0 || value === '' || error || errorAmount
+            : apiURL === '' ||
+              error ||
+              errorAmount ||
+              !balance.gte(MIN_STAKE_AMOUNT)
         }
       />
     </ModalComponent>

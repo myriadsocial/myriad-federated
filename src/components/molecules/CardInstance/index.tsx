@@ -14,12 +14,12 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import ShowIf from '../common/show-if.component';
 import { numberFormatter } from 'src/utils/numberFormatter';
 import { InstanceType } from 'src/hooks/use-instances.hook';
+import { formatAmount } from 'src/helpers/formatNumber';
 
 interface CardInstanceInterface {
   server: ServerListProps;
   balance: BN;
   type: InstanceType;
-  status?: boolean;
   onClick?: () => void;
   onUpdateInstance?: (
     accountId: string,
@@ -53,7 +53,6 @@ export default function CardInstance(props: CardInstanceInterface) {
     onRemoveInstance,
     onWithdrawReward,
     onChangeNetwork,
-    status,
   } = props;
 
   const [expand, setExpand] = useState<boolean>(false);
@@ -65,11 +64,6 @@ export default function CardInstance(props: CardInstanceInterface) {
 
   const onExpand = async () => {
     setExpand(!expand);
-  };
-
-  const formatAmount = (value: BN): string => {
-    const decimal = 10 ** 18;
-    return (+value.toString() / decimal).toLocaleString();
   };
 
   return (
@@ -162,8 +156,14 @@ export default function CardInstance(props: CardInstanceInterface) {
                 </div>
                 <div className="w-1/5 text-right">
                   Status:{' '}
-                  <span className={status ? 'text-primary' : 'text-error'}>
-                    {status ? 'Active' : 'Inactive'}
+                  <span
+                    className={
+                      !Boolean(server?.unstakedAt)
+                        ? 'text-primary'
+                        : 'text-error'
+                    }
+                  >
+                    {!Boolean(server?.unstakedAt) ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default function CardInstance(props: CardInstanceInterface) {
                     onClick={onClick}
                     label={'Manage Dashboard'}
                     primary
-                    disable={!status}
+                    disable={Boolean(server?.unstakedAt)}
                   />
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function CardInstance(props: CardInstanceInterface) {
           style={{ backgroundColor: '#FBFBFB', borderRadius: '0 0 10px 10px' }}
         >
           <div className="grid grid-cols-3 pt-2">
-            <ShowIf condition={Boolean(status)}>
+            <ShowIf condition={!Boolean(server.unstakedAt)}>
               <TotalStaked
                 onUpdateInstance={onUpdateInstance}
                 instance={server}
@@ -238,10 +238,24 @@ export default function CardInstance(props: CardInstanceInterface) {
                 onRemoveInstance={onRemoveInstance}
               />
             </ShowIf>
-            <ShowIf condition={!Boolean(status)}>
+            <ShowIf condition={Boolean(server.unstakedAt)}>
+              <ShowIf condition={server.stakedAmount.gte(BN_ZERO)}>
+                <TotalStaked
+                  instance={server}
+                  balance={{
+                    account: balance,
+                    staked: server?.stakedAmount ?? BN_ZERO,
+                    formattedAccount: formatAmount(balance),
+                    formattedStaked: formatAmount(
+                      server?.stakedAmount ?? BN_ZERO,
+                    ),
+                  }}
+                />
+              </ShowIf>
               <UnclaimReward
                 instance={server}
                 onWithdrawReward={onWithdrawReward}
+                onChangeNetwork={onChangeNetwork}
               />
             </ShowIf>
           </div>

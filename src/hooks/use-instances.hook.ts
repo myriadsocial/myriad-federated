@@ -10,6 +10,7 @@ import { BN, BN_ZERO } from '@polkadot/util';
 import { PolkadotJs } from 'src/lib/services/polkadot-js';
 import { getCurrencies } from 'src/api/GET_Currencies';
 import { getNetwork } from 'src/api/GET_Network';
+import { formatAmount } from 'src/helpers/formatNumber';
 
 export enum InstanceType {
   ALL = 'all',
@@ -115,11 +116,10 @@ export const useInstances = (
                 ? 'native'
                 : currency.referenceId;
               const amount = Number(rewards?.[ftIdentifier ?? ''] ?? '0');
-              const amountDecimal = 10 ** currency.decimal;
 
               return {
                 ...currency,
-                amount: Number(amount) / amountDecimal,
+                amount: formatAmount(amount, currency.decimal),
               };
             }),
             detail: data,
@@ -151,11 +151,12 @@ export const useInstances = (
     apiURL: string,
     stakeAmount: BN | null,
     callback?: () => void,
-  ) => {
+    estimateFee = false,
+  ): Promise<BN | void> => {
     try {
       if (!provider || !accountId) return;
 
-      await provider.createServer(
+      const result = await provider.createServer(
         accountId,
         apiURL,
         stakeAmount,
@@ -171,7 +172,10 @@ export const useInstances = (
               .finally(() => setServerList([...serverList, server]));
           }
         },
+        estimateFee,
       );
+
+      if (result) return result as BN;
     } catch (err: any) {
       enqueueSnackbar({
         message: err.toString(),
@@ -365,11 +369,9 @@ export const useInstances = (
             ? 'native'
             : currency.referenceId;
           const amount = Number(rewards?.[ftIdentifier ?? ''] ?? '0');
-          const amountDecimal = 10 ** currency.decimal;
-
           return {
             ...currency,
-            amount: amount / amountDecimal,
+            amount: formatAmount(amount, currency.decimal),
           };
         }),
       };

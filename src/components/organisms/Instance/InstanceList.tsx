@@ -138,10 +138,6 @@ export const InstanceList: React.FC<InstanceListProps> = ({
     setFilteredServer(filtered);
   };
 
-  const statusInstance = (server: ServerListProps) => {
-    return !Boolean(server.unstakedAt);
-  };
-
   if (filteredServer.length === 0) {
     return (
       <>
@@ -198,7 +194,6 @@ export const InstanceList: React.FC<InstanceListProps> = ({
               onWithdrawReward={onWithdrawReward}
               onChangeNetwork={onChangeNetwork}
               type={InstanceType.OWNED}
-              status={statusInstance(server)}
             />
           );
         })}

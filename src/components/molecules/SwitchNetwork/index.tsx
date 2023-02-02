@@ -39,9 +39,7 @@ export const SwitchNetwork: React.FC<NetworkOptionProps> = ({
         size="small"
         color="inherit"
       >
-        <div className="text-[14px] capitalize text-[#12130F] ">
-          Myriad Network
-        </div>
+        <div className="text-[14px] capitalize text-[#12130F] ">Myriad</div>
       </Button>
       <Menu
         anchorEl={anchorEl}

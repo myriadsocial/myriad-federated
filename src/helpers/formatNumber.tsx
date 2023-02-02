@@ -4,6 +4,7 @@ import {
   NumericFormat,
   NumericFormatProps,
 } from 'react-number-format';
+import { BN } from '@polkadot/util';
 
 interface CustomProps {
   onChange: (event: { target: { name: string; value: string } }) => void;
@@ -32,3 +33,20 @@ export const NumberFormatCustom = React.forwardRef<
     />
   );
 });
+
+export const formatAmount = (
+  value: BN | string | number,
+  decimal = 18,
+  precision = 5,
+): string => {
+  const balance = (+value.toString() / Math.pow(10, decimal)).toFixed(
+    precision,
+  );
+
+  const [num1, num2] = balance.split('.');
+  const amountDecimal = parseFloat(num2 ? '0.' + num2 : '')
+    .toString()
+    .substring(1);
+
+  return Number(num1).toLocaleString() + amountDecimal;
+};
