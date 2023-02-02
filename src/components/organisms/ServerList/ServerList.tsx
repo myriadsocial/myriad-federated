@@ -16,7 +16,6 @@ import { useAuth } from 'src/hooks/use-auth.hook';
 import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
 import { usePolkadotExtension } from 'src/hooks/use-polkadot-app.hook';
 import { ServerListProps } from 'src/interface/ServerListInterface';
-import { numberFormatter } from 'src/utils/numberFormatter';
 
 import { parseCookies } from 'nookies';
 import { IcAccountPolkadot, Illustration, MyriadFullBlack } from 'public/icons';
@@ -29,6 +28,7 @@ import SwitchAccount from '../../molecules/SwitchAccount';
 import { ShimerComponent } from './Shimer';
 import { Container, SvgIcon } from '@mui/material';
 import { BN_ZERO } from '@polkadot/util';
+import { formatAmount } from 'src/helpers/formatNumber';
 
 const PolkadotAccountList = dynamic(
   () =>
@@ -174,10 +174,9 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
   ) => {
     setAnchorEl(event.currentTarget);
     const { account, stake } = await fetchBalance();
-    const decimal = 10 ** 18;
     setBalance({
-      account: (+account.toString() / decimal).toLocaleString(),
-      stake: (+stake.toString() / decimal).toLocaleString(),
+      account: formatAmount(account),
+      stake: formatAmount(stake),
     });
   };
 

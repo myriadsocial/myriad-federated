@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -20,6 +20,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { IcDropdownPrimary, IcNotification } from '../../../../public/icons';
 import { useEnqueueSnackbar } from '../../molecules/Snackbar/useEnqueueSnackbar.hook';
 import { InstanceType, useInstances } from 'src/hooks/use-instances.hook';
+import { formatAmount } from 'src/helpers/formatNumber';
 
 const PolkadotIcon = dynamic(() => import('@polkadot/react-identicon'), {
   ssr: false,
@@ -59,10 +60,9 @@ const Header = ({ title }: { title: string }) => {
   ) => {
     setAnchorEl(event.currentTarget);
     const { account, stake } = await fetchBalance(selectedInstance);
-    const decimal = 10 ** 18;
     setBalance({
-      account: (+account.toString() / decimal).toLocaleString(),
-      stake: (+stake.toString() / decimal).toLocaleString(),
+      account: formatAmount(account),
+      stake: formatAmount(stake),
     });
   };
 

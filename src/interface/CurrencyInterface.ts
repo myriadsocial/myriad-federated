@@ -10,5 +10,5 @@ export interface Currency {
   updatedAt: string;
   networkId: string;
   referenceId?: string;
-  amount: number;
+  amount: string;
 }

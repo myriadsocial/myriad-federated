@@ -10,6 +10,8 @@ import { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 import { ServerListProps } from 'src/interface/ServerListInterface';
 import { PolkadotAccountList } from '../PolkadotAccountList';
 import { BN } from '@polkadot/util';
+import { IcMyriad } from 'public/icons';
+import { Currency } from 'src/interface/CurrencyInterface';
 
 interface UnclaimRewardProps {
   instance: ServerListProps;
@@ -22,6 +24,11 @@ interface UnclaimRewardProps {
     network: string,
     instance: ServerListProps,
   ) => Promise<void>;
+}
+
+interface ShowWalletListProps {
+  network?: string;
+  rewards?: Currency[];
 }
 
 export const UnclaimReward = (props: UnclaimRewardProps) => {
@@ -90,24 +97,38 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
     handleOpenModal();
   };
 
+  const showListWallet = (rewards?: Currency[], openModal = false) => {
+    if (!rewards || (rewards && rewards.length === 0)) {
+      return (
+        <ListWallet
+          image={IcMyriad}
+          label="MYRIA"
+          amount="0"
+          network={openModal ? 'myriad' : ''}
+          classes="pb-1"
+        />
+      );
+    }
+
+    return rewards.map((reward) => {
+      return (
+        <ListWallet
+          key={reward.id}
+          image={reward.image}
+          label={reward.symbol}
+          amount={reward.amount}
+          network={openModal ? reward.networkId : ''}
+          classes="pb-1"
+        />
+      );
+    });
+  };
+
   return (
     <React.Fragment>
       <CardStaked title="Unclaimed Reward">
         <div className="p-5 flex flex-col justify-between h-full">
-          <div>
-            {(instance?.rewards ?? []).map((reward) => {
-              if (reward.amount <= 0) return <React.Fragment />;
-              return (
-                <ListWallet
-                  key={reward.id}
-                  image={reward.image}
-                  label={reward.symbol}
-                  amount={reward.amount.toLocaleString()}
-                  classes="pb-1"
-                />
-              );
-            })}
-          </div>
+          <div>{showListWallet(instance.rewards, openModal)}</div>
           <div className="flex gap-x-2 mt-4">
             <Button
               onClick={handleOpenModal}
@@ -138,19 +159,7 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
             <SwitchNetwork handleSelect={() => null} />
           </div>
           <div className="mb-4">
-            {(instance?.rewards ?? []).map((reward) => {
-              if (reward.amount <= 0) return <React.Fragment />;
-              return (
-                <ListWallet
-                  key={reward.id}
-                  image={reward.image}
-                  label={reward.symbol}
-                  amount={reward.amount.toLocaleString()}
-                  network={reward.networkId}
-                  classes="pb-3"
-                />
-              );
-            })}
+            {showListWallet(instance.rewards, openModal)}
           </div>
           <div className="mb-5">
             <Gasfee amount={estimateFee} />

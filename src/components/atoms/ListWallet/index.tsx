@@ -5,7 +5,7 @@ interface ListSwitchAccount {
   label: string | undefined;
   network?: string | undefined;
   image: string;
-  amount?: string;
+  amount: string;
   classes?: string;
 }
 const ListWallet = (props: ListSwitchAccount) => {
@@ -24,17 +24,9 @@ const ListWallet = (props: ListSwitchAccount) => {
         />
         <div className="text-[14px] text-black font-semibold leading-4">
           <div>{label}</div>
-          {network && (
-            <div className="text-xs text-softGray3 capitalize font-medium">
-              {network} network
-            </div>
-          )}
         </div>
       </div>
-
-      {amount && (
-        <div className="text-[14px] text-black font-semibold">{amount}</div>
-      )}
+      <div className="text-[14px] text-black font-semibold">{amount}</div>
     </div>
   );
 };
