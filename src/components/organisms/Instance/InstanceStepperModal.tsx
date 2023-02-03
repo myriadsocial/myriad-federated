@@ -50,7 +50,7 @@ export const InstanceStepperModal: React.FC<InstanceStepperModalProps> = (
 
   const handleClick = async () => {
     if (isStepOne) return setIsStepOne(false);
-    if (error || !apiURL || !errorAmount) return;
+    if (error || !apiURL || errorAmount) return;
     onCreateInstance(apiURL, bnAmount, () => handleClose());
   };
 
