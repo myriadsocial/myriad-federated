@@ -76,7 +76,7 @@ const Settings: NextPageWithLayout = () => {
           </div>
           <div className="flex mb-4">
             <a
-              href={`https://app.testnet.myriad.social/post/`}
+              href={`https://myriadsocial.github.io/myriad-docs/#/maintain/run-your-own-server-guide/introduction`}
               target="_blank"
               rel="noreferrer"
               className="flex justify-center"
