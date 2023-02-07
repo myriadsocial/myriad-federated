@@ -331,7 +331,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
                         balance={BN_ZERO}
                         type={InstanceType.ALL}
                         onClick={goToMyriadApp(
-                          `${publicRuntimeConfig.myriadAppURL}/login?rpc=${server.apiUrl}`,
+                          `${publicRuntimeConfig.myriadAppURL}/login?instance=${server.apiUrl}`,
                         )}
                       />
                     );
