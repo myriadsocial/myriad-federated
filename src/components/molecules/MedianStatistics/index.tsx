@@ -30,7 +30,7 @@ export default function MedianStatistics({
       <ListMedian
         image={IcCountExperiance}
         count={numberFormatter(item?.experience as number) ?? 0}
-        title={'Experience Per User'}
+        title={'Timeline Per User'}
       />
       <ListMedian
         image={CountComments}
