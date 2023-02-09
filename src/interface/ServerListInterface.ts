@@ -26,11 +26,11 @@ export interface MedianInterface {
   medianSubscription: number;
 }
 export interface AverageInterface {
-  averagePost: number;
-  averageComment: number;
-  averageExperience: number;
-  averageTransaction: number;
-  averageSubscription: number;
+  post: number;
+  comment: number;
+  experience: number;
+  transaction: number;
+  subscription: number;
 }
 
 export interface MetricTotalWalletsInterface {

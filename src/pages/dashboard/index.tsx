@@ -1,4 +1,3 @@
-import { useQuery } from '@tanstack/react-query';
 import {
   ArcElement,
   BarElement,
@@ -10,11 +9,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import { useRouter } from 'next/router';
-import { ChangeEvent, ReactElement, useEffect, useState } from 'react';
-import { getReports } from 'src/api/GET_Reports';
-import { getServersMetric } from 'src/api/GET_serversMetric';
-import { getTopCurrencies } from 'src/api/GET_TopCurrencies';
-import { getUsersGrowth } from 'src/api/GET_UsersGrowth';
+import { ChangeEvent, ReactElement } from 'react';
 import { DropdownFilter } from 'src/components/atoms';
 import ChartBar from 'src/components/molecules/ChartBar';
 import ChartDoughnat from 'src/components/molecules/ChartDoughnut';
@@ -22,12 +17,10 @@ import ChartPie from 'src/components/molecules/ChartPie';
 import ChartTopCoint from 'src/components/molecules/ChartTopCoint';
 import ShowIf from 'src/components/molecules/common/show-if.component';
 import MedianStatistics from 'src/components/molecules/MedianStatistics';
-import { useEnqueueSnackbar } from 'src/components/molecules/Snackbar/useEnqueueSnackbar.hook';
 import CardRecentReported from 'src/components/organisms/CardRecentReported';
 import DashCounter from 'src/components/organisms/DashCounter';
 import { Arrays } from 'src/constans/array';
-import { useAuth } from 'src/hooks/use-auth.hook';
-import { ServerListProps } from 'src/interface/ServerListInterface';
+import { useDashboard } from 'src/hooks/use-dashboard.hook';
 import ContentLayout from '../../layout/ContentLayout';
 import type { NextPageWithLayout } from '../_app';
 
@@ -43,73 +36,16 @@ ChartJS.register(
 
 const Dashboard: NextPageWithLayout = () => {
   const router = useRouter();
-  const { cookie } = useAuth();
-  const selectedInstance: ServerListProps = cookie?.selectedInstance ?? '';
-  const [sortingDate, setSortingDate] = useState<string>('DESC');
-  const pageNumber = 1;
-  const enqueueSnackbar = useEnqueueSnackbar();
-
-  const filterPost = JSON.stringify({
-    where: { status: 'pending', referenceType: { inq: ['post', 'comment'] } },
-    order: [`createdAt ${sortingDate}`],
-  });
-
-  const filterUser = JSON.stringify({
-    where: { status: 'pending', referenceType: 'user' },
-    order: [`createdAt ${sortingDate}`],
-  });
-
-  const { refetch: refetchingPostReported, data: dataPostReported } = useQuery(
-    ['/getAllPost'],
-    () => getReports({ pageNumber, filter: filterPost }),
-    {
-      enabled: false,
-    },
-  );
-
-  const { refetch: refetchingAllUser, data: dataUserReported } = useQuery(
-    ['/getAllUser'],
-    () => getReports({ pageNumber, filter: filterUser }),
-    {
-      enabled: false,
-    },
-  );
-
-  const { refetch: refetchingTopCurrencies, data: dataTopCurrencies } =
-    useQuery(['/getTopCurrencies'], () => getTopCurrencies(), {
-      enabled: false,
-    });
-
-  const { refetch: refetchingUserGrowth, data: dataUsersGrowth } = useQuery(
-    ['/getUserGrowth'],
-    () => getUsersGrowth(),
-    {
-      enabled: false,
-    },
-  );
-
-  const { refetch: refetchingServerMetric, data: dataServerMetric } = useQuery(
-    ['/getServerMetric'],
-    () => getServersMetric({ baseUrl: selectedInstance.apiUrl }),
-    {
-      enabled: false,
-    },
-  );
-
-  useEffect(() => {
-    refetchingAllUser();
-    refetchingPostReported();
-    refetchingServerMetric();
-    refetchingTopCurrencies();
-    refetchingUserGrowth();
-  }, [
-    refetchingAllUser,
-    refetchingPostReported,
-    refetchingServerMetric,
-    refetchingTopCurrencies,
-    refetchingUserGrowth,
-    selectedInstance.id,
-  ]);
+  const {
+    dataPostReported,
+    dataServerMetric,
+    dataTopCurrencies,
+    dataUserReported,
+    dataUsersGrowth,
+    sortingDate,
+    dataAverageStats,
+    onChangeSortingDate,
+  } = useDashboard();
 
   return (
     <div className="bg-background-content">
@@ -119,7 +55,7 @@ const Dashboard: NextPageWithLayout = () => {
           data={Arrays.dashboardFilter ?? []}
           value={sortingDate}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            setSortingDate(event.target.value)
+            onChangeSortingDate(event.target.value)
           }
         />
         <DashCounter
@@ -190,7 +126,7 @@ const Dashboard: NextPageWithLayout = () => {
           </div>
           <div className="col-span-1 p-5 bg-white shadow-lg rounded-2xl mb-6">
             <div className="text-lg font-semibold mb-6">Average Statistics</div>
-            <MedianStatistics item={dataServerMetric?.average} />
+            <MedianStatistics item={dataAverageStats} />
           </div>
         </div>
       </div>
