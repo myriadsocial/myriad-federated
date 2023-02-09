@@ -33,7 +33,7 @@ export default function DashCounter(props: DashCounterInterface) {
       <CardTotal
         image={IcCountExperiance}
         count={totalExperiances ?? 0}
-        label={'Total experiences'}
+        label={'Total timelines'}
       />
       <CardTotal
         image={IcCountTip}

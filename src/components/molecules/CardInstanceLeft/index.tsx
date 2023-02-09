@@ -55,7 +55,7 @@ const CardInstanceLeft = ({ data }: { data: ServerDetail }) => {
                   {data?.metric.totalExperiences}
                 </div>
               </div>
-              <div className="text-sm text-[#9e9e9e]">Experiance</div>
+              <div className="text-sm text-[#9e9e9e]">Timeline</div>
             </div>
           </div>
         </div>
