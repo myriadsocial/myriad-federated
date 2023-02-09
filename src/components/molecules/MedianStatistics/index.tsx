@@ -24,27 +24,27 @@ export default function MedianStatistics({
     <div className="grid gap-4">
       <ListMedian
         image={IcCountPost}
-        count={numberFormatter(item?.averagePost as number) ?? 0}
+        count={numberFormatter(item?.post as number) ?? 0}
         title={'Post Per User'}
       />
       <ListMedian
         image={IcCountExperiance}
-        count={numberFormatter(item?.averageExperience as number) ?? 0}
+        count={numberFormatter(item?.experience as number) ?? 0}
         title={'Experience Per User'}
       />
       <ListMedian
         image={CountComments}
-        count={numberFormatter(item?.averageComment as number) ?? 0}
+        count={numberFormatter(item?.comment as number) ?? 0}
         title={'Comments Per User'}
       />
       <ListMedian
         image={CountTips}
-        count={numberFormatter(item?.averageTransaction as number) ?? 0}
+        count={numberFormatter(item?.transaction as number) ?? 0}
         title={'Transaction Per User'}
       />
       <ListMedian
         image={CountSubscriptions}
-        count={numberFormatter(item?.averageSubscription as number) ?? 0}
+        count={numberFormatter(item?.subscription as number) ?? 0}
         title={'Subscriptions Per User'}
       />
     </div>
