@@ -134,7 +134,7 @@ export default function CardInstance(props: CardInstanceInterface) {
                   <Image src={ExperianceGray} height={20} width={20} alt="" />
                   <div className="mx-2">
                     <div className="text-sm font-semibold text-softGray">
-                      {experience} experiences
+                      {experience} timelines
                     </div>
                   </div>
                 </div>
@@ -189,7 +189,7 @@ export default function CardInstance(props: CardInstanceInterface) {
                     <Image src={ExperianceGray} height={20} width={20} alt="" />
                     <div className="mx-2">
                       <div className="text-sm font-semibold text-softGray">
-                        {experience} experiences
+                        {experience} timelines
                       </div>
                     </div>
                   </div>
