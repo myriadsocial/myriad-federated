@@ -1,7 +1,7 @@
 {
   "name": "myriad-federated",
+  "version": "0.1.0",
   "description": "myriad-federated",
-  "version": "1.0.0",
   "private": true,
   "license": "AGPL-3.0",
   "author": "Myriad Dev Team <dev@myriad.social>",
@@ -22,16 +22,10 @@
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint:check": "next lint --ignore-path .gitignore .",
+    "lint:check": "next lint --report-unused-disable-directives --ignore-path .gitignore .",
     "lint:fix": "next lint --fix --ignore-path .gitignore  .",
-    "format:check": "prettier --check --ignore-path .gitignore .",
-    "format:fix": "prettier --write --ignore-path .gitignore ."
-  },
-  "lint-staged": {
-    "!yarn.lock": [
-      "yarn lint:fix",
-      "yarn format:fix"
-    ]
+    "format:check": "prettier --list-different --ignore-unknown --ignore-path .gitignore . '!CHANGELOG.md'",
+    "format:fix": "prettier --write --ignore-unknown --ignore-path .gitignore . '!CHANGELOG.md'"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
