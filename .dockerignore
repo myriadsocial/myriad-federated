@@ -85,13 +85,13 @@ prisma
 
 # next.js
 .next
+next-env.d.ts
 
-# Docs
-/docs/*
-# exception to the rule
-!docs/.gitkeep
-README.md
-DEVELOPING.md
+# storybook
+/storybook-static
+
+# Sentry
+.sentryclirc
 
 # IDE
 .idea
@@ -103,10 +103,16 @@ DEVELOPING.md
 
 # Docker
 .dockerignore
+Dockerfile
+docker-compose.yaml
+
+# Docs
+/docs/*
+# exception to the rule
+!docs/.gitkeep
+README.md
+CHANGELOG.md
 
 # Other
 .github
 .maintain
-
-# Sentry
-.sentryclirc

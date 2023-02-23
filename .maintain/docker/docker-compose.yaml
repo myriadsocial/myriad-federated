@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-  web:
-    container_name: myriad-federated
+  federated:
+    container_name: federated
     image: myriadsocial/myriad-federated
     build:
       context: ../../
@@ -15,7 +15,7 @@ services:
       myriad:
         ipv4_address: 172.27.2.1
         aliases:
-          - myriad-federated
+          - federated
 
 networks:
   myriad:
