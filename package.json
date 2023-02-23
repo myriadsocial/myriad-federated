@@ -22,7 +22,7 @@
     "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start",
-    "lint:check": "next lint --report-unused-disable-directives --ignore-path .gitignore .",
+    "lint:check": "next lint --report-unused-disable-directives error --ignore-path .gitignore .",
     "lint:fix": "next lint --fix --ignore-path .gitignore  .",
     "format:check": "prettier --list-different --ignore-unknown --ignore-path .gitignore . '!CHANGELOG.md'",
     "format:fix": "prettier --write --ignore-unknown --ignore-path .gitignore . '!CHANGELOG.md'"
