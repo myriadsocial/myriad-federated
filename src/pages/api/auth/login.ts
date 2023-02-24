@@ -34,7 +34,10 @@ export default async function handler(
       '/authentication/login/wallet',
       omit(data, ['apiURL', 'address']),
     );
-    const payload = encryptMessage(result.data.accessToken, data.publicAddress);
+    const payload = encryptMessage(
+      result.data.token.accessToken,
+      data.publicAddress,
+    );
 
     res.setHeader(
       'Set-Cookie',
