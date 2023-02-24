@@ -187,12 +187,12 @@ jobs:
             WEB_FEDERATED_ENVIRONMENT:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_ENVIRONMENT
             WEB_FEDERATED_NAME:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_NAME
             WEB_FEDERATED_SECRET:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_SECRET
-            WEB_FEDERATED_URL:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_URL
             WEBSITE_URL:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEBSITE_URL
             SUPPORT_MAIL:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/SUPPORT_MAIL
-            RPC_URL:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/RPC_URL
             WEB_FEDERATED_SENTRY_DSN:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_SENTRY_DSN
             WEB_FEDERATED_DNS:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_DNS
+            WEB_DNS:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_DNS
+            NODE_RPC_WS_DNS:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/NODE_RPC_WS_DNS
       - name: Tunneling SSH connections
         run: |
           gcloud compute ssh ${{ secrets[format('{0}_{1}', matrix.environment, 'GCE_BASTION_INSTANCE_NAME')] }} \
@@ -217,11 +217,11 @@ jobs:
             --set-string config.app.environment=${{ steps.secrets.outputs.WEB_FEDERATED_ENVIRONMENT }} \
             --set-string config.app.name="${{ steps.secrets.outputs.WEB_FEDERATED_NAME }}" \
             --set-string config.app.version=${{ needs.release-please.outputs.tag_name || github.sha }} \
-            --set-string config.app.authURL=${{ steps.secrets.outputs.WEB_FEDERATED_URL }} \
+            --set-string config.app.authURL=https://${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
             --set-string config.app.secret=${{ steps.secrets.outputs.WEB_FEDERATED_SECRET }} \
-            --set-string config.websiteURL=${{ steps.secrets.outputs.WEBSITE_URL }} \
+            --set-string config.websiteURL=https://${{ steps.secrets.outputs.WEB_DNS }} \
             --set-string config.supportMail=${{ steps.secrets.outputs.SUPPORT_MAIL }} \
-            --set-string config.rpcURL=${{ steps.secrets.outputs.RPC_URL }} \
+            --set-string config.rpcURL=wss://${{ steps.secrets.outputs.NODE_RPC_WS_DNS }} \
             --set-string config.sentry.dsn=${{ steps.secrets.outputs.WEB_FEDERATED_SENTRY_DSN }} \
             --set ingress.enabled=true \
             --set-string ingress.className=nginx \
