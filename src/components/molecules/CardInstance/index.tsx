@@ -103,14 +103,24 @@ export default function CardInstance(props: CardInstanceInterface) {
 
           <div className="ml-4 w-full">
             <ShowIf condition={type === InstanceType.ALL}>
-              <div className="text-2xl text-primary text-left">
-                {server?.detail?.name ?? 'Unknown Instance'}
-              </div>
-              <div className="text-sm text-darkGray text-left">
-                {server.detail?.categories.join(', ') ?? ''}
-              </div>
-              <div className="text-base text-left">
-                {server.detail?.description ?? ''}
+              <div className="flex justify-between">
+                <div className="w-4/5">
+                  <div className="text-2xl text-primary text-left">
+                    {server?.detail?.name ?? 'Unknown Instance'}
+                  </div>
+                  <div className="text-sm text-darkGray text-left">
+                    {server.detail?.categories.join(', ') ?? ''}
+                  </div>
+                  <div className="text-base text-left">
+                    {server.detail?.description ?? ''}
+                  </div>
+                </div>
+                <div className="w-1/5 text-right">
+                  Total Staked:{' '}
+                  <span className={'text-primary'}>
+                    {formatAmount(server?.stakedAmount ?? BN_ZERO)}
+                  </span>
+                </div>
               </div>
 
               <div className="flex mt-2">
