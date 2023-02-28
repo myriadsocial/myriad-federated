@@ -12,6 +12,7 @@ import { PolkadotAccountList } from '../PolkadotAccountList';
 import { BN } from '@polkadot/util';
 import { IcMyriad } from 'public/icons';
 import { Currency } from 'src/interface/CurrencyInterface';
+import { Backdrop, CircularProgress } from '@mui/material';
 
 interface UnclaimRewardProps {
   instance: ServerListProps;
@@ -32,7 +33,7 @@ interface ShowWalletListProps {
 }
 
 export const UnclaimReward = (props: UnclaimRewardProps) => {
-  const { instance, onWithdrawReward } = props;
+  const { instance, onWithdrawReward, onChangeNetwork } = props;
   const { enablePolkadotExtension, getPolkadotAccounts } =
     usePolkadotExtension();
 
@@ -41,6 +42,7 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
   const [extensionInstalled, setExtensionInstalled] = useState(false);
   const [showAccountList, setShowAccountList] = useState<boolean>(false);
   const [estimateFee, setEstimateFee] = useState<string>('0');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const hasReward = instance.rewards && instance.rewards.length > 0;
 
@@ -56,8 +58,9 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
     getEstimateFee();
   }, [getEstimateFee]);
 
-  const handleOpenModal = () => {
+  const handleOpenModal = async () => {
     setEstimateFee('0');
+    if (openModal) await handleChangeNetwork?.('myriad');
     setOpenModal(!openModal);
   };
 
@@ -95,6 +98,12 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
   const onCloseAccountList = () => {
     setShowAccountList(false);
     handleOpenModal();
+  };
+
+  const handleChangeNetwork = async (networkId: string) => {
+    setLoading(true);
+    await onChangeNetwork?.(networkId, instance);
+    setLoading(false);
   };
 
   const showListWallet = (rewards?: Currency[], openModal = false) => {
@@ -156,7 +165,7 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
           </div>
           <div className="flex items-center text-[14px] text-softGray mb-5">
             <div>Network : </div>
-            <SwitchNetwork handleSelect={() => null} />
+            <SwitchNetwork onChangeNetwork={handleChangeNetwork} />
           </div>
           <div className="mb-4">
             {showListWallet(instance.rewards, openModal)}
@@ -181,6 +190,9 @@ export const UnclaimReward = (props: UnclaimRewardProps) => {
         onSelect={handleSelectedSubstrateAccount}
         onClose={onCloseAccountList}
       />
+      <Backdrop style={{ zIndex: 1400, color: '#fff' }} open={loading}>
+        <CircularProgress style={{ color: '#7342CC' }} />
+      </Backdrop>
     </React.Fragment>
   );
 };

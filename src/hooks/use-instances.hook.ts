@@ -394,5 +394,7 @@ export const useInstances = (
     balance,
     totalStaked,
     fetchBalance,
+    currentNetworkId,
+    setCurrentNetworkId,
   };
 };
