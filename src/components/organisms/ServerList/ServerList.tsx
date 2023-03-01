@@ -70,6 +70,7 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
     account: '0',
     stake: '0',
   });
+  const [mainInstance, setMainInstance] = useState<ServerListProps>();
 
   const cookies = parseCookies();
   const session = cookies?.session;
@@ -90,13 +91,9 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
     });
   };
 
-  const serverList: ServerListProps[] = useMemo(() => {
+  let serverList: ServerListProps[] = useMemo(() => {
     if (!query) return servers;
     const regex = new RegExp(`${query.toLowerCase()}`, 'gi');
-
-    servers.sort(
-      (a, b) => b.stakedAmount.toNumber() - a.stakedAmount.toNumber(),
-    );
 
     return servers.filter((server) => {
       if (!server?.detail) return false;
@@ -179,6 +176,15 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
       stake: formatAmount(stake),
     });
   };
+
+  useEffect(() => {
+    if (serverList) {
+      const main = serverList.find(
+        (server) => server.detail?.name === 'Myriad Official',
+      );
+      setMainInstance(main);
+    }
+  }, [serverList]);
 
   return (
     <>
@@ -319,23 +325,43 @@ export const ServerListComponent: React.FC<ServerListComponentProps> = ({
                   </div>
                 </ShowIf>
                 <ShowIf condition={serverList.length > 0}>
-                  {serverList.map((server) => {
-                    if (!server?.detail) {
-                      return <React.Fragment key={server.id} />;
-                    }
+                  {mainInstance && (
+                    <CardInstance
+                      key={mainInstance.id}
+                      server={mainInstance}
+                      balance={BN_ZERO}
+                      type={InstanceType.ALL}
+                      onClick={goToMyriadApp(
+                        `${publicRuntimeConfig.myriadAppURL}/login?instance=${mainInstance.apiUrl}`,
+                      )}
+                    />
+                  )}
 
-                    return (
-                      <CardInstance
-                        key={server.id}
-                        server={server}
-                        balance={BN_ZERO}
-                        type={InstanceType.ALL}
-                        onClick={goToMyriadApp(
-                          `${publicRuntimeConfig.myriadAppURL}/login?instance=${server.apiUrl}`,
-                        )}
-                      />
-                    );
-                  })}
+                  {serverList
+                    .sort(
+                      (a, b) =>
+                        parseFloat(formatAmount(b.stakedAmount)) -
+                        parseFloat(formatAmount(a.stakedAmount)),
+                    )
+                    .map((server) => {
+                      if (server.detail?.name === 'Myriad Official')
+                        return null;
+                      if (!server?.detail) {
+                        return <React.Fragment key={server.id} />;
+                      }
+
+                      return (
+                        <CardInstance
+                          key={server.id}
+                          server={server}
+                          balance={BN_ZERO}
+                          type={InstanceType.ALL}
+                          onClick={goToMyriadApp(
+                            `${publicRuntimeConfig.myriadAppURL}/login?instance=${server.apiUrl}`,
+                          )}
+                        />
+                      );
+                    })}
                 </ShowIf>
               </ShowIf>
             </div>
