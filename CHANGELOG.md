@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/myriadsocial/myriad-federated/compare/1.0.0...1.1.0) (2023-03-08)
+
+
+### Features
+
+* switch network in modal staking reward ([#111](https://github.com/myriadsocial/myriad-federated/issues/111)) ([bf5b3c4](https://github.com/myriadsocial/myriad-federated/commit/bf5b3c40c48fbd7d14fba635f825a333c4e10e18))
+
+
+### Bug Fixes
+
+* sort instance ([#113](https://github.com/myriadsocial/myriad-federated/issues/113)) ([731407d](https://github.com/myriadsocial/myriad-federated/commit/731407dd130eeb8489f14e8afe6cba8322be362f))
+
 ## 1.0.0 (2023-02-27)
 
 
