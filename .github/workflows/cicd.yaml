@@ -179,20 +179,6 @@ jobs:
           cluster_name: ${{ secrets[format('{0}_{1}', matrix.environment, 'GKE_CLUSTER_NAME')] }}
           location: ${{ secrets[format('{0}_{1}', matrix.environment, 'GKE_LOCATION')] }}
           use_internal_ip: true
-      - name: Get Secrets from Google Secret Manager
-        id: secrets
-        uses: google-github-actions/get-secretmanager-secrets@4d6d3dfd94110800dda8d84109cb6da0f6a5919d
-        with:
-          secrets: |-
-            WEB_FEDERATED_ENVIRONMENT:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_ENVIRONMENT
-            WEB_FEDERATED_NAME:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_NAME
-            WEB_FEDERATED_SECRET:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_SECRET
-            WEBSITE_URL:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEBSITE_URL
-            SUPPORT_MAIL:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/SUPPORT_MAIL
-            WEB_FEDERATED_SENTRY_DSN:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_SENTRY_DSN
-            WEB_FEDERATED_DNS:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_FEDERATED_DNS
-            WEB_DNS:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/WEB_DNS
-            NODE_RPC_WS_DNS:${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}/NODE_RPC_WS_DNS
       - name: Tunneling SSH connections
         run: |
           gcloud compute ssh ${{ secrets[format('{0}_{1}', matrix.environment, 'GCE_BASTION_INSTANCE_NAME')] }} \
@@ -214,15 +200,9 @@ jobs:
             --set-string image.tag=${{ needs.release-please.outputs.tag_name || github.sha }} \
             --set-string serviceAccount.name=${{ github.event.repository.name }} \
             --set-string serviceAccount.annotations.'iam\.gke\.io/gcp-service-account'=${{ github.event.repository.name }}@${{ secrets[format('{0}_{1}', matrix.environment, 'GCP_PROJECT_ID')] }}.iam.gserviceaccount.com \
-            --set-string config.app.environment=${{ steps.secrets.outputs.WEB_FEDERATED_ENVIRONMENT }} \
-            --set-string config.app.name="${{ steps.secrets.outputs.WEB_FEDERATED_NAME }}" \
-            --set-string config.app.version=${{ needs.release-please.outputs.tag_name || github.sha }} \
-            --set-string config.app.authURL=https://${{ steps.secrets.outputs.WEB_FEDERATED_DNS }} \
-            --set-string config.app.secret=${{ steps.secrets.outputs.WEB_FEDERATED_SECRET }} \
-            --set-string config.websiteURL=https://${{ steps.secrets.outputs.WEB_DNS }} \
-            --set-string config.supportMail=${{ steps.secrets.outputs.SUPPORT_MAIL }} \
-            --set-string config.rpcURL=wss://${{ steps.secrets.outputs.NODE_RPC_WS_DNS }} \
-            --set-string config.sentry.dsn=${{ steps.secrets.outputs.WEB_FEDERATED_SENTRY_DSN }} \
+            --set config.secretsStore.enabled=true \
+            --set-string config.secretsStore.providerClass=${{ github.event.repository.name }}-secrets-store-provider \
+            --set-string config.secretsStore.name=${{ github.event.repository.name }}-secrets-store \
             --set-string nodeSelector.node_pool=general \
             --set-string nodeSelector.'iam\.gke\.io/gke-metadata-server-enabled'='true'
           HTTPS_PROXY=127.0.0.1:8888 kubectl rollout status deployment/${{ github.event.repository.name }}
